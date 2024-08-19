@@ -1,21 +1,25 @@
-import { formateObjToParamStr } from "../common"
+import { formateObjToParamStr } from "./common"
 
 const request = {
     // post请求方法
-    post(url: string, data: string | Record<string, string | number | undefined>) {
-        let requestBody = ""
+    post<T>(url: string, data: any, config?: undefined | Record<string, any>): Promise<T> {
+        let requestBody: string | FormData = ""
         if (typeof data == "string") {
+            requestBody = data
+        } else if (data instanceof FormData) {
             requestBody = data
         } else if (typeof data == "object") {
             requestBody = formateObjToParamStr(data)
         }
+        const requestHeaders = {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            ...config
+        }
         return fetch(url, {
             method: 'POST',
             credentials: 'include',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: requestHeaders,
             // 注意 post 时候参数的形式
             body: requestBody
         }).then(res => {
@@ -23,12 +27,14 @@ const request = {
         })
     },
     // get请求方法
-    get(url: string) {
+    get<T>(url: string, config?: undefined | Record<string, string | number | undefined>): Promise<T> {
+        const requestHeaders = {
+            "Content-Type": "application/json;charset=UTF-8",
+            ...config
+        }
         return fetch(url, {
             credentials: 'include',
-            headers: new Headers({
-                "Content-Type": "application/json;charset=UTF-8",
-            }),
+            headers: new Headers(requestHeaders),
             mode: "cors",
         }).then(res => {
             return res.json()

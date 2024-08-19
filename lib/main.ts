@@ -1,13 +1,13 @@
-export function setupCounter(element: HTMLButtonElement) {
-  let counter = 0
-  const setCounter = (count: number) => {
-    counter = count
-    element.innerHTML = `count is ${counter}`
-  }
-  element.addEventListener('click', () => setCounter(++counter))
-  setCounter(0)
+import wpsHelper from "./wps";
+import wfsHelper from "./wfs";
+import utils from "./utils";
+export function sum(a: number, b: number): number {
+  return a + b;
 }
 
-export function sum(a: number, b: number) {
-  return a + b
-}
+export default {
+  wpsHelper,
+  wfsHelper,
+  utils,
+  sum
+};

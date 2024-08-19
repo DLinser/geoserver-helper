@@ -1,7 +1,9 @@
 import { ILayer } from '../interface/layer'
 import fetchUtil from '../utils/fetch'
 const auth = window.btoa(`admin:geoserver`)
-
+const restXhrConfig = {
+    headers: { noLoading: false, geoserverRest: true, Authorization: `Basic ${auth}` },
+}
 
 // * 获取rest图层详情
 export const getLayerInfoApi = (layerNameWithWorkspace: string) => {
@@ -9,10 +11,10 @@ export const getLayerInfoApi = (layerNameWithWorkspace: string) => {
 }
 
 // * 编辑/更新图层
-export const modifyLayerApi = (layerName: string, layerBody: ILayer.LayerModifyInfo, workspaceName?: string) => {
-    const putUrl = workspaceName ? `/rest/workspaces/${workspaceName}/layers/${layerName}` : `/rest/layers/${layerName}`
-    return fetchUtil.put<ILayer.ResLayerInfo>(putUrl, { layer: layerBody }, restXhrConfig)
-}
+// export const modifyLayerApi = (layerName: string, layerBody: ILayer.LayerModifyInfo, workspaceName?: string) => {
+//     const putUrl = workspaceName ? `/rest/workspaces/${workspaceName}/layers/${layerName}` : `/rest/layers/${layerName}`
+//     return fetchUtil.put<ILayer.ResLayerInfo>(putUrl, { layer: layerBody }, restXhrConfig)
+// }
 
 // * 获取图层源详情
 export const getLayerSourceInfoByHrefApi = (sourceInfoHref: string) => {
@@ -53,7 +55,7 @@ export const sendLayerCacheTaskApi = (layerNameWithWorkspace: string, operationT
         // }
     }
 
-    return http.post<RestLayers.ILayerCacheTasks>(
+    return fetchUtil.post<ILayer.ILayerCacheTasks>(
         `/gwc/rest/seed/${layerNameWithWorkspace}.json`,
         operationType == 'kill_all' ? formData : seedOption,
         restXhrConfig,

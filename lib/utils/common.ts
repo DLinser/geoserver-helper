@@ -2,8 +2,8 @@
  * @Author: linyongxin linyongxin@ellipspace.com
  * @Date: 2024-08-14 14:40:47
  * @LastEditors: linyongxin linyongxin@ellipspace.com
- * @LastEditTime: 2024-08-14 16:54:12
- * @FilePath: \geoserver-rest\src\common.ts
+ * @LastEditTime: 2024-08-19 15:33:09
+ * @FilePath: \geoserver-rest\lib\utils\common.ts
  * @Description: 公共方法库
  */
 /**
@@ -32,4 +32,9 @@ export function postXml(url: string, params: BodyInit) {
     }).then((res) => {
         return res.text();
     });
+}
+
+export default {
+    formateObjToParamStr,
+    postXml
 }

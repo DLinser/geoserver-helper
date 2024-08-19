@@ -1,7 +1,6 @@
 import './style.css'
 import typescriptLogo from './typescript.svg'
-import { setupCounter } from '../lib/main'
-
+import geoserverRest from '../lib/main'
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <a href="https://vitejs.dev" target="_blank">
@@ -19,5 +18,22 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </p>
   </div>
 `
+const cc = geoserverRest.sum(1, 6)
+console.log(cc)
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const wpsHelper = new geoserverRest.wpsHelper();
+const countXml = wpsHelper.formatFeatureCountXmlString({
+  workspace: "qhd",
+  workspaceURI: "http://qhd",
+  queryName: "qhd:xzqh_xian",
+  cql: "gb like '1561303%'",
+});
+const finishXmlString = wpsHelper.finishXML(countXml);
+const wpsurl = `/geoserver/ows?service=WPS&version=1.0.0`;
+geoserverRest.utils.common.postXml(wpsurl, finishXmlString).then((res2) => {
+  if (res2) {
+    const jsonRes = JSON.parse(res2);
+    debugger;
+    console.log(jsonRes)
+  }
+});

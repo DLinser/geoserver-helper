@@ -1,7 +1,7 @@
 {
   "name": "geoserver-rest",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.0.2",
   "type": "module",
   "files": [
     "dist",
@@ -11,7 +11,7 @@
   "module": "./dist/geoserver-rest.js",
   "types": "./index.d.ts",
   "exports": {
-    "types": "./index.d.ts",
+    "types": "./dist/main.d.ts",
     "import": "./dist/geoserver-rest.js",
     "require": "./dist/geoserver-rest.umd.cjs"
   },
@@ -27,6 +27,7 @@
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.1.0",
     "vite": "^5.2.10",
+    "vite-plugin-dts": "^4.0.3",
     "vitest": "^2.0.5"
   }
 }
