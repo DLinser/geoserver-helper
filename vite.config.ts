@@ -6,32 +6,18 @@ export default defineConfig({
   build: {
     outDir: "dist",
     lib: {
-      entry: ['./lib/main.ts', './lib/utils/index.ts', './lib/modules/layer.ts'],
+      entry: ['./lib/geoserver-helper.ts', './lib/utils/utils.ts', './lib/wfs.ts', './lib/wps.ts'],
       name: 'geoserver-helper',
       // fileName: 'geoserver-helper',
       fileName: (format, entryName: string) => {
-        console.log('名称 entryName', entryName)
-        console.log('format format', format)
-        if (entryName == "main") {
-          if (format == "es") {
-            return `geoserver-helper.js`
-          } else if (format == "umd") {
-            return `geoserver-helper.${format}.cjs`
-          } else if (format == "cjs") {
-            return `geoserver-helper.cjs`
-          } else {
-            return `geoserver-helper.${format}.js`
-          }
+        if (format == "es") {
+          return `${entryName}.js`
+        } else if (format == "umd") {
+          return `${entryName}.${format}.cjs`
+        } else if (format == "cjs") {
+          return `${entryName}.cjs`
         } else {
-          if (format == "es") {
-            return `${entryName}.js`
-          } else if (format == "umd") {
-            return `${entryName}.${format}.cjs`
-          } else if (format == "cjs") {
-            return `${entryName}.cjs`
-          } else {
-            return `${entryName}.${format}.js`
-          }
+          return `${entryName}.${format}.js`
         }
       },
     },

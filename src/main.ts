@@ -1,6 +1,8 @@
 import './style.css'
 import typescriptLogo from './typescript.svg'
-import geoserverRest from '../lib/main'
+import geoserverRest from '../lib/geoserver-helper'
+import restHelper from '../lib/rest'
+
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <a href="https://vitejs.dev" target="_blank">
@@ -37,3 +39,11 @@ geoserverRest.utils.common.postXml(wpsurl, finishXmlString).then((res2) => {
     console.log(jsonRes)
   }
 });
+const restHelperInstance = new restHelper({
+  url: "/geoserver"
+})
+restHelperInstance.getLayersListApi("qhd").then(res => {
+  debugger
+  res.layers
+  console.log(res)
+})

@@ -1,6 +1,12 @@
 
 import { formateObjToParamStr } from "./utils/common";
+import fetchUtil from './utils/fetch'
+const auth = window.btoa(`admin:geoserver`)
+const restXhrConfig = {
+    headers: { Authorization: `Basic ${auth}` },
+}
 import { type ILayer } from "./interface/layer"
+export type { ILayer } from './interface/layer';
 export default class restHelper {
     url: string = "";
     layer: string = "";
@@ -10,149 +16,115 @@ export default class restHelper {
         options?:
             | {
                 url: string;
-                layer: string;
-                srsName: string;
+                layer?: string;
+                srsName?: string;
                 workspace?: string;
             }
             | undefined,
     ) {
         if (!options) return;
         this.url = options.url;
-        this.layer = options.layer;
-        this.srsName = options.srsName;
+        this.layer = options.layer || "";
+        this.srsName = options.srsName || "EPSG:4326";
         this.workspace = options.workspace || "";
     }
-
+    /*************************************************图层相关**************************************************** */
     /**
-     * @description: 查询矢量Features
+     * @description: 获取图层列表
+     * @param {string} workspaceName 工作空间名称，空的话则返回所有
      * @return {*}
      */
-    queryFeatures(queryOption?: {
-        cql?: string;
-        propertyname?: string;
-        fid?: number | string;
-        maxFeatures?: number | string;
-        startIndex?: number | string;
-        extension?: Record<string, string | number>;
-    }) {
-        return new Promise<ILayer.LayerPropertySheetInfo>((resolve, reject) => {
-            interface wfsQueryParams {
-                service: "WFS";
-                version: "1.0.0";
-                request: "GetFeature";
-                srsName: string;
-                typename: string;
-                outputFormat: "application/json";
-                featureId?: string;
-                CQL_FILTER?: string;
-                propertyname?: string;
-                maxFeatures?: number | string;
-                startIndex?: number | string;
-            }
-            // 使用索引签名来允许任意数量的额外属性
-            interface ExtendedWfsQueryParams extends wfsQueryParams {
-                [key: string]: string | number | undefined; // 这里允许任意类型的额外属性
-            }
-            let featureRequest: ExtendedWfsQueryParams = {
-                service: "WFS",
-                version: "1.0.0",
-                request: "GetFeature",
-                srsName: this.srsName,
-                typename: this.workspace
-                    ? `${this.workspace}:${this.layer}`
-                    : this.layer,
-                outputFormat: "application/json",
-            };
-            if (queryOption) {
-                if (queryOption.fid) {
-                    featureRequest.featureId = String(queryOption.fid);
-                }
-                if (queryOption.cql) {
-                    featureRequest.CQL_FILTER = queryOption.cql;
-                }
-                if (queryOption.propertyname) {
-                    featureRequest.propertyname = queryOption.propertyname;
-                }
-                if (queryOption.maxFeatures) {
-                    featureRequest.maxFeatures = queryOption.maxFeatures;
-                }
-                if (queryOption.startIndex) {
-                    featureRequest.startIndex = queryOption.startIndex;
-                }
-                if (
-                    queryOption.extension &&
-                    Object.prototype.toString.call(queryOption.extension) ==
-                    "[object Object]"
-                ) {
-                    featureRequest = {
-                        ...featureRequest,
-                        ...queryOption.extension,
-                    };
-                }
-            }
-            const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-            fetch(fetchUrl, {
-                method: "GET",
-                headers: new Headers({
-                    Accept: "application/json;charset=utf-8",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                }),
-                mode: "cors",
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then((json) => {
-                    resolve(json);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+    getLayersListApi(workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layers` : `${this.url}/rest/layers`
+        return fetchUtil.get<ILayer.ResLayerList>(queryUrl, restXhrConfig)
     }
 
     /**
-     * @description: 查询矢量图层字段信息
+     * @description: 获取单个图层详情
+     * @param {string} layerNameWithWorkspace
+     * @return {Promise}
+     */
+    getLayerInfoApi(layerNameWithWorkspace?: string) {
+        const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
+        return fetchUtil.get<ILayer.ResLayerInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, restXhrConfig)
+    }
+
+    /**
+     * @description: 编辑/更新图层
+     * @param {string} layerName 图层名
+     * @param {ILayer} layerBody 
+     * @param {string} workspaceName
      * @return {*}
      */
-    getDescribeFeatureType() {
-        return new Promise((resolve, reject) => {
-            interface wfsQueryDescribeFeatureTypeParams {
-                service: "WFS";
-                version: "1.0.0";
-                request: "DescribeFeatureType";
-                typeName: string;
-                outputFormat: "application/json";
-                // 添加索引签名，允许任意数量的额外属性
-                [key: string]: string | number | undefined;
+    modifyLayerApi(layerName: string, layerBody: ILayer.LayerModifyInfo, workspaceName?: string) {
+        const putUrl = workspaceName ? `/rest/workspaces/${workspaceName}/layers/${layerName}` : `/rest/layers/${layerName}`
+        return fetchUtil.put<ILayer.ResLayerInfo>(putUrl, { layer: layerBody }, restXhrConfig)
+    }
+
+    // * 获取图层源详情
+    getLayerSourceInfoByHrefApi(sourceInfoHref: string) {
+        return fetchUtil.get<ILayer.LayerSourceDetailInfo>(sourceInfoHref, restXhrConfig)
+    }
+
+    // * 获取rest图层切片任务详情
+    getLayerCacheTasksApi(layerNameWithWorkspace?: string) {
+        const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
+        return fetchUtil.get<ILayer.ILayerCacheTasks>(`${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`, restXhrConfig)
+    }
+
+    /**
+     * @description: 发起rest图层切片任务
+     * @param {string} operationType 操作类型
+     * @param {string} layerNameWithWorkspace 图层名
+     * @return {Promise}
+     */
+    sendLayerCacheTaskApi(operationType: string, layerNameWithWorkspace?: string) {
+        const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
+        interface ISeedOption {
+            seedRequest?: {
+                name?: string
+                zoomStart?: number
+                zoomStop?: number
+                type?: string
+                threadCount?: number
             }
-            const featureRequest: wfsQueryDescribeFeatureTypeParams = {
-                service: "WFS",
-                version: "1.0.0",
-                request: "DescribeFeatureType",
-                typeName: this.workspace
-                    ? `${this.workspace}:${this.layer}`
-                    : this.layer,
-                outputFormat: "application/json",
-            };
-            const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-            fetch(fetchUrl, {
-                method: "GET",
-                headers: new Headers({
-                    Accept: "application/json;charset=utf-8",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                }),
-                mode: "cors",
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then((json) => {
-                    resolve(json);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+            kill_all?: string
+        }
+        const seedOption: ISeedOption = {
+            seedRequest: {
+                name: realLayerNameWithWorkspace,
+                zoomStart: 0,
+                zoomStop: 15,
+                type: operationType,
+                threadCount: 1,
+            },
+        }
+        const formData = new FormData()
+        if (operationType == 'kill_all') {
+            formData.append('kill_all', 'all')
+            // seedOption = {
+            //     kill_all: 'all',
+            // }
+        }
+
+        return fetchUtil.post<ILayer.ILayerCacheTasks>(
+            `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
+            operationType == 'kill_all' ? formData : seedOption,
+            restXhrConfig,
+        )
+    }
+
+    // * 关闭rest图层切片任务
+    clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
+        const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
+        const tempHeadersConfig = Object.assign({ 'Content-Type': 'application/javascript' }, restXhrConfig.headers)
+        const tempXhrConfig = Object.assign(restXhrConfig, {
+            headers: tempHeadersConfig,
+        })
+        return fetchUtil.post<ILayer.ILayerCacheTasks>(
+            `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}`,
+            'kill_all=all' as any,
+            tempXhrConfig,
+        )
     }
 }

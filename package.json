@@ -21,10 +21,15 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./layer": {
-      "types": "./dist/modules/layer.d.ts",
-      "import": "./dist/layer.js",
-      "require": "./dist/layer.cjs"
+    "./wfs": {
+      "types": "./dist/modules/wfs.d.ts",
+      "import": "./dist/wfs.js",
+      "require": "./dist/wfs.cjs"
+    },
+    "./wps": {
+      "types": "./dist/modules/wps.d.ts",
+      "import": "./dist/wps.js",
+      "require": "./dist/wps.cjs"
     }
   },
   "scripts": {

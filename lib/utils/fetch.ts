@@ -2,7 +2,7 @@ import { formateObjToParamStr } from "./common"
 
 const request = {
     // post请求方法
-    post<T>(url: string, data: any, config?: undefined | Record<string, any>): Promise<T> {
+    post<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
         let requestBody: string | FormData = ""
         if (typeof data == "string") {
             requestBody = data
@@ -11,10 +11,12 @@ const request = {
         } else if (typeof data == "object") {
             requestBody = formateObjToParamStr(data)
         }
-        const requestHeaders = {
+        let requestHeaders = {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/x-www-form-urlencoded',
-            ...config
+        }
+        if (config?.headers) {
+            requestHeaders = { ...requestHeaders, ...config.headers }
         }
         return fetch(url, {
             method: 'POST',
@@ -27,15 +29,35 @@ const request = {
         })
     },
     // get请求方法
-    get<T>(url: string, config?: undefined | Record<string, string | number | undefined>): Promise<T> {
-        const requestHeaders = {
+    get<T>(url: string, config?: Record<string, any>): Promise<T> {
+        let requestHeaders: Record<string, any> = {
             "Content-Type": "application/json;charset=UTF-8",
-            ...config
+        }
+        if (config?.headers) {
+            requestHeaders = { ...requestHeaders, ...config.headers }
         }
         return fetch(url, {
             credentials: 'include',
             headers: new Headers(requestHeaders),
             mode: "cors",
+        }).then(res => {
+            return res.json()
+        })
+    },
+    // get请求方法
+    put<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
+        let requestHeaders: Record<string, any> = {
+            "Content-Type": "application/json;charset=UTF-8",
+        }
+        if (config?.headers) {
+            requestHeaders = { ...requestHeaders, ...config.headers }
+        }
+        return fetch(url, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: new Headers(requestHeaders),
+            mode: "cors",
+            body: data
         }).then(res => {
             return res.json()
         })

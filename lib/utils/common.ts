@@ -2,8 +2,8 @@
  * @Author: linyongxin linyongxin@ellipspace.com
  * @Date: 2024-08-14 14:40:47
  * @LastEditors: linyongxin linyongxin@ellipspace.com
- * @LastEditTime: 2024-08-19 15:33:09
- * @FilePath: \geoserver-rest\lib\utils\common.ts
+ * @LastEditTime: 2024-08-20 18:01:00
+ * @FilePath: \geoserver-helper\lib\utils\common.ts
  * @Description: 公共方法库
  */
 /**
@@ -12,12 +12,9 @@
  * @return {String}
  */
 export function formateObjToParamStr(
-    paramObj: Record<string, string | number | undefined>,
+    paramObj: Record<string, string>,
 ) {
-    const params = new URLSearchParams();
-    for (const attr in paramObj) {
-        params.append(attr, String(paramObj[attr]));
-    }
+    const params = new URLSearchParams(paramObj);
     return params.toString();
 }
 
