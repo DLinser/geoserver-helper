@@ -28,8 +28,45 @@ npm create vite
 │  └─utils           工具
 ├─public             普通前端的public用于预览和测试
 └─src                普通前端的src用于预览和测试
+### 二次开发指引
+1. 克隆项目
+```shell
+git clone https://gitee.com/lyxstart/geoserver-rest.git
+```
+2. 安装依赖
+```shell
+npm i  /  pnpm i
+```
+3. 运行
+```shell
+npm run dev
+```
+4. 打包
+```shell
+npm run build
+```
+* 单元测试
+```shell
+npm run test
+```
+* 发布前调试(发布到本地,类似虚拟的 npm publish)
+```shell
+npm run link
+pnpm link --global
+```
+* 发布前测试项目测试
+```shell
+npm run link geoserver-rest
+pnpm link --global geoserver-rest
+npm run unlink
+```
+* 关闭发布前的调试
+```shell
+npm run unlink
+pnpm unlink geoserver-rest
+```
 
-### 安装教程
+## 安装教程
 ```shell
 # 安装依赖
 npm i geoserver-restt

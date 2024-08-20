@@ -1,24 +1,40 @@
 {
-  "name": "geoserver-rest",
+  "name": "geoserver-helper",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.4",
   "type": "module",
   "files": [
     "dist",
     "index.d.ts"
   ],
-  "main": "./dist/geoserver-rest.umd.cjs",
-  "module": "./dist/geoserver-rest.js",
+  "main": "./dist/geoserver-helper.cjs",
+  "module": "./dist/geoserver-helper.js",
   "types": "./index.d.ts",
   "exports": {
-    "types": "./dist/main.d.ts",
-    "import": "./dist/geoserver-rest.js",
-    "require": "./dist/geoserver-rest.umd.cjs"
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/geoserver-helper.js",
+      "require": "./dist/geoserver-helper.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./layer": {
+      "types": "./dist/modules/layer.d.ts",
+      "import": "./dist/layer.js",
+      "require": "./dist/layer.cjs"
+    }
   },
   "scripts": {
     "dev": "vite",
     "test": "vitest",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "link": "npm link",
+    "pnpmlink": "pnpm link --global",
+    "unlink": "npm unlink geoserver-helper -g",
+    "pnpmunlink": "pnpm unlink --global geoserver-helper -g"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

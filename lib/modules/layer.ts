@@ -4,6 +4,7 @@ const auth = window.btoa(`admin:geoserver`)
 const restXhrConfig = {
     headers: { noLoading: false, geoserverRest: true, Authorization: `Basic ${auth}` },
 }
+export type { ILayer } from '../interface/layer';
 
 // * 获取rest图层详情
 export const getLayerInfoApi = (layerNameWithWorkspace: string) => {
