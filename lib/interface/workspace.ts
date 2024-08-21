@@ -1,0 +1,31 @@
+//工作空间模块
+export namespace IWorkspace {
+    //返回结果单项
+    export interface WorkspaceItemOfList {
+        name: string
+        href: string
+    }
+    //查询的工作空间列表结果
+    export interface WorkspaceList {
+        workspaces: {
+            workspace: WorkspaceItemOfList[]
+        }
+    }
+    //查询的单个工作空间结果
+    export interface WorkspaceInfo {
+        workspace: {
+            coverageStores: string
+            dataStores: string
+            dateCreated: string
+            isolated: false
+            name: string
+            wmsStores: string
+            wmtsStores: string
+        }
+    }
+    //新增或者编辑表单
+    export interface WorkspaceOperationForm {
+        name: string
+        default?: boolean
+    }
+}

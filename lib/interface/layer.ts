@@ -119,10 +119,21 @@ export namespace ILayer {
     export interface LayerInfo {
         //名称
         name: string
-        // 类型
+        //属性
+        attribution: {
+            logoHeight: number
+            logoWidth: number
+        }
+        // 类型  "VECTOR"
         type: string
         //创建时间
         dateCreated: string
+        //修改时间
+        dateModified: string
+        //是否是不透明的
+        opaque: boolean
+        //是否可查询
+        queryable: boolean
         //图层源
         resource: LayerSourceInfo
         //样式

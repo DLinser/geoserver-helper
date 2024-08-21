@@ -1,7 +1,7 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
 import geoserverRest from '../lib/geoserver-helper'
-import restHelper from '../lib/rest'
+import fetchUtil from '../lib/utils/fetch'
+import restHelper, { ILayer } from '../lib/rest'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -9,7 +9,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>
     <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
     </a>
     <h1>Vite + TypeScript</h1>
     <div class="card">
@@ -32,7 +31,8 @@ const countXml = wpsHelper.formatFeatureCountXmlString({
 });
 const finishXmlString = wpsHelper.finishXML(countXml);
 const wpsurl = `/geoserver/ows?service=WPS&version=1.0.0`;
-geoserverRest.utils.common.postXml(wpsurl, finishXmlString).then((res2) => {
+
+fetchUtil.post<string>(wpsurl, finishXmlString).then((res2) => {
   if (res2) {
     const jsonRes = JSON.parse(res2);
     debugger;
@@ -42,8 +42,38 @@ geoserverRest.utils.common.postXml(wpsurl, finishXmlString).then((res2) => {
 const restHelperInstance = new restHelper({
   url: "/geoserver"
 })
-restHelperInstance.getLayersListApi("qhd").then(res => {
+// restHelperInstance.getLayerListApi("qhd").then(res => {
+//   debugger
+//   res.layers
+//   console.log(res)
+// })
+
+// restHelperInstance.getLayerInfoApi("qhd:xzqh_shi").then(res => {
+//   debugger
+//   res.layer
+//   console.log(res)
+// })
+restHelperInstance.getWorkspaceListApi().then(res => {
   debugger
-  res.layers
   console.log(res)
 })
+restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
+  debugger
+  console.log(res)
+})
+
+// const currentLayerModifyInfo: ILayer.LayerModifyInfo = {
+//   defaultStyle: {
+//     name: "qhd:xzqh_shi",
+//     // name: "polygon",
+//   },
+// }
+// restHelperInstance.modifyLayerApi(
+//   "xzqh_shi",
+//   currentLayerModifyInfo,
+//   "qhd",
+// ).then(res => {
+//   debugger
+// }).catch(e => {
+//   debugger
+// })
