@@ -21,13 +21,13 @@ npm create vite
 ```
 
 ### 文件资源目录 📚
-├─dist  打包后的文件目录
-├─lib   代码库
-│  ├─interface       接口
-│  ├─modules         模块
-│  └─utils           工具
-├─public             普通前端的public用于预览和测试
-└─src                普通前端的src用于预览和测试
+├─dist  打包后的文件目录  
+├─lib   代码库  
+│  ├─interface       接口  
+│  ├─modules         模块  
+│  └─utils           工具  
+├─public             普通前端的public用于预览和测试  
+└─src                普通前端的src用于预览和测试  
 ### 二次开发指引
 1. 克隆项目
 ```shell
@@ -74,9 +74,36 @@ npm i geoserver-restt
 
 ### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  引入依赖的
+```shell
+# 整体引入依赖
+import geoserverHelper from 'geoserver-helper'
+
+# 按需引入依赖
+import utils from 'geoserver-helper/utils'
+import wfsHelper from 'geoserver-helper/wfs'
+import wpsHelper from 'geoserver-helper/wps'
+import restHelper from 'geoserver-helper/rest'
+```
+2.  使用
+```javascript
+//对象转Query字符串
+const aa = utils.common.formateObjToParamStr({
+        name: 'zhangsan',
+})
+
+//查询所有的图层列表
+const restHelperInstance = new restHelper({
+    url: "http://localhost:8080/geoserver"
+})
+//查询所有的图层列表
+const res = await restHelperInstance.getLayerListApi()
+console.log(res.layers)
+//查询所有的工作空间列表
+const res = await restHelperInstance.getWorkspaceListApi()
+console.log(res.workspaces)
+```
+
 
 #### 参与贡献
 

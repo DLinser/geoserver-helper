@@ -1,5 +1,4 @@
 
-import { formateObjToParamStr } from "./utils/common";
 import fetchUtil from './utils/fetch'
 const auth = window.btoa(`admin:geoserver`)
 const restXhrConfig = {
