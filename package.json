@@ -1,34 +1,37 @@
 {
   "name": "geoserver-helper",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.6",
   "type": "module",
   "files": [
-    "dist",
-    "index.d.ts"
+    "dist"
   ],
   "main": "./dist/geoserver-helper.cjs",
   "module": "./dist/geoserver-helper.js",
-  "types": "./index.d.ts",
+  "types": "./dist/geoserver-helper.d.ts",
   "exports": {
     ".": {
       "types": "./dist/geoserver-helper.d.ts",
       "import": "./dist/geoserver-helper.js",
+      "default": "./dist/geoserver-helper.cjs",
       "require": "./dist/geoserver-helper.cjs"
     },
     "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./dist/utils/utils.d.ts",
+      "import": "./dist/utils.js",
+      "default": "./dist/utils.cjs",
+      "require": "./dist/utils.cjs"
     },
     "./wfs": {
-      "types": "./dist/modules/wfs.d.ts",
+      "types": "./dist/wfs.d.ts",
       "import": "./dist/wfs.js",
+      "default": "./dist/wfs.cjs",
       "require": "./dist/wfs.cjs"
     },
     "./wps": {
-      "types": "./dist/modules/wps.d.ts",
+      "types": "./dist/wps.d.ts",
       "import": "./dist/wps.js",
+      "default": "./dist/wps.cjs",
       "require": "./dist/wps.cjs"
     }
   },
@@ -39,7 +42,9 @@
     "link": "npm link",
     "pnpmlink": "pnpm link --global",
     "unlink": "npm unlink geoserver-helper -g",
-    "pnpmunlink": "pnpm unlink --global geoserver-helper -g"
+    "pnpmunlink": "pnpm unlink --global geoserver-helper -g",
+    "setproxy": "npm config set proxy http://localhost:10809",
+    "deleteproxy": "npm config delete proxy   "
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -51,5 +56,10 @@
     "vite": "^5.2.10",
     "vite-plugin-dts": "^4.0.3",
     "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "geostyler-cql-parser": "^3.0.2",
+    "geostyler-style": "^9.1.0",
+    "ol": "^10.1.0"
   }
 }

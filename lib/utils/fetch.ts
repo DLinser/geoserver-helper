@@ -44,6 +44,22 @@ const request = {
         }
         return fetchData<T>(url, { method: 'POST', body: requestBody, headers: new Headers(requestHeaders) });
     },
+    postXml<T>(url: string, data: BodyInit, config?: Record<string, any>): Promise<T> {
+        //默认值
+        let requestHeaders: Record<string, any> = {
+            'Accept': 'application/json;charset=utf-8',
+            'Content-Type': 'text/xml'
+        }
+        //如果外部传值，优先使用外部的传值
+        if (config?.headers) {
+            requestHeaders = Object.assign(requestHeaders, config.headers)
+        }
+        return fetchData<T>(url, {
+            method: "POST",
+            headers: new Headers(requestHeaders),
+            body: data,
+        });
+    },
     // get请求方法
     get<T>(url: string, data?: Record<string, any>, config?: Record<string, any>): Promise<T> {
         let requestHeaders: Record<string, any> = { 'Content-Type': "application/json;charset=UTF-8" }

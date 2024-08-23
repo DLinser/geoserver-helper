@@ -2,6 +2,7 @@ import './style.css'
 import geoserverRest from '../lib/geoserver-helper'
 import fetchUtil from '../lib/utils/fetch'
 import restHelper, { ILayer } from '../lib/rest'
+import wfsHelper from '../lib/wfs'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -23,6 +24,10 @@ const cc = geoserverRest.sum(1, 6)
 console.log(cc)
 
 const wpsHelper = new geoserverRest.wpsHelper();
+const wfsHelperInstance = new wfsHelper({
+  url: "/geoserver/wfs?",
+  workspace: "qhd",
+});
 const countXml = wpsHelper.formatFeatureCountXmlString({
   workspace: "qhd",
   workspaceURI: "http://qhd",
@@ -32,13 +37,13 @@ const countXml = wpsHelper.formatFeatureCountXmlString({
 const finishXmlString = wpsHelper.finishXML(countXml);
 const wpsurl = `/geoserver/ows?service=WPS&version=1.0.0`;
 
-fetchUtil.post<string>(wpsurl, finishXmlString).then((res2) => {
-  if (res2) {
-    const jsonRes = JSON.parse(res2);
-    debugger;
-    console.log(jsonRes)
-  }
-});
+// fetchUtil.post<string>(wpsurl, finishXmlString).then((res2) => {
+//   if (res2) {
+//     const jsonRes = JSON.parse(res2);
+//     debugger;
+//     console.log(jsonRes)
+//   }
+// });
 const restHelperInstance = new restHelper({
   url: "/geoserver"
 })
@@ -53,14 +58,14 @@ const restHelperInstance = new restHelper({
 //   res.layer
 //   console.log(res)
 // })
-restHelperInstance.getWorkspaceListApi().then(res => {
-  debugger
-  console.log(res)
-})
-restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
-  debugger
-  console.log(res)
-})
+// restHelperInstance.getWorkspaceListApi().then(res => {
+//   debugger
+//   console.log(res)
+// })
+// restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
+//   debugger
+//   console.log(res)
+// })
 
 // const currentLayerModifyInfo: ILayer.LayerModifyInfo = {
 //   defaultStyle: {
@@ -76,4 +81,21 @@ restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
 //   debugger
 // }).catch(e => {
 //   debugger
+// })
+
+// wfsHelperInstance.queryFeatures({
+//   typename: "qhd:重点工程点",
+//   cql: "XZQHMC = '抚宁区' OR KCKZ LIKE '矿泉%'"
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+// wfsHelperInstance.queryFeatures({
+//   propertyname: "name,gb",
+//   typename: "qhd:xzqh_xian",
+
+// }).then(res => {
+//   debugger
+//   console.log(res)
 // })

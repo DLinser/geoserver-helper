@@ -1,7 +1,7 @@
-# geoserver-rest
+# geoserver-helper
 
 ## 介绍
-用于请求geoserver的rest接口，包括常用的wfs、wms、wps等
+用于请求geoserver的rest、wfs、wms、wps等接口信息
 
 ## 软件架构
 
@@ -73,13 +73,13 @@ npm i geoserver-restt
 ```
 
 ### 使用说明
-
 1.  引入依赖的
-```shell
-# 整体引入依赖
+```javascript
+// 整体引入依赖
 import geoserverHelper from 'geoserver-helper'
 
-# 按需引入依赖
+// 按需引入依赖
+
 import utils from 'geoserver-helper/utils'
 import wfsHelper from 'geoserver-helper/wfs'
 import wpsHelper from 'geoserver-helper/wps'
@@ -103,7 +103,17 @@ console.log(res.layers)
 const res = await restHelperInstance.getWorkspaceListApi()
 console.log(res.workspaces)
 ```
+3. 注意
+如果您的项目用到了Typescript，因为Typescript版本问题，目前支持exports映射的只有Typescript 4.7（2022 年 6 月）往后的版本，也就是说使用的时候必须用高版本的解析器（node16、nodenext、Bundler），也就是说您的tsconfig.json中的  "moduleResolution": "Bundler",必须修改为node16、nodenext、Bundler中的某一个，如果因为某些特殊原因您不愿意更改或者不能更改也可以使用下面绝对路径的引用方式
+```javascript
+// 整体引入依赖
+import geoserverHelper from 'geoserver-helper'
 
+// 按需引入依赖
+import utils from 'geoserver-helper/dist/utils'
+import wfsHelper from 'geoserver-helper/dist/wfs'
+import wpsHelper from 'geoserver-helper/dist/wps'
+impor
 
 #### 参与贡献
 

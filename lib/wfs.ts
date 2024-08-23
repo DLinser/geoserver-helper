@@ -1,26 +1,31 @@
 
 import { formateObjToParamStr } from "./utils/common";
+import { creatFeatureRequestXml } from "./utils/wfsXml";
 import { type ILayer } from "./interface/layer"
+import fetchUtil from './utils/fetch'
 export default class wfsHelper {
     url: string = "";
     layer: string = "";
     srsName: string = "EPSG:4326";
     workspace: string = "";
+    //工作空间Uri
+    workspaceUri: string = "";
     constructor(
-        options?:
-            | {
+        options:
+            {
                 url: string;
-                layer: string;
-                srsName: string;
+                layer?: string;
+                srsName?: string;
                 workspace?: string;
+                workspaceUri?: string
             }
-            | undefined,
     ) {
         if (!options) return;
         this.url = options.url;
-        this.layer = options.layer;
-        this.srsName = options.srsName;
+        this.layer = options.layer || "";
+        this.srsName = options.srsName || "EPSG:4326";
         this.workspace = options.workspace || "";
+        this.workspaceUri = options.workspaceUri || "";
     }
 
     /**
@@ -31,6 +36,8 @@ export default class wfsHelper {
         cql?: string;
         propertyname?: string;
         fid?: number | string;
+        //图层名
+        typename?: string;
         maxFeatures?: number | string;
         startIndex?: number | string;
         extension?: Record<string, string | number>;
@@ -69,6 +76,13 @@ export default class wfsHelper {
                 }
                 if (queryOption.cql) {
                     featureRequest.CQL_FILTER = queryOption.cql;
+                }
+                if (queryOption.typename) {
+                    featureRequest.typename = queryOption.typename;
+                } else {
+                    featureRequest.typename = this.workspace
+                        ? `${this.workspace}:${this.layer}`
+                        : this.layer
                 }
                 if (queryOption.propertyname) {
                     featureRequest.propertyname = queryOption.propertyname;
@@ -112,10 +126,46 @@ export default class wfsHelper {
     }
 
     /**
+     * @description: Post方式查询矢量图层Features
+     * @return {*}
+     */
+    queryFeaturesByPost(option?: {
+        cql?: string;
+        //要显示的字段名（多字段的话用逗号分隔的字符串）
+        propertyname?: string
+        //图层名
+        typename?: string
+        //工作空间
+        workspace?: string
+        //工作空间uri
+        workspaceUri?: string
+        maxFeatures?: number
+        startIndex?: number
+    }) {
+        const currentLayerName = option?.typename || (this.workspace
+            ? `${this.workspace}:${this.layer}`
+            : this.layer);
+        const xmlParam = creatFeatureRequestXml({
+            srsName: this.srsName,
+            featureNS: option?.workspaceUri || this.workspaceUri || "",
+            featurePrefix: option?.workspace || this.workspace || "",
+            featureTypes: [currentLayerName],
+            outputFormat: 'application/json',
+            propertyNames: option?.propertyname ? option?.propertyname.split(",") : undefined,
+            startIndex: option?.startIndex,
+            count: option?.maxFeatures,
+            cql: option?.cql
+        })
+        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam)
+    }
+
+    /**
      * @description: 查询矢量图层字段信息
      * @return {*}
      */
-    getDescribeFeatureType() {
+    getDescribeFeatureType(queryOption?: {
+        typeName?: string;
+    }) {
         return new Promise((resolve, reject) => {
             interface wfsQueryDescribeFeatureTypeParams {
                 service: "WFS";
@@ -129,12 +179,17 @@ export default class wfsHelper {
             const featureRequest: wfsQueryDescribeFeatureTypeParams = {
                 service: "WFS",
                 version: "1.0.0",
+                typeName: "",
                 request: "DescribeFeatureType",
-                typeName: this.workspace
-                    ? `${this.workspace}:${this.layer}`
-                    : this.layer,
                 outputFormat: "application/json",
             };
+            if (queryOption?.typeName) {
+                featureRequest.typeName = queryOption?.typeName
+            } else {
+                featureRequest.typeName = this.workspace
+                    ? `${this.workspace}:${this.layer}`
+                    : this.layer
+            }
             const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
             fetch(fetchUrl, {
                 method: "GET",
