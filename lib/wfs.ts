@@ -3,6 +3,9 @@ import { formateObjToParamStr } from "./utils/common";
 import { creatFeatureRequestXml } from "./utils/wfsXml";
 import { type ILayer } from "./interface/layer"
 import fetchUtil from './utils/fetch'
+import X2JS from 'x2js';
+
+const x2js = new X2JS();
 export default class wfsHelper {
     url: string = "";
     layer: string = "";
@@ -29,10 +32,65 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: 查询矢量Features
+     * @description: 获取能力集(不同version会有细微的不同)
+     * @return {string} 能力集（暂不支持json格式）
+     */
+    GetCapabilities(option: {
+        version: string
+    } = {
+            version: "1.0.0"
+        }) {
+        const featureRequest = {
+            service: "WFS",
+            version: option.version,
+            request: "GetCapabilities"
+        };
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
+        // return fetchUtil.get<string>(fetchUrl)
+        return new Promise<ILayer.LayerPropertyValue>((resolve, reject) => {
+            fetchUtil.get<any>(fetchUrl).then(xmlString => {
+                const jsonResult = x2js.xml2js<any>(xmlString)
+                resolve(jsonResult)
+            }).catch(() => {
+                reject
+            })
+        })
+    }
+
+    /**
+     * @description: 查询某个图层的某个字段的属性(类似GetFeature查询但是只能查某个单一属性，并且无法加条件筛选)
+     * @return {ILayer.LayerPropertyValue} 单属性表
+     */
+    GetPropertyValue(option: {
+        typeNames?: string;
+        valueReference: string;
+    }) {
+        const realTypeNames = option.typeNames ? option.typeNames : this.workspace
+            ? `${this.workspace}:${this.layer}`
+            : this.layer
+        const featureRequest = {
+            service: "WFS",
+            version: "2.0.0",
+            request: "GetPropertyValue",
+            typeNames: realTypeNames,
+            valueReference: option.valueReference
+        };
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
+        return new Promise<ILayer.LayerPropertyValue>((resolve, reject) => {
+            fetchUtil.get<string>(fetchUrl).then(xmlString => {
+                const jsonResult = x2js.xml2js<ILayer.LayerPropertyValue>(xmlString)
+                resolve(jsonResult)
+            }).catch(() => {
+                reject
+            })
+        })
+    }
+
+    /**
+     * @description: 查询矢量Features（多用于简单查询，复杂查询条件的因为get请求本身的限制建议使用post协议的GetFeatureByPost方式）
      * @return {*}
      */
-    queryFeatures(queryOption?: {
+    GetFeature(queryOption?: {
         cql?: string;
         propertyname?: string;
         fid?: number | string;
@@ -129,7 +187,7 @@ export default class wfsHelper {
      * @description: Post方式查询矢量图层Features
      * @return {*}
      */
-    queryFeaturesByPost(option?: {
+    GetFeatureByPost(option?: {
         cql?: string;
         //要显示的字段名（多字段的话用逗号分隔的字符串）
         propertyname?: string
@@ -163,51 +221,36 @@ export default class wfsHelper {
      * @description: 查询矢量图层字段信息
      * @return {*}
      */
-    getDescribeFeatureType(queryOption?: {
+    DescribeFeatureType(queryOption?: {
         typeName?: string;
     }) {
-        return new Promise((resolve, reject) => {
-            interface wfsQueryDescribeFeatureTypeParams {
-                service: "WFS";
-                version: "1.0.0";
-                request: "DescribeFeatureType";
-                typeName: string;
-                outputFormat: "application/json";
-                // 添加索引签名，允许任意数量的额外属性
-                [key: string]: string | number | undefined;
-            }
-            const featureRequest: wfsQueryDescribeFeatureTypeParams = {
-                service: "WFS",
-                version: "1.0.0",
-                typeName: "",
-                request: "DescribeFeatureType",
-                outputFormat: "application/json",
-            };
-            if (queryOption?.typeName) {
-                featureRequest.typeName = queryOption?.typeName
-            } else {
-                featureRequest.typeName = this.workspace
-                    ? `${this.workspace}:${this.layer}`
-                    : this.layer
-            }
-            const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-            fetch(fetchUrl, {
-                method: "GET",
-                headers: new Headers({
-                    Accept: "application/json;charset=utf-8",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                }),
-                mode: "cors",
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then((json) => {
-                    resolve(json);
-                })
-                .catch((err) => {
-                    reject(err);
-                });
-        });
+
+        interface wfsQueryDescribeFeatureTypeParams {
+            service: "WFS";
+            version: "1.0.0";
+            request: "DescribeFeatureType";
+            typeName: string;
+            outputFormat: "application/json";
+            // 添加索引签名，允许任意数量的额外属性
+            [key: string]: string | number | undefined;
+        }
+        const featureRequest: wfsQueryDescribeFeatureTypeParams = {
+            service: "WFS",
+            version: "1.0.0",
+            typeName: "",
+            request: "DescribeFeatureType",
+            outputFormat: "application/json",
+        };
+        if (queryOption?.typeName) {
+            featureRequest.typeName = queryOption?.typeName
+        } else {
+            featureRequest.typeName = this.workspace
+                ? `${this.workspace}:${this.layer}`
+                : this.layer
+        }
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
+        return fetchUtil.get<ILayer.LayerDescribeFeatureType>(fetchUrl)
     }
+
+
 }

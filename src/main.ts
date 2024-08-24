@@ -3,6 +3,7 @@ import geoserverRest from '../lib/geoserver-helper'
 import fetchUtil from '../lib/utils/fetch'
 import restHelper, { ILayer } from '../lib/rest'
 import wfsHelper from '../lib/wfs'
+import wmsHelper from '../lib/wms'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -25,9 +26,14 @@ console.log(cc)
 
 const wpsHelper = new geoserverRest.wpsHelper();
 const wfsHelperInstance = new wfsHelper({
-  url: "/geoserver/wfs?",
+  url: "/geoserver/wfs",
   workspace: "qhd",
 });
+const wmsHelperInstance = new wmsHelper({
+  url: "/geoserver/wms",
+  workspace: "qhd",
+});
+
 const countXml = wpsHelper.formatFeatureCountXmlString({
   workspace: "qhd",
   workspaceURI: "http://qhd",
@@ -83,7 +89,7 @@ const restHelperInstance = new restHelper({
 //   debugger
 // })
 
-// wfsHelperInstance.queryFeatures({
+// wfsHelperInstance.GetFeature({
 //   typename: "qhd:重点工程点",
 //   cql: "XZQHMC = '抚宁区' OR KCKZ LIKE '矿泉%'"
 // }).then(res => {
@@ -91,7 +97,7 @@ const restHelperInstance = new restHelper({
 //   console.log(res)
 // })
 
-// wfsHelperInstance.queryFeatures({
+// wfsHelperInstance.GetFeature({
 //   propertyname: "name,gb",
 //   typename: "qhd:xzqh_xian",
 
@@ -99,3 +105,48 @@ const restHelperInstance = new restHelper({
 //   debugger
 //   console.log(res)
 // })
+
+// wfsHelperInstance.DescribeFeatureType({
+//   typeName: "",
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+// wfsHelperInstance.GetCapabilities({
+//   version: "1.0.0",
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+// wfsHelperInstance.GetPropertyValue({
+//   typeNames: "ellip_visual:1000508550696423425",
+//   valueReference: "等级"
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+// wmsHelperInstance.GetCapabilities({
+//   version:"1.0.0"
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+wmsHelperInstance.GetFeatureInfo({
+  layers: "ellip_visual:1000515860911116289",
+  // x: 119.64528,
+  width: "101",
+  height: "101",
+  version: "1.1.1",
+  // y: 39.95140,
+  x: "0",
+  y: "0",
+  bbox: "119.64367532716186,39.948507784364665,119.64800977692992,39.95284223413273",
+  srs: "EPSG:4326"
+}).then(res => {
+  debugger
+  console.log(res)
+})

@@ -141,7 +141,7 @@ export namespace ILayer {
     }
 
     //图层字段信息
-    export interface ILayerFieldProperties {
+    export interface LayerFieldProperties {
         localType: string
         maxOccurs: number
         minOccurs: number
@@ -149,13 +149,13 @@ export namespace ILayer {
         nillable: boolean
         type: string
     }
-    export interface LayerDescribeFeatureTypeInfo {
+    export interface LayerDescribeFeatureType {
         elementFormDefault: string
         // 字段类型
         featureTypes: {
             //图层名
             typeName: string
-            properties: ILayerFieldProperties[]
+            properties: LayerFieldProperties[]
         }[]
         //命名空间
         targetNamespace: string
@@ -257,5 +257,16 @@ export namespace ILayer {
 
     export interface ILayerCacheTasks {
         'long-array-array': string[]
+    }
+
+    //图层WFS的GetPropertyValue查询结果
+    export interface LayerPropertyValue {
+        ValueCollection: {
+            member: Record<string, {
+                __prefix: string;
+                __text: string;
+                toString(): string;
+            }>[]
+        }
     }
 }

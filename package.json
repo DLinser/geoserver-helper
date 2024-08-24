@@ -60,6 +60,7 @@
   "dependencies": {
     "geostyler-cql-parser": "^3.0.2",
     "geostyler-style": "^9.1.0",
-    "ol": "^10.1.0"
+    "ol": "^10.1.0",
+    "x2js": "^3.4.4"
   }
 }

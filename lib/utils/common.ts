@@ -1,8 +1,8 @@
 /*
  * @Author: linyongxin linyongxin@ellipspace.com
  * @Date: 2024-08-14 14:40:47
- * @LastEditors: linyongxin linyongxin@ellipspace.com
- * @LastEditTime: 2024-08-22 09:38:11
+ * @LastEditors: 林永鑫
+ * @LastEditTime: 2024-08-24 23:17:11
  * @FilePath: \geoserver-helper\lib\utils\common.ts
  * @Description: 公共方法库
  */
@@ -16,7 +16,9 @@ export function formateObjToParamStr(
 ) {
     const params = new URLSearchParams();
     for (const attr in paramObj) {
-        params.append(attr, String(paramObj[attr]));
+        if(paramObj[attr] != undefined && paramObj[attr]!=null){
+            params.append(attr, String(paramObj[attr]));
+        }
     }
     return params.toString();
 }
