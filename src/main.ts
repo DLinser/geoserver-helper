@@ -128,25 +128,27 @@ const restHelperInstance = new restHelper({
 //   console.log(res)
 // })
 
-// wmsHelperInstance.GetCapabilities({
-//   version:"1.0.0"
+wmsHelperInstance.GetCapabilities({
+  version:"1.0.0"
+}).then(res => {
+  debugger
+  console.log(res)
+})
+
+// wmsHelperInstance.GetFeatureInfo({
+//   layers: "ellip_visual:1000510942192095232",
+//   version: "1.1.1",
+//   bbox: "118.85559,39.47113,119.17419,39.776",
+//   srs: "EPSG:4326"
 // }).then(res => {
 //   debugger
 //   console.log(res)
 // })
 
-wmsHelperInstance.GetFeatureInfo({
-  layers: "ellip_visual:1000515860911116289",
-  // x: 119.64528,
-  width: "101",
-  height: "101",
-  version: "1.1.1",
-  // y: 39.95140,
-  x: "0",
-  y: "0",
-  bbox: "119.64367532716186,39.948507784364665,119.64800977692992,39.95284223413273",
-  srs: "EPSG:4326"
+wmsHelperInstance.GetLegendGraphic({
+  layer: "ellip_visual:1000510942192095232",
 }).then(res => {
   debugger
   console.log(res)
 })
+

@@ -3,6 +3,7 @@ import { formateObjToParamStr } from "./utils/common";
 import fetchUtil from './utils/fetch'
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import { IWms } from "./interface/wms";
+import { ILayer } from "./interface/layer";
 
 // wms的版本列表
 type IWmsVersion = "1.0.0" | "1.1.0" | "1.1.1" | "1.3.0"
@@ -55,59 +56,59 @@ export default class wmsHelper {
         })
     }
 
-    GetFeatureInfo(option: {
-        version?: IWmsVersion
-        layers?: string
-        styles?: string
-        //坐标系（WMS 1.3.0 +）
-        crs?: string
-        //坐标系
-        srs?: string
-        bbox?: string
-        //返回地图图片的宽度（点选查询的时候用不到）
-        width?: string
-        //返回地图图片的高度（点选查询的时候用不到）
-        height?: string
-        //经度WMS 1.3.0
-        i?: string
-        //纬度WMS 1.3.0
-        j?: string
-        //经度
-        x?: string
-        //纬度
-        y?: string
-        //返回结果有哪些字段，默认返回全部
-        propertyName?: string
-        //cql过滤条件
-        cql_filter?: string
-        //返回结果的格式
-        info_format?: string
-    }) {
+    /**
+     * @description: 获取要素信息
+     * @param {IWms.GetFeatureInfoParameters} option
+     * @return {*}
+     */
+    GetFeatureInfo(option: IWms.GetFeatureInfoParameters) {
         const currentLayerName = option?.layers || (this.workspace
             ? `${this.workspace}:${this.layer}`
             : this.layer);
-        const featureRequest = {
+        const versionParameters = option.version == "1.3.0" ? {
+            x: "0",
+            y: "0",
+            srs: "EPSG:4326"
+        } : {
+            i: "0",
+            j: "0",
+            crs: "EPSG:4326"
+        }
+        const featureRequest: IWms.GetFeatureInfoParameters = Object.assign({
             service: "WMS",
-            version: option.version || "1.0.0",
+            version: "1.0.0",
             request: "GetFeatureInfo",
             layers: currentLayerName,
             query_layers: currentLayerName,
-            styles: option.styles,
-            crs: option.crs,
-            srs: option.srs,
             bbox: option.bbox,
-            width: option.width,
-            height: option.height,
-            x: option.x,
-            y: option.y,
-            i: option.i,
-            j: option.j,
-            info_format: "application/json"
-        };
+            width: option.width || "101",
+            height: option.height || "101",
+            feature_count: option.feature_count,
+            info_format: option.info_format || "application/json",
+            exceptions: option.exceptions || "application/json"
+        }, versionParameters, option);
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-        return fetchUtil.get<string>(fetchUrl)
+        return fetchUtil.get<ILayer.LayerPropertySheetInfo>(fetchUrl)
     }
 
+    /**
+     * @description: 获取图例信息
+     * @param {*} option
+     * @return {*}
+     */
+    GetLegendGraphic(option: IWms.GetLegendGraphic.QueryParameters) {
+        const currentLayerName = option?.layer || (this.workspace
+            ? `${this.workspace}:${this.layer}`
+            : this.layer);
+        const requestParameters = Object.assign({
+            service: "WMS",
+            version: "1.1.0",
+            layer:currentLayerName,
+            request: "GetLegendGraphic",
+            format: "application/json",
+        }, option)
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParameters as any)}`;
+        return fetchUtil.get<IWms.GetLegendGraphic.Response>(fetchUrl)
 
-
+    }
 }

@@ -171,6 +171,7 @@ export namespace ILayer {
             }
             type: string
         }
+        bbox?: [number, number, number, number],
         // 要素总数
         totalFeatures: number
         // 当前查询时间
