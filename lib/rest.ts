@@ -10,9 +10,21 @@ import { INamespaces } from "./interface/namespaces";
 export type { ILayer } from './interface/layer';
 export type { IWorkspace } from './interface/workspace';
 export default class restHelper {
+    /**
+     * geoserver地址
+     */
     url: string = "";
+    /**
+     * 图层名称
+     */
     layer: string = "";
+    /**
+     * SRS名称
+     */
     srsName: string = "EPSG:4326";
+    /**
+     * 工作空间名称
+     */
     workspace: string = "";
     constructor(
         options?:
@@ -32,8 +44,17 @@ export default class restHelper {
     }
     /*************************************************图层相关start**************************************************** */
     /**
-     * @description: 获取图层列表
+     * 获取图层列表
      * @param {string} workspaceName 工作空间名称，空的话则返回所有
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.getLayerListApi().then(res => {
+     *  console.log(res)
+     * })
+     * ```
      * @return {*}
      */
     getLayerListApi(workspaceName?: string) {
@@ -42,8 +63,17 @@ export default class restHelper {
     }
 
     /**
-     * @description: 获取单个图层详情
-     * @param {string} layerNameWithWorkspace
+     * 获取单个图层详情
+     * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.getLayerInfoApi("qhd:xzqh_shi").then(res => {
+     *  console.log(res)
+     * })
+     * ```
      * @return {Promise}
      */
     getLayerInfoApi(layerNameWithWorkspace?: string) {
@@ -54,8 +84,8 @@ export default class restHelper {
     /**
      * @description: 编辑/更新图层
      * @param {string} layerName 图层名
-     * @param {ILayer} layerBody 
-     * @param {string} workspaceName
+     * @param {ILayer} layerBody 编辑/更新信息
+     * @param {string} workspaceName 工作空间名称
      * @return {Promise<string>}
      */
     modifyLayerApi(layerName: string, layerBody: ILayer.LayerModifyInfo, workspaceName?: string) {
@@ -65,7 +95,7 @@ export default class restHelper {
 
     /**
      * @description: 获取图层源详情
-     * @param {string} sourceInfoHref
+     * @param {string} sourceInfoHref URL of the source
      * @return {Promise<ILayer.LayerSourceDetailInfo>}
      */
     getLayerSourceInfoByHrefApi(sourceInfoHref: string) {
@@ -74,7 +104,7 @@ export default class restHelper {
 
     /**
      * @description: 获取图层切片任务详情
-     * @param {string} layerNameWithWorkspace
+     * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
      * @return {Promise<ILayer.ILayerCacheTasks>}
      */
     getLayerCacheTasksApi(layerNameWithWorkspace?: string) {
@@ -126,7 +156,7 @@ export default class restHelper {
 
     /**
      * @description: 关闭图层切片任务
-     * @param {string} layerNameWithWorkspace 图层名
+     * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
      * @return {Promise<string>}
      */
     clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
@@ -143,15 +173,33 @@ export default class restHelper {
     }
     /*************************************************图层相关end**************************************************** */
     /*************************************************工作空间相关start**************************************************** */
-    // * 获取工作空间列表
+    /**
+     * @description:获取工作空间列表 
+     * @example
+    * ``` typescript
+    * restHelperInstance.getWorkspaceListApi().then(res => {
+    *  console.log(res)
+    * })
+    * ```
+     * @return {*}
+     */
     getWorkspaceListApi() {
         return fetchUtil.get<IWorkspace.WorkspaceList>(`${this.url}/rest/workspaces.json`, {}, restXhrConfig)
     }
 
     /**
-     * @description: 获取单个工作空间详情
-     * @param {string} layerNameWithWorkspace 工作空间名称
-     * @return {Promise<IWorkspace.WorkspaceInfo>}
+     * 获取单个工作空间详情
+     * @param workspaceName 工作空间名称
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
      */
     getWorkspaceInfoApi(workspaceName?: string) {
         return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/${workspaceName}`, {}, restXhrConfig)
@@ -195,6 +243,14 @@ export default class restHelper {
     /**
      * @description: 获取命名空间详情
      * @param {string} namespaceName 命名空间名称（一般和工作空间名称相同）
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.getNamespacesInfoApi("qhd").then(res => {
+     *  console.log(res)
+     * })
      * @return {Promise<INamespaces.NamespaceInfo>}
      */
     getNamespacesInfoApi(namespaceName: string) {

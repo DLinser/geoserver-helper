@@ -31,7 +31,7 @@ npm create vite
 ### 二次开发指引
 1. 克隆项目
 ```shell
-git clone https://gitee.com/lyxstart/geoserver-rest.git
+git clone https://gitee.com/lyxstart/geoserver-helper.git
 ```
 2. 安装依赖
 ```shell
@@ -56,14 +56,14 @@ pnpm link --global
 ```
 * 发布前测试项目测试
 ```shell
-npm run link geoserver-rest
-pnpm link --global geoserver-rest
+npm run link geoserver-helper
+pnpm link --global geoserver-helper
 npm run unlink
 ```
 * 关闭发布前的调试
 ```shell
 npm run unlink
-pnpm unlink geoserver-rest
+pnpm unlink geoserver-helper
 ```
 
 ## 安装教程

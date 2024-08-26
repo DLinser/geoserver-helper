@@ -78,6 +78,7 @@ export default class wfsHelper {
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
         return new Promise<ILayer.LayerPropertyValue>((resolve, reject) => {
             fetchUtil.get<string>(fetchUrl).then(xmlString => {
+                debugger
                 const jsonResult = x2js.xml2js<ILayer.LayerPropertyValue>(xmlString)
                 resolve(jsonResult)
             }).catch(() => {

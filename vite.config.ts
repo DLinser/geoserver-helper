@@ -39,7 +39,9 @@ export default defineConfig({
     proxy: {
       "/geoserver": {
         // target: "http://192.168.0.110:8082/geoserver",
-        target: "http://124.232.190.101:30500/geoserver",
+        target: "http://124.232.190.101:30500/geoserver",//秦皇岛项目
+        //target: "https://ahocevar.com/geoserver",//openlayers官方地址
+        // target: "https://maps5.geosolutionsgroup.com/geoserver",//geosolutions官方地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/geoserver/, "/"),
       }

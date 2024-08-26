@@ -34,7 +34,7 @@ export default class wmsHelper {
 
     /**
      * @description: 获取wms能力集(不同version会有细微的不同)
-     * @return {string} 能力集（暂不支持json格式）
+     * @return {IWms.WMSCapabilities.GetCapabilitiesResponse} 能力集
      */
     GetCapabilities(option: {
         version: IWmsVersion
@@ -103,7 +103,7 @@ export default class wmsHelper {
         const requestParameters = Object.assign({
             service: "WMS",
             version: "1.1.0",
-            layer:currentLayerName,
+            layer: currentLayerName,
             request: "GetLegendGraphic",
             format: "application/json",
         }, option)

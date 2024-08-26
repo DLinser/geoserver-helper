@@ -24,14 +24,14 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 const cc = geoserverRest.sum(1, 6)
 console.log(cc)
 
-const wpsHelper = new geoserverRest.wpsHelper();
+const wpsHelper = new geoserverRest.wpsHelper("/geoserver/ows",);
 const wfsHelperInstance = new wfsHelper({
   url: "/geoserver/wfs",
-  workspace: "qhd",
+  workspace: "topp",
 });
 const wmsHelperInstance = new wmsHelper({
   url: "/geoserver/wms",
-  workspace: "qhd",
+  workspace: "topp",
 });
 
 const countXml = wpsHelper.formatFeatureCountXmlString({
@@ -53,11 +53,11 @@ const wpsurl = `/geoserver/ows?service=WPS&version=1.0.0`;
 const restHelperInstance = new restHelper({
   url: "/geoserver"
 })
-// restHelperInstance.getLayerListApi("qhd").then(res => {
-//   debugger
-//   res.layers
-//   console.log(res)
-// })
+restHelperInstance.getLayerListApi("").then(res => {
+  debugger
+  res.layers
+  console.log(res)
+})
 
 // restHelperInstance.getLayerInfoApi("qhd:xzqh_shi").then(res => {
 //   debugger
@@ -107,7 +107,7 @@ const restHelperInstance = new restHelper({
 // })
 
 // wfsHelperInstance.DescribeFeatureType({
-//   typeName: "",
+//   typeName: "topp:states",
 // }).then(res => {
 //   debugger
 //   console.log(res)
@@ -121,19 +121,19 @@ const restHelperInstance = new restHelper({
 // })
 
 // wfsHelperInstance.GetPropertyValue({
-//   typeNames: "ellip_visual:1000508550696423425",
-//   valueReference: "等级"
+//   typeNames: "topp:states",
+//   valueReference: "STATE_NAME"
 // }).then(res => {
 //   debugger
 //   console.log(res)
 // })
 
-wmsHelperInstance.GetCapabilities({
-  version:"1.0.0"
-}).then(res => {
-  debugger
-  console.log(res)
-})
+// wmsHelperInstance.GetCapabilities({
+//   version: "1.0.0"
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
 
 // wmsHelperInstance.GetFeatureInfo({
 //   layers: "ellip_visual:1000510942192095232",
@@ -145,10 +145,20 @@ wmsHelperInstance.GetCapabilities({
 //   console.log(res)
 // })
 
-wmsHelperInstance.GetLegendGraphic({
-  layer: "ellip_visual:1000510942192095232",
+// wmsHelperInstance.GetLegendGraphic({
+//   layer: "ellip_visual:1000510942192095232",
+// }).then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+// wpsHelper.GetCapabilities().then(res => {
+//   debugger
+//   console.log(res)
+// })
+wpsHelper.DescribeProcess({
+  identifier: "JTS:buffer"
 }).then(res => {
   debugger
   console.log(res)
 })
-

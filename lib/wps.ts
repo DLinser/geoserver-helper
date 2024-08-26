@@ -4,6 +4,12 @@
  * @param {function} callback 回调函数
  * @returns {requestCallback} callback 回调函数
  */
+import { IWps } from "./interface/wps";
+import { formateObjToParamStr } from "./utils/common";
+import fetchUtil from './utils/fetch'
+import X2JS from 'x2js';
+
+const x2js = new X2JS();
 
 const WPSServiceUtil = {
     organization: {
@@ -142,6 +148,49 @@ export default class wpsHelper {
      */
     setUrl(url: string) {
         this.url = url;
+    }
+
+    /**
+     * @description: 获取能力集(不同version会有细微的不同)
+     * @return {string} 能力集（暂不支持json格式）
+     */
+    GetCapabilities() {
+        const requestParams = {
+            service: "WPS",
+            version: "1.0.0",
+            request: "GetCapabilities"
+        };
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParams)}`;
+        // return fetchUtil.get<string>(fetchUrl)
+        return new Promise<IWps.WPSCapabilities.WpsCapabilitiesResponse>((resolve, reject) => {
+            fetchUtil.get<any>(fetchUrl).then(xmlString => {
+                const jsonResult = x2js.xml2js<IWps.WPSCapabilities.WpsCapabilitiesResponse>(xmlString)
+                resolve(jsonResult)
+            }).catch(() => {
+                reject
+            })
+        })
+    }
+
+    DescribeProcess(option: {
+        identifier: string
+    }) {
+        const requestParams = {
+            service: "WPS",
+            version: "1.0.0",
+            request: "DescribeProcess",
+            identifier: option.identifier
+        };
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParams)}`;
+        // return fetchUtil.get<string>(fetchUrl)
+        return new Promise<IWps.DescribeProcess.DescribeProcessResponse>((resolve, reject) => {
+            fetchUtil.get<any>(fetchUrl).then(xmlString => {
+                const jsonResult = x2js.xml2js<IWps.DescribeProcess.DescribeProcessResponse>(xmlString)
+                resolve(jsonResult)
+            }).catch(() => {
+                reject
+            })
+        })
     }
 
     /**
