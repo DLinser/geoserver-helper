@@ -24,7 +24,7 @@ npm create vite
 ├─dist  打包后的文件目录  
 ├─lib   代码库  
 │  ├─interface       接口  
-│  ├─modules         模块  
+│  ├─config          配置文件  
 │  └─utils           工具  
 ├─public             普通前端的public用于预览和测试  
 └─src                普通前端的src用于预览和测试  
@@ -47,6 +47,7 @@ npm run build
 ```
 * 单元测试
 ```shell
+# 测试的geoserver地址可能要做一下变更
 npm run test
 ```
 * 发布前调试(发布到本地,类似虚拟的 npm publish)
@@ -58,7 +59,6 @@ pnpm link --global
 ```shell
 npm run link geoserver-helper
 pnpm link --global geoserver-helper
-npm run unlink
 ```
 * 关闭发布前的调试
 ```shell
@@ -69,7 +69,7 @@ pnpm unlink geoserver-helper
 ## 安装教程
 ```shell
 # 安装依赖
-npm i geoserver-restt
+npm i geoserver-helper
 ```
 
 ### 使用说明
@@ -83,6 +83,7 @@ import geoserverHelper from 'geoserver-helper'
 import utils from 'geoserver-helper/utils'
 import wfsHelper from 'geoserver-helper/wfs'
 import wpsHelper from 'geoserver-helper/wps'
+import wmsHelper from 'geoserver-helper/wms'
 import restHelper from 'geoserver-helper/rest'
 ```
 2.  使用
@@ -113,7 +114,7 @@ import geoserverHelper from 'geoserver-helper'
 import utils from 'geoserver-helper/dist/utils'
 import wfsHelper from 'geoserver-helper/dist/wfs'
 import wpsHelper from 'geoserver-helper/dist/wps'
-impor
+import wmsHelper from 'geoserver-helper/dist/wms'
 
 #### 参与贡献
 
@@ -121,13 +122,3 @@ impor
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

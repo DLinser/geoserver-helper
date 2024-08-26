@@ -256,5 +256,71 @@ export default class restHelper {
     getNamespacesInfoApi(namespaceName: string) {
         return fetchUtil.get<INamespaces.NamespaceInfo>(`${this.url}/rest/namespaces/${namespaceName}`, {}, restXhrConfig)
     }
+
+    /*************************************************命名空间相关end**************************************************** */
+    /*************************************************样式相关start**************************************************** */
+
+    getStylesListApi(workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles` : `${this.url}/rest/styles`
+        return fetchUtil.get<Styles.ResStyleList>(queryUrl, {}, restXhrConfig)
+    }
+
+    /**
+     * 获取样式的xld字符串
+     * @param {string} styleName 样式名称
+     * @param {string} workspaceName 工作空间
+     * @return {*}
+     */
+    getSldStyleApi(styleName: string, workspaceName?: string) {
+        const queryUrl = workspaceName
+            ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}.sld`
+            : `${this.url}/rest/styles/${styleName}.sld`
+        return fetchUtil.get<string>(queryUrl, {}, restXhrConfig)
+    }
+
+    /**
+     * 添加样式
+     * @param body 样式的sld字符串
+     * @param styleName 样式名称
+     * @param workspaceName 工作空间名称
+     * @returns 
+     */
+    addStyleApi(body: any, styleName: string, workspaceName?: string) {
+        const postUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles?name=${styleName}` : `${this.url}/rest/styles?name=${styleName}`
+        const tempHeadersConfig = Object.assign(restXhrConfig.headers, { 'Content-Type': 'application/vnd.ogc.sld+xml' })
+        const tempXhrConfig = Object.assign(restXhrConfig, {
+            headers: tempHeadersConfig,
+        })
+        return fetchUtil.post<string>(postUrl, body, tempXhrConfig)
+    }
+    /**
+     * 更新样式
+     * @param body 样式的sld字符串
+     * @param styleName 原样式名称
+     * @param newStyleName 新样式名称
+     * @param workspaceName 工作空间名称
+     * @returns 
+     */
+    updateStyleApi(body: any, styleName: string, newStyleName?: string, workspaceName?: string) {
+        const putUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}?style=${newStyleName || styleName}` : `${this.url}/rest/styles/${styleName}?style=${newStyleName || styleName}`
+        const tempHeadersConfig = Object.assign(restXhrConfig.headers, { 'Content-Type': 'application/vnd.ogc.sld+xml' })
+        const tempXhrConfig = Object.assign(restXhrConfig, {
+            headers: tempHeadersConfig,
+        })
+        return fetchUtil.put<string>(putUrl, body, tempXhrConfig)
+    }
+
+    /**
+     * 删除样式
+     * @param {string} styleName 样式名称
+     * @param {string} workspaceName 工作空间名称
+     * @return {*}
+     */
+    deleteStyleApi(styleName: string, workspaceName: string) {
+        const deleteUrl = workspaceName
+            ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}`
+            : `${this.url}/rest/styles/${styleName}`
+        return fetchUtil.delete<string>(deleteUrl, {}, restXhrConfig)
+    }
     /*************************************************命名空间相关end**************************************************** */
 }
