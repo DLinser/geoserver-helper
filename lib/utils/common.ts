@@ -1,8 +1,8 @@
 /*
  * @Author: linyongxin linyongxin@ellipspace.com
  * @Date: 2024-08-14 14:40:47
- * @LastEditors: 林永鑫
- * @LastEditTime: 2024-08-24 23:17:11
+ * @LastEditors: linyongxin linyongxin@ellipspace.com
+ * @LastEditTime: 2024-08-27 09:46:50
  * @FilePath: \geoserver-helper\lib\utils\common.ts
  * @Description: 公共方法库
  */
@@ -16,27 +16,12 @@ export function formateObjToParamStr(
 ) {
     const params = new URLSearchParams();
     for (const attr in paramObj) {
-        if(paramObj[attr] != undefined && paramObj[attr]!=null){
+        if (paramObj[attr] != undefined && paramObj[attr] != null) {
             params.append(attr, String(paramObj[attr]));
         }
     }
     return params.toString();
 }
-
-export function postXml(url: string, params: BodyInit) {
-    return fetch(url, {
-        method: "POST",
-        headers: new Headers({
-            "Content-Type": "application/json;charset=UTF-8",
-        }),
-        mode: "cors",
-        body: params,
-    }).then((res) => {
-        return res.text();
-    });
-}
-
 export default {
     formateObjToParamStr,
-    postXml
 }

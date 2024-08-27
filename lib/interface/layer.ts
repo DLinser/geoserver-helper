@@ -206,7 +206,7 @@ export namespace ILayer {
     export interface ResLayerInfo {
         layer: LayerInfo
     }
-    //查询的工作空间列表结果
+    //查询的图层列表结果
     export interface ResLayerList {
         layers: {
             layer: ResLayerListItem[]
@@ -256,10 +256,33 @@ export namespace ILayer {
         }[]
     }
 
-    export interface ILayerCacheTasks {
+    /*************************************************************************切片相关start************************************************************* */
+
+    /**
+     * 图层切片任务列表
+     */
+    export interface LayerCacheTasks {
         'long-array-array': string[]
     }
 
+    /**
+     * 发起切片任务时的参数
+     */
+    export interface SeedRequest {
+        name?: string
+        zoomStart?: number
+        zoomStop?: number
+        formats?: string[]
+        bounds?: {
+            coords: {
+                double: [number, number, number, number]
+            }
+        }
+        type?: string
+        threadCount?: number
+    }
+
+    /*************************************************************************切片相关end************************************************************* */
     //图层WFS的GetPropertyValue查询结果
     export interface LayerPropertyValue {
         ValueCollection: {

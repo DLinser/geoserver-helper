@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     lib: {
-      entry: ['./lib/geoserver-helper.ts', './lib/utils/utils.ts', './lib/wfs.ts', './lib/wps.ts'],
+      entry: ['./lib/geoserver-helper.ts', './lib/utils/utils.ts', './lib/interface/interface.ts', './lib/wfs.ts', './lib/wps.ts'],
       name: 'geoserver-helper',
       // fileName: 'geoserver-helper',
       fileName: (format, entryName: string) => {
@@ -38,8 +38,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/geoserver": {
-        // target: "http://192.168.0.110:8082/geoserver",
-        target: "http://124.232.190.101:30500/geoserver",//秦皇岛项目
+        target: "http://192.168.0.110:8082/geoserver",
         //target: "https://ahocevar.com/geoserver",//openlayers官方地址
         // target: "https://maps5.geosolutionsgroup.com/geoserver",//geosolutions官方地址
         changeOrigin: true,

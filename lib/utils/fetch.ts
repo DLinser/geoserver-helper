@@ -25,7 +25,13 @@ function fetchData<T>(url: string, config: RequestConfig): Promise<T> {
 }
 
 const request = {
-    // post请求方法
+    /**
+     * post请求方法
+     * @param url 请求路径
+     * @param data 请求参数
+     * @param config 请求配置
+     * @returns 
+     */
     post<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
         let requestBody: string | FormData = ""
         let requestHeaders: Record<string, any> = {}
@@ -44,6 +50,13 @@ const request = {
         }
         return fetchData<T>(url, { method: 'POST', body: requestBody, headers: new Headers(requestHeaders) });
     },
+    /**
+     * 参数是xml的post请求方法
+     * @param url 请求路径
+     * @param data 请求参数
+     * @param config 请求配置
+     * @returns 
+     */
     postXml<T>(url: string, data: BodyInit, config?: Record<string, any>): Promise<T> {
         //默认值
         let requestHeaders: Record<string, any> = {
@@ -60,7 +73,22 @@ const request = {
             body: data,
         });
     },
-    // get请求方法
+    /**
+     * get请求方法
+     * @param url 请求路径
+     * @param data 请求参数
+     * @param config 请求配置
+     * @example 
+     * ```typescript
+     * import helperUtil from 'geoserver-helper/utils'
+     * const restXhrConfig = {
+     *      headers: { Authorization: `Basic ${auth}` },
+     * }
+     * const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layers` : `${this.url}/rest/layers`
+     * helperUtil.request.get<ILayer.ResLayerList>(queryUrl, {}, restXhrConfig)
+     * ```
+     * @returns 
+     */
     get<T>(url: string, data?: Record<string, any>, config?: Record<string, any>): Promise<T> {
         let requestHeaders: Record<string, any> = { 'Content-Type': "application/json;charset=UTF-8" }
         let fetchUrl = ''
@@ -76,7 +104,13 @@ const request = {
         //get请求一般不允许传请求体参数
         return fetchData<T>(fetchUrl, { method: 'GET', headers: new Headers(requestHeaders) });
     },
-    // put请求方法
+    /**
+     * put请求方法
+     * @param url 请求路径
+     * @param data 请求参数
+     * @param config 请求配置
+     * @returns 
+     */
     put<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
         let requestBody: string = ""
         let requestHeaders: Record<string, any> = {}
@@ -93,7 +127,13 @@ const request = {
         }
         return fetchData<T>(url, { method: 'PUT', body: requestBody, headers: new Headers(requestHeaders) });
     },
-    // delete方法
+    /**
+     * delete方法
+     * @param url 请求路径
+     * @param data 请求参数
+     * @param config 请求配置
+     * @returns 
+     */
     delete<T>(url: string, data?: Record<string, any>, config?: Record<string, any>): Promise<T> {
         let requestHeaders: Record<string, any> = {}
         //如果外部传值，优先使用外部的传值

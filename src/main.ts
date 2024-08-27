@@ -53,11 +53,16 @@ const wpsurl = `/geoserver/ows?service=WPS&version=1.0.0`;
 const restHelperInstance = new restHelper({
   url: "/geoserver"
 })
-restHelperInstance.getLayerListApi("").then(res => {
-  debugger
-  res.layers
-  console.log(res)
-})
+// restHelperInstance.getLayerListApi("").then(res => {
+//   debugger
+//   res.layers
+//   console.log(res)
+// })
+
+// restHelperInstance.getStylesListApi().then(res => {
+//   debugger
+//   console.log(res)
+// })
 
 // restHelperInstance.getLayerInfoApi("qhd:xzqh_shi").then(res => {
 //   debugger
@@ -97,14 +102,14 @@ restHelperInstance.getLayerListApi("").then(res => {
 //   console.log(res)
 // })
 
-// wfsHelperInstance.GetFeature({
-//   propertyname: "name,gb",
-//   typename: "qhd:xzqh_xian",
+wfsHelperInstance.GetFeature({
+  propertyname: "name,gb",
+  typename: "qhd:xzqh_xian",
 
-// }).then(res => {
-//   debugger
-//   console.log(res)
-// })
+}).then(res => {
+  debugger
+  console.log(res)
+})
 
 // wfsHelperInstance.DescribeFeatureType({
 //   typeName: "topp:states",
@@ -113,12 +118,12 @@ restHelperInstance.getLayerListApi("").then(res => {
 //   console.log(res)
 // })
 
-// wfsHelperInstance.GetCapabilities({
-//   version: "1.0.0",
-// }).then(res => {
-//   debugger
-//   console.log(res)
-// })
+wfsHelperInstance.GetCapabilities({
+  version: "1.0.0",
+}).then(res => {
+  debugger
+  console.log(res)
+})
 
 // wfsHelperInstance.GetPropertyValue({
 //   typeNames: "topp:states",

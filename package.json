@@ -22,6 +22,9 @@
       "default": "./dist/utils.cjs",
       "require": "./dist/utils.cjs"
     },
+    "./interface": {
+      "types": "./dist/interface/interface.d.ts"
+    },
     "./wfs": {
       "types": "./dist/wfs.d.ts",
       "import": "./dist/wfs.js",

@@ -1,62 +1,31 @@
 // * 图层模块
 export namespace IStyle {
-    interface StyleCommonInfo {
-        code?: string
-        createBy?: string
-        createTime?: string
-        dateCreated?: string
-        dateModified?: string
-        format?: string
-        id?: string
-        ids?: string[]
-        name?: string
-        params?: {}
-        remark?: string
-        searchValue?: string
-        sldFileText?: string
-        styleFilePath?: string
-        type?: string
-        updateBy?: string
-        updateTime?: string
-        workspaceId?: string
-        workspaceName?: string
-    }
-    // 样式查询表单
-    export interface StyleQueryForm extends StyleCommonInfo {
-        pageNum: number
-        pageSize: number
-    }
-    // 样式新增或编辑表单
-    export interface StyleAddOrUpdateForm extends StyleCommonInfo {
+    /**
+     * 样式列表中单个信息
+     */
+    export interface StyleInfoOfList {
+        /**
+         * 名称
+         */
         name: string
+        /**
+         * 详情地址
+         */
+        href: string
     }
-    // 接口返回的样式信息
-    export interface ResStyleInfo {
-        code: string
-        createBy: string
-        createTime: string
-        dateCreated: string
-        dateModified: string
-        format: string
-        id: string
-        ids?: string[]
-        name: string
-        params: {}
-        remark: string
-        searchValue: string
-        sldFileText: string
-        styleFilePath: string
-        type: string
-        updateBy: string
-        updateTime: string
-        workspaceId: string
-        workspaceName: string
+    /**
+     * 样式列表结果
+     */
+    export interface StyleList {
+        styles: {
+            style: StyleInfoOfList[]
+        }
     }
-    //查询的样式列表结果
-    export type ResStyleList = ResStyleInfo[]
 
-    //样式详细
-    export interface ResStyleDetailInfo {
+    /**
+     * 单个样式详细
+     */
+    export interface StyleDetailInfo {
         style: {
             name: string
             format: string
@@ -66,16 +35,12 @@ export namespace IStyle {
             filename: string
             dateCreated: string
             dateModified: string
+            /**
+             * 工作空间
+             */
             workspace?: {
                 name: string
             }
         }
-    }
-    //要展示的样式详细
-    export interface ResStyleDetailInfoShow {
-        name: string
-        version: string
-        dateCreated: string
-        workspace: string
     }
 }

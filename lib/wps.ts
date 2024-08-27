@@ -272,7 +272,7 @@ export default class wpsHelper {
     }
 
     /**
-     * @description 对子流程结果为FeatureCollection中的要素进行边界计算。
+     * 对子流程结果为FeatureCollection中的要素进行边界计算。
      * @param {XML} Subprocess 子流程Execute.
      * @returns {XML} Execute Execute
      */
@@ -356,7 +356,7 @@ export default class wpsHelper {
     };
 
     /**
-     * @description 对图层进行字段唯一值计算。
+     * 对图层进行字段唯一值计算。
      * @param {Object} option 配置
      * @returns {XML} Execute Execute
      */
@@ -395,7 +395,7 @@ export default class wpsHelper {
     };
 
     /**
-     * @description 对图层要素数量统计计算。
+     * 对图层要素数量统计计算。
      * @param {Object} option 配置
      * @returns {XML} Execute Execute
      */
@@ -449,7 +449,7 @@ export default class wpsHelper {
     };
 
     /**
-     * @description 对图层要素数量统计计算。
+     * 对图层属性的统计计算。
      * @param {Object} option 配置
      * @returns {XML} Execute Execute
      */
@@ -540,7 +540,7 @@ export default class wpsHelper {
     };
 
     /**
-     * @description 对已完成的Execute XML添加xml头文件。
+     * 对已完成的Execute XML添加xml头文件。
      * @param {XML} xml 任意Execute格式的XML.
      * @returns {XML} xml 完整的XML
      */

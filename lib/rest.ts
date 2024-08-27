@@ -7,8 +7,7 @@ const restXhrConfig = {
 import { type ILayer } from "./interface/layer"
 import { type IWorkspace } from "./interface/workspace"
 import { INamespaces } from "./interface/namespaces";
-export type { ILayer } from './interface/layer';
-export type { IWorkspace } from './interface/workspace';
+import { IStyle } from './interface/style'
 export default class restHelper {
     /**
      * geoserver地址
@@ -103,60 +102,65 @@ export default class restHelper {
     }
 
     /**
-     * @description: 获取图层切片任务详情
+     * 获取图层切片任务详情
      * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
-     * @return {Promise<ILayer.ILayerCacheTasks>}
+     * @return {Promise<ILayer.LayerCacheTasks>}
      */
     getLayerCacheTasksApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        return fetchUtil.get<ILayer.ILayerCacheTasks>(`${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`, {}, restXhrConfig)
+        return fetchUtil.get<ILayer.LayerCacheTasks>(`${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`, {}, restXhrConfig)
     }
 
     /**
-     * @description: 发起rest图层切片任务
-     * @param {string} operationType 操作类型
-     * @param {string} layerNameWithWorkspace 图层名
-     * @return {Promise<ILayer.ILayerCacheTasks>}
+     * 发起rest图层切片任务
+     * @param  seedRequestOption 参数配置
+     * @example
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.sendLayerCacheTaskApi({
+     *     name: "workspace:layername",
+     *     zoomStart: 0,
+     *     zoomStop: 15,
+     *     type: "seed",
+     *     threadCount: 1,
+     * }).then(res => {
+     *   console.log(res)
+     * })
+     * @return {Promise<ILayer.LayerCacheTasks>}
      */
-    sendLayerCacheTaskApi(operationType: string, layerNameWithWorkspace?: string) {
-        const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
+    sendLayerCacheTaskApi(seedRequestOption: ILayer.SeedRequest) {
+        const realLayerNameWithWorkspace = seedRequestOption.name ? seedRequestOption.name : this.workspace ? `${this.workspace}:${this.layer}` : `${this.layer}`;
         interface ISeedOption {
-            seedRequest?: {
-                name?: string
-                zoomStart?: number
-                zoomStop?: number
-                type?: string
-                threadCount?: number
-            }
-            kill_all?: string
+            seedRequest?: ILayer.SeedRequest
         }
-        const seedOption: ISeedOption = {
+        const defaultSeedOption: ISeedOption = {
             seedRequest: {
                 name: realLayerNameWithWorkspace,
                 zoomStart: 0,
                 zoomStop: 15,
-                type: operationType,
+                type: "seed",
                 threadCount: 1,
             },
         }
-        const formData = new FormData()
-        if (operationType == 'kill_all') {
-            formData.append('kill_all', 'all')
-            // seedOption = {
-            //     kill_all: 'all',
-            // }
-        }
-
-        return fetchUtil.post<ILayer.ILayerCacheTasks>(
+        const seedOption = Object.assign(defaultSeedOption, seedRequestOption)
+        return fetchUtil.post<ILayer.LayerCacheTasks>(
             `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
-            operationType == 'kill_all' ? formData : seedOption,
+            seedOption,
             restXhrConfig,
         )
     }
 
     /**
-     * @description: 关闭图层切片任务
+     * 关闭图层切片任务
      * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
+     * @example
+     * const restHelperInstance = new restHelper({
+     *  url: "/geoserver"
+     *  })
+     * restHelperInstance.clostLayerCacheTaskApi("workspace:layername").then(res => {
+     *   console.log(res)
+     * })
      * @return {Promise<string>}
      */
     clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
@@ -262,7 +266,7 @@ export default class restHelper {
 
     getStylesListApi(workspaceName?: string) {
         const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles` : `${this.url}/rest/styles`
-        return fetchUtil.get<Styles.ResStyleList>(queryUrl, {}, restXhrConfig)
+        return fetchUtil.get<IStyle.StyleList>(queryUrl, {}, restXhrConfig)
     }
 
     /**
