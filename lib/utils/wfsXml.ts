@@ -14,6 +14,7 @@ import {
   equalTo as equalToFilter,
   notEqualTo as notEqualToFilter,
   like as likeFilter,
+  intersects as intersectsFilter,
 } from 'ol/format/filter';
 import Filter from 'ol/format/filter/Filter';
 const WFSTSerializer = new WFS()
@@ -25,6 +26,7 @@ const WFSTSerializer = new WFS()
  */
 const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoPropertyType>) => {
   // TODO 因为cqlCondition还有自定义的类型 所以这个地方可能会有特殊情况
+  debugger
   let cqlOperator: GeoOperator | "like" = "=="
   let cqlProperty: GeoFilter | GeoExpression<GeoPropertyType> = ""
   let cqlValue: GeoFilter | GeoExpression<GeoPropertyType> = ""
@@ -83,7 +85,7 @@ export const creatFeatureRequestXml = (option: {
   outputFormat: string,
   propertyNames?: string[],
   startIndex?: number | undefined;
-  count?: number | undefined;
+  maxFeatures?: number | undefined;
   cql?: string
 }) => {
   const writeGetFeatureOptions: WriteGetFeatureOptions = {
@@ -96,10 +98,11 @@ export const creatFeatureRequestXml = (option: {
     featureTypes: option.featureTypes || [],
     propertyNames: option.propertyNames,
     startIndex: option.startIndex,
-    count: option.count,
+    maxFeatures: option.maxFeatures,
     outputFormat: option.outputFormat,
   }
   if (option.cql) {
+    debugger
     const geoStyleCql = cqlParser.read(option.cql)
     const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
     writeGetFeatureOptions.filter = cqlFilter

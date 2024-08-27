@@ -212,7 +212,7 @@ export default class wfsHelper {
             outputFormat: 'application/json',
             propertyNames: option?.propertyname ? option?.propertyname.split(",") : undefined,
             startIndex: option?.startIndex,
-            count: option?.maxFeatures,
+            maxFeatures: option?.maxFeatures,
             cql: option?.cql
         })
         return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam)
