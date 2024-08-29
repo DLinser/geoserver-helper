@@ -1,5 +1,6 @@
 import { WFS } from 'ol/format';
 import { WriteGetFeatureOptions } from 'ol/format/WFS';
+import WKT from 'ol/format/WKT';
 import Feature from 'ol/Feature'
 import Point from 'ol/geom/Point'
 import Polygon from 'ol/geom/Polygon'
@@ -15,9 +16,20 @@ import {
   notEqualTo as notEqualToFilter,
   like as likeFilter,
   intersects as intersectsFilter,
+  within as withinFilter,
+  dwithin as dwithinFilter,
+  contains as containsFilter,
+  disjoint as disjointFilter,
 } from 'ol/format/filter';
 import Filter from 'ol/format/filter/Filter';
 const WFSTSerializer = new WFS()
+
+
+/**
+ * 空间查询Filter的数组
+ */
+let geometryFilterArray: Filter[] = []
+
 
 /**
  * @description: cql字符串转ol的Filter
@@ -26,7 +38,6 @@ const WFSTSerializer = new WFS()
  */
 const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoPropertyType>) => {
   // TODO 因为cqlCondition还有自定义的类型 所以这个地方可能会有特殊情况
-  debugger
   let cqlOperator: GeoOperator | "like" = "=="
   let cqlProperty: GeoFilter | GeoExpression<GeoPropertyType> = ""
   let cqlValue: GeoFilter | GeoExpression<GeoPropertyType> = ""
@@ -63,7 +74,11 @@ const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoProper
       break;
     //export type ComparisonOperator = '==' | '*=' | '!=' | '<' | '<=' | '>' | '>=' | '<=x<=';
     case '==':
-      filter = equalToFilter(cqlProperty as string, cqlValue as string | number);
+      if ((cqlProperty as string).includes("spatialMatch")) {
+        filter = geometryFilterArray[Number((cqlProperty as string).substring(12))]
+      } else {
+        filter = equalToFilter(cqlProperty as string, cqlValue as string | number);
+      }
       break;
     case '!=':
       filter = notEqualToFilter(cqlProperty as string, cqlValue as string | number);
@@ -77,6 +92,11 @@ const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoProper
   }
   return filter
 }
+/**
+ * 创建要素查询的xml（暂不支持TOUCHES|CROSSES|OVERLAPS|DWITHIN|BEYOND）
+ * @param option 
+ * @returns 
+ */
 export const creatFeatureRequestXml = (option: {
   srsName: string,
   featureNS: string,
@@ -102,8 +122,28 @@ export const creatFeatureRequestXml = (option: {
     outputFormat: option.outputFormat,
   }
   if (option.cql) {
-    debugger
-    const geoStyleCql = cqlParser.read(option.cql)
+    let nonSpatialCql = option.cql + ""
+    geometryFilterArray = []
+    const regex = /(INTERSECTS|WITHIN|CONTAINS|DISJOINT)\s*\(\s*([\w_]+)\s*,\s*((POINT|LINESTRING|MULTIPOLYGON|POLYGON)\((?:(?:[\d\s,.]+)|(?:\([\d\s,.]+\))|(?:\(\([\d\s,.]+\)\)))\))\)/g;
+    let spatialMatch;
+    while ((spatialMatch = regex.exec(option.cql)) !== null) {
+      const wktGeometry = spatialMatch[3];
+      const spatialField = spatialMatch[2];
+      let geometry = new WKT().readGeometry(wktGeometry, {});
+      if (spatialMatch[1].toUpperCase() === 'INTERSECTS') {
+        geometryFilterArray.push(intersectsFilter(spatialField, geometry))
+      } else if (spatialMatch[1].toUpperCase() === 'WITHIN') {
+        geometryFilterArray.push(withinFilter(spatialField, geometry))
+      } else if (spatialMatch[1].toUpperCase() === 'CONTAINS') {
+        geometryFilterArray.push(containsFilter(spatialField, geometry))
+      } else if (spatialMatch[1].toUpperCase() === 'DISJOINT') {
+        geometryFilterArray.push(disjointFilter(spatialField, geometry))
+      } else if (spatialMatch[1].toUpperCase() === 'TOUCHES') {
+        geometryFilterArray.push(disjointFilter(spatialField, geometry))
+      }
+      nonSpatialCql = spatialMatch ? nonSpatialCql.replace(spatialMatch[0], `spatialMatch${geometryFilterArray.length - 1} = 0`) : option.cql;
+    }
+    const geoStyleCql = cqlParser.read(nonSpatialCql)
     const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
     writeGetFeatureOptions.filter = cqlFilter
   }
