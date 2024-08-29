@@ -1,6 +1,6 @@
 
 import { formateObjToParamStr } from "./utils/common";
-import { creatFeatureRequestXml } from "./utils/wfsXml";
+import { IFeatureTransactionOption, creatFeatureRequestXml, creatFeatureTransactionXml } from "./utils/wfsXml";
 import { type ILayer } from "./interface/layer"
 import fetchUtil from './utils/fetch'
 import X2JS from 'x2js';
@@ -326,5 +326,27 @@ export default class wfsHelper {
         return fetchUtil.get<ILayer.LayerDescribeFeatureType>(fetchUrl)
     }
 
-
+    /**
+     *  矢量图层要素的新增、编辑、删除
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     * });
+     * wfsHelperInstance.Transaction({
+     *   type:"modif",
+     *   featurePrefix:"test",
+     *   featureNS:"http://test"
+     *   featureType:"test:layername"
+     *   srsName: "EPSG:4326",
+     *   features:yourFeature //可以是ol的格式也可以是json格式
+     * }).then(res => {
+     *   console.log(res)
+     * })
+     * @return {*}
+     */
+    Transaction(option: IFeatureTransactionOption) {
+        const xmlParam = creatFeatureTransactionXml(option)
+        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam)
+    }
 }

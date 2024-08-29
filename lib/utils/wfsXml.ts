@@ -199,11 +199,30 @@ export const formateFeatures = (features: Feature[] | featureOption[]) => {
   return readyToReturnFeatures
 }
 
-interface IFeatureTransactionOption {
+export interface IFeatureTransactionOption {
+  /**
+   * 操作类型
+   */
   type: "modif" | "create" | "delete",
+  /**
+   * 工作区的名称
+   */
+  featurePrefix: string,
+  /**
+   * 工作区的命名空间URI
+   */
   featureNS: string, // 注意这个值必须为创建工作区时的命名空间URI
+  /**
+   * 图层名
+   */
   featureType: string,
-  srsName: string,
+  /**
+   * 坐标系
+   */
+  srsName?: string,
+  /**
+   * 要操作的要素
+   */
   features: Feature[] | featureOption[]
 }
 /**
@@ -218,28 +237,34 @@ export const creatFeatureTransactionXml = (option: IFeatureTransactionOption) =>
     featObject = WFSTSerializer.writeTransaction(null as any, formatedFeatures, null as any, {
       featureType: option.featureType,
       featureNS: option.featureNS, // 注意这个值必须为创建工作区时的命名空间URI
-      srsName: option.srsName,
-      featurePrefix: '', //工作空间
+      srsName: option.srsName || "EPSG:4326",
+      featurePrefix: option.featurePrefix || "", //工作空间
       nativeElements: []
     });
   } else if (option.type == "create") {
     featObject = WFSTSerializer.writeTransaction(formatedFeatures, null as any, null as any, {
       featureType: option.featureType,
       featureNS: option.featureNS, // 注意这个值必须为创建工作区时的命名空间URI
-      srsName: option.srsName,
-      featurePrefix: '',
+      srsName: option.srsName || "EPSG:4326",
+      featurePrefix: option.featurePrefix || "",
       nativeElements: []
     });
   } else if (option.type == "delete") {
     featObject = WFSTSerializer.writeTransaction(null as any, null as any, formatedFeatures, {
       featureType: option.featureType,
       featureNS: option.featureNS, // 注意这个值必须为创建工作区时的命名空间URI
-      srsName: option.srsName,
-      featurePrefix: '',
+      srsName: option.srsName || "EPSG:4326",
+      featurePrefix: option.featurePrefix || "",
       nativeElements: []
     });
   } else {
-    return new Error('type：created/modified/deleted');
+    featObject = WFSTSerializer.writeTransaction(null as any, formatedFeatures, null as any, {
+      featureType: option.featureType,
+      featureNS: option.featureNS, // 注意这个值必须为创建工作区时的命名空间URI
+      srsName: option.srsName || "EPSG:4326",
+      featurePrefix: option.featurePrefix || "", //工作空间
+      nativeElements: []
+    });
   }
   return new XMLSerializer().serializeToString(featObject)
 }
