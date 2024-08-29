@@ -7,11 +7,25 @@ import X2JS from 'x2js';
 
 const x2js = new X2JS();
 export default class wfsHelper {
+    /**
+     * geoserver地址
+     */
     url: string = "";
+    /**
+     * 图层名称(优先级较低，方法的参数中没传图层名的时候会用它)
+     */
     layer: string = "";
+    /**
+     * SRS名称
+     */
     srsName: string = "EPSG:4326";
+    /**
+     * 工作空间名称(优先级较低，方法的参数中没传图层名的时候会用它)
+     */
     workspace: string = "";
-    //工作空间Uri
+    /**
+     * 工作空间Uri(优先级较低，方法的参数中没传图层名的时候会用它)
+     */
     workspaceUri: string = "";
     constructor(
         options:
@@ -32,7 +46,17 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: 获取能力集(不同version会有细微的不同)
+     * 获取能力集(不同version会有细微的不同)
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     * });
+     * wfsHelperInstance.GetCapabilities({
+     *   version: "1.0.0",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {string} 能力集（暂不支持json格式）
      */
     GetCapabilities(option: {
@@ -58,7 +82,19 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: 查询某个图层的某个字段的属性(类似GetFeature查询但是只能查某个单一属性，并且无法加条件筛选)
+     * 查询某个图层的某个字段的属性(类似GetFeature查询但是只能查某个单一属性，并且无法加条件筛选)
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     *   workspace: "qhd",//这个工作空间优先级最低，如果参数中没传typeNames的话就会用它
+     * });
+     * wfsHelperInstance.GetPropertyValue({
+     *   typeNames: "topp:states",
+     *   valueReference: "STATE_NAME"
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {ILayer.LayerPropertyValue} 单属性表
      */
     GetPropertyValue(option: {
@@ -87,7 +123,19 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: 查询矢量Features（多用于简单查询，复杂查询条件的因为get请求本身的限制建议使用post协议的GetFeatureByPost方式）
+     * 查询矢量Features（多用于简单查询，复杂查询条件的因为get请求本身的限制建议使用post协议的GetFeatureByPost方式）
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     *   workspace: "qhd",//这个工作空间优先级最低，如果参数中没传工作空间和图层名的话就会用它
+     * });
+     * wfsHelperInstance.GetFeature({
+     *   propertyname: "name,gb",
+     *   typename: "qhd:xzqh_xian",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {*}
      */
     GetFeature(queryOption?: {
@@ -184,7 +232,23 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: Post方式查询矢量图层Features（cql暂不支持TOUCHES|CROSSES|OVERLAPS|DWITHIN|BEYOND方法）
+     * Post方式查询矢量图层Features（cql暂不支持TOUCHES|CROSSES|OVERLAPS|DWITHIN|BEYOND方法）
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     *   workspace: "qhd",//这个工作空间优先级最低，如果参数中没传的话就会用它
+     * });
+     * wfsHelperInstance.GetFeatureByPost({
+     *   "workspace": "qhd",//工作空间（如果是默认的工作空间可以不传）
+     *   "workspaceUri": "http://qhd",//工作空间uri（如果是默认的工作空间可以不传）
+     *   "typename": "qhd:永久基本农田", 
+     *   "startIndex": 0, 
+     *   "maxFeatures": 10, 
+     *   "cql": "type = '种植非粮食作' AND INTERSECTS (the_geom, MULTIPOLYGON(((119.149559 40.60191,119.1549 40.597565,...119.176018 40.609817))))"
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {*}
      */
     GetFeatureByPost(option?: {
@@ -218,7 +282,17 @@ export default class wfsHelper {
     }
 
     /**
-     * @description: 查询矢量图层字段信息
+     *  查询矢量图层字段信息
+     * @example
+     * import wfsHelper from 'geoserver-helper/wfs'
+     * const wfsHelperInstance = new wfsHelper({
+     *   url: "/geoserver/wfs",
+     * });
+     * wfsHelperInstance.DescribeFeatureType({
+     *   typeName: "topp:states",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {*}
      */
     DescribeFeatureType(queryOption?: {

@@ -17,7 +17,6 @@ import {
   like as likeFilter,
   intersects as intersectsFilter,
   within as withinFilter,
-  dwithin as dwithinFilter,
   contains as containsFilter,
   disjoint as disjointFilter,
 } from 'ol/format/filter';

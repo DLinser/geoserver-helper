@@ -25,7 +25,7 @@
     "name": "geoserver-helper",
     "entryPoints": [
       "lib/rest.ts",
-      "lib/wfm.ts",
+      "lib/wfs.ts",
       "lib/wms.ts",
       "lib/wps.ts",
       "lib/interface/interface.ts",

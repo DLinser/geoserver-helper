@@ -9,6 +9,7 @@
 * 主语言：Typescript
 * 声明文件框架：vite-plugin-dts
 * 单元测试框架：vitest
+* api文档框架：typedoc
 * 创建流程：
 ```shell
 # 1.创建入口
@@ -115,6 +116,7 @@ import utils from 'geoserver-helper/dist/utils'
 import wfsHelper from 'geoserver-helper/dist/wfs'
 import wpsHelper from 'geoserver-helper/dist/wps'
 import wmsHelper from 'geoserver-helper/dist/wms'
+```
 
 #### 参与贡献
 
