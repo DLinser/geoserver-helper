@@ -64,8 +64,12 @@
   },
   "dependencies": {
     "geostyler-cql-parser": "^3.0.2",
-    "geostyler-style": "^9.1.0",
+    "geostyler-style": "^8.1.0",
     "ol": "^10.1.0",
     "x2js": "^3.4.4"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=6.0.0"
   }
 }

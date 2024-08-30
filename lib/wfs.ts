@@ -336,8 +336,8 @@ export default class wfsHelper {
      * wfsHelperInstance.Transaction({
      *   type:"modif",
      *   featurePrefix:"test",
-     *   featureNS:"http://test"
-     *   featureType:"test:layername"
+     *   featureNS:"http://test",
+     *   featureType:"test:layername",
      *   srsName: "EPSG:4326",
      *   features:yourFeature //可以是ol的格式也可以是json格式
      * }).then(res => {
