@@ -58,7 +58,7 @@ pnpm link --global
 ```
 * 发布前测试项目测试
 ```shell
-npm run link geoserver-helper
+npm link geoserver-helper
 pnpm link --global geoserver-helper
 ```
 * 关闭发布前的调试

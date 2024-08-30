@@ -1,16 +1,28 @@
 
 import { formateObjToParamStr } from "./utils/common";
-import { IFeatureTransactionOption, creatFeatureRequestXml, creatFeatureTransactionXml } from "./utils/wfsXml";
+import { creatFeatureRequestXml, creatFeatureTransactionXml } from "./utils/wfsXml";
 import { type ILayer } from "./interface/layer"
 import fetchUtil from './utils/fetch'
 import X2JS from 'x2js';
+import { IWfs } from "./interface/wfs";
 
 const x2js = new X2JS();
 export default class wfsHelper {
+    private restXhrConfig: Record<string, any> = {
+        headers: {},
+    }
     /**
      * geoserver地址
      */
     url: string = "";
+    /**
+     * geoserver用户名
+     */
+    userName: string = "";
+    /**
+    * geoserver密码
+    */
+    password: string = "";
     /**
      * 图层名称(优先级较低，方法的参数中没传图层名的时候会用它)
      */
@@ -31,6 +43,14 @@ export default class wfsHelper {
         options:
             {
                 url: string;
+                /**
+                 * 用户名（不传用户名密码的话就不会携带Authorization头）
+                 */
+                userName?: string;
+                /**
+                 * 密码（不传用户名密码的话就不会携带Authorization头）
+                 */
+                password?: string;
                 layer?: string;
                 srsName?: string;
                 workspace?: string;
@@ -39,10 +59,18 @@ export default class wfsHelper {
     ) {
         if (!options) return;
         this.url = options.url;
+        this.userName = options.userName || "";
+        this.password = options.password || "";
         this.layer = options.layer || "";
         this.srsName = options.srsName || "EPSG:4326";
         this.workspace = options.workspace || "";
         this.workspaceUri = options.workspaceUri || "";
+        if (this.userName && this.password) {
+            const auth = window.btoa(`${this.userName}:${this.password}`)
+            this.restXhrConfig = {
+                headers: { Authorization: `Basic ${auth}` },
+            }
+        }
     }
 
     /**
@@ -327,7 +355,7 @@ export default class wfsHelper {
     }
 
     /**
-     *  矢量图层要素的新增、编辑、删除
+     *  矢量图层要素的新增、编辑、删除 （features在内部已经加了经纬度反转，不用再次处理）
      * @example
      * import wfsHelper from 'geoserver-helper/wfs'
      * const wfsHelperInstance = new wfsHelper({
@@ -345,8 +373,9 @@ export default class wfsHelper {
      * })
      * @return {*}
      */
-    Transaction(option: IFeatureTransactionOption) {
+    Transaction(option: IWfs.Transaction.FeatureTransactionOption) {
+        debugger
         const xmlParam = creatFeatureTransactionXml(option)
-        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam)
+        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam, this.restXhrConfig)
     }
 }

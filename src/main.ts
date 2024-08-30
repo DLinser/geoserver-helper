@@ -4,6 +4,7 @@ import fetchUtil from '../lib/utils/fetch'
 import restHelper from '../lib/rest'
 import wfsHelper from '../lib/wfs'
 import wmsHelper from '../lib/wms'
+import Feature from 'ol/Feature'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -138,6 +139,21 @@ wfsHelperInstance.GetFeatureByPost({
 //   debugger
 //   console.log(res)
 // })
+const feature = new Feature({
+  备注: "呼高81米，档距575米"
+})
+feature.setId("jiquanxian_1045_2.353")
+wfsHelperInstance.Transaction({
+  type: "modif",
+  featurePrefix: "data",
+  featureNS: "http://192.168.0.110:8082/data",
+  featureType: "data:jiquanxian_1045_2",
+  srsName: 'EPSG:4326',
+  features: [feature as any],
+}).then(res => {
+  debugger
+  console.log(res)
+})
 
 // wmsHelperInstance.GetCapabilities({
 //   version: "1.0.0"

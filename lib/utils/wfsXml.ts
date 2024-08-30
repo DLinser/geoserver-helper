@@ -21,6 +21,7 @@ import {
   disjoint as disjointFilter,
 } from 'ol/format/filter';
 import Filter from 'ol/format/filter/Filter';
+import { IWfs } from '../interface/wfs';
 const WFSTSerializer = new WFS()
 
 
@@ -164,73 +165,59 @@ export type featureOption = {
 export const formateFeatures = (features: Feature[] | featureOption[]) => {
   const readyToReturnFeatures: Feature[] = []
   features.forEach(singleFeature => {
-    if (singleFeature instanceof Feature) {
-      readyToReturnFeatures.push(singleFeature)
+    let initedFeature: Feature
+    if (singleFeature instanceof Feature || (singleFeature as unknown as Feature).getProperties) {
+      initedFeature = singleFeature as Feature
     } else {
-      if (singleFeature.type && singleFeature.coordinates) {
-        let initedFeature;
-        if (singleFeature.type == "Point") {
-          initedFeature = new Feature({
-            geometry: new Point(singleFeature.coordinates as number[]),
-          })
-        } else if (singleFeature.type == "LineString") {
-          initedFeature = new Feature({
-            geometry: new LineString(singleFeature.coordinates as Array<number[]>),
-          })
-        } else if (singleFeature.type == "MultiPolygon") {
-          initedFeature = new Feature({
-            geometry: new MultiPolygon(singleFeature.coordinates as number[]),
-          })
-        } else { //(singleFeature.type == "Polygon") 
-          initedFeature = new Feature({
-            geometry: new Polygon(singleFeature.coordinates as number[]),
-          })
-        }
-        if (singleFeature.properties) {
-          initedFeature?.setProperties(singleFeature.properties)
-        }
-        if (singleFeature.id) {
-          initedFeature?.setId(singleFeature.id)
-        }
-        readyToReturnFeatures.push(initedFeature)
+      if (singleFeature.type == "Point") {
+        initedFeature = new Feature({
+          geometry: new Point(singleFeature.coordinates as number[]),
+        })
+      } else if (singleFeature.type == "LineString") {
+        initedFeature = new Feature({
+          geometry: new LineString(singleFeature.coordinates as Array<number[]>),
+        })
+      } else if (singleFeature.type == "MultiPolygon") {
+        initedFeature = new Feature({
+          geometry: new MultiPolygon(singleFeature.coordinates as number[]),
+        })
+      } else { //(singleFeature.type == "Polygon") 
+        initedFeature = new Feature({
+          geometry: new Polygon(singleFeature.coordinates as number[]),
+        })
+      }
+      if (singleFeature.properties) {
+        initedFeature?.setProperties(singleFeature.properties)
+      }
+      if (singleFeature.id) {
+        initedFeature?.setId(singleFeature.id)
       }
     }
+    if (initedFeature) {
+      // 转换坐标
+      var geometry = initedFeature.getGeometry()?.clone();
+      geometry?.applyTransform(function (flatCoordinates, _flatCoordinates2, stride = 2) {
+        for (var j = 0; j < flatCoordinates.length; j += stride) {
+          var y = flatCoordinates[j];
+          var x = flatCoordinates[j + 1];
+          flatCoordinates[j] = x;
+          flatCoordinates[j + 1] = y;
+        }
+        return flatCoordinates
+      });
+      initedFeature.setGeometry(geometry)
+    }
+    readyToReturnFeatures.push(initedFeature as Feature)
   })
   return readyToReturnFeatures
 }
 
-export interface IFeatureTransactionOption {
-  /**
-   * 操作类型
-   */
-  type: "modif" | "create" | "delete",
-  /**
-   * 工作区的名称
-   */
-  featurePrefix: string,
-  /**
-   * 工作区的命名空间URI
-   */
-  featureNS: string, // 注意这个值必须为创建工作区时的命名空间URI
-  /**
-   * 图层名
-   */
-  featureType: string,
-  /**
-   * 坐标系
-   */
-  srsName?: string,
-  /**
-   * 要操作的要素
-   */
-  features: Feature[] | featureOption[]
-}
 /**
  * @description: 创建要素变换(增删改)xml
- * @param {IFeatureTransactionOption} option 配置
+ * @param {IWfs.Transaction.FeatureTransactionOption} option 配置
  * @return {string}
  */
-export const creatFeatureTransactionXml = (option: IFeatureTransactionOption) => {
+export const creatFeatureTransactionXml = (option: IWfs.Transaction.FeatureTransactionOption) => {
   let featObject: Node;
   const formatedFeatures = formateFeatures(option.features)
   if (option.type == "modif") {

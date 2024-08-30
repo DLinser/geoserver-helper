@@ -1,18 +1,25 @@
 
 import fetchUtil from './utils/fetch'
-const auth = window.btoa(`admin:geoserver`)
-const restXhrConfig = {
-    headers: { Authorization: `Basic ${auth}` },
-}
 import { type ILayer } from "./interface/layer"
 import { type IWorkspace } from "./interface/workspace"
 import { INamespaces } from "./interface/namespaces";
 import { IStyle } from './interface/style'
 export default class restHelper {
+    private restXhrConfig: Record<string, any> = {
+        headers: {},
+    }
     /**
      * geoserver地址
      */
     url: string = "";
+    /**
+     * geoserver用户名
+     */
+    userName: string = "";
+    /**
+    * geoserver密码
+    */
+    password: string = "";
     /**
      * 图层名称
      */
@@ -26,20 +33,38 @@ export default class restHelper {
      */
     workspace: string = "";
     constructor(
-        options?:
-            | {
+        options:
+            {
+                /**
+                 * server 地址
+                 */
                 url: string;
+                /**
+                 * 用户名（不传用户名密码的话就不会携带Authorization头）
+                 */
+                userName?: string;
+                /**
+                 * 密码（不传用户名密码的话就不会携带Authorization头）
+                 */
+                password?: string;
                 layer?: string;
                 srsName?: string;
                 workspace?: string;
             }
-            | undefined,
     ) {
         if (!options) return;
         this.url = options.url;
+        this.userName = options.userName || "";
+        this.password = options.password || "";
         this.layer = options.layer || "";
         this.srsName = options.srsName || "EPSG:4326";
         this.workspace = options.workspace || "";
+        if (this.userName && this.password) {
+            const auth = window.btoa(`${this.userName}:${this.password}`)
+            this.restXhrConfig = {
+                headers: { Authorization: `Basic ${auth}` },
+            }
+        }
     }
     /*************************************************图层相关start**************************************************** */
     /**
@@ -58,7 +83,7 @@ export default class restHelper {
      */
     getLayerListApi(workspaceName?: string) {
         const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layers` : `${this.url}/rest/layers`
-        return fetchUtil.get<ILayer.ResLayerList>(queryUrl, {}, restXhrConfig)
+        return fetchUtil.get<ILayer.ResLayerList>(queryUrl, {}, this.restXhrConfig)
     }
 
     /**
@@ -77,7 +102,7 @@ export default class restHelper {
      */
     getLayerInfoApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        return fetchUtil.get<ILayer.ResLayerInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, restXhrConfig)
+        return fetchUtil.get<ILayer.ResLayerInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, this.restXhrConfig)
     }
 
     /**
@@ -89,7 +114,7 @@ export default class restHelper {
      */
     modifyLayerApi(layerName: string, layerBody: ILayer.LayerModifyInfo, workspaceName?: string) {
         const putUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layers/${layerName}` : `${this.url}/rest/layers/${layerName}`
-        return fetchUtil.put<string>(putUrl, { layer: layerBody }, restXhrConfig)
+        return fetchUtil.put<string>(putUrl, { layer: layerBody }, this.restXhrConfig)
     }
 
     /**
@@ -98,7 +123,7 @@ export default class restHelper {
      * @return {Promise<ILayer.LayerSourceDetailInfo>}
      */
     getLayerSourceInfoByHrefApi(sourceInfoHref: string) {
-        return fetchUtil.get<ILayer.LayerSourceDetailInfo>(sourceInfoHref, {}, restXhrConfig)
+        return fetchUtil.get<ILayer.LayerSourceDetailInfo>(sourceInfoHref, {}, this.restXhrConfig)
     }
 
     /**
@@ -108,7 +133,7 @@ export default class restHelper {
      */
     getLayerCacheTasksApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        return fetchUtil.get<ILayer.LayerCacheTasks>(`${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`, {}, restXhrConfig)
+        return fetchUtil.get<ILayer.LayerCacheTasks>(`${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`, {}, this.restXhrConfig)
     }
 
     /**
@@ -147,7 +172,7 @@ export default class restHelper {
         return fetchUtil.post<ILayer.LayerCacheTasks>(
             `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
             seedOption,
-            restXhrConfig,
+            this.restXhrConfig,
         )
     }
 
@@ -165,8 +190,8 @@ export default class restHelper {
      */
     clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        const tempHeadersConfig = Object.assign({ 'Content-Type': 'application/javascript' }, restXhrConfig.headers)
-        const tempXhrConfig = Object.assign(restXhrConfig, {
+        const tempHeadersConfig = Object.assign({ 'Content-Type': 'application/javascript' }, JSON.parse(JSON.stringify(this.restXhrConfig.headers)))
+        const tempXhrConfig = Object.assign(this.restXhrConfig, {
             headers: tempHeadersConfig,
         })
         return fetchUtil.post<string>(
@@ -188,7 +213,7 @@ export default class restHelper {
      * @return {*}
      */
     getWorkspaceListApi() {
-        return fetchUtil.get<IWorkspace.WorkspaceList>(`${this.url}/rest/workspaces.json`, {}, restXhrConfig)
+        return fetchUtil.get<IWorkspace.WorkspaceList>(`${this.url}/rest/workspaces.json`, {}, this.restXhrConfig)
     }
 
     /**
@@ -206,7 +231,7 @@ export default class restHelper {
      * @returns 
      */
     getWorkspaceInfoApi(workspaceName?: string) {
-        return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/${workspaceName}`, {}, restXhrConfig)
+        return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/${workspaceName}`, {}, this.restXhrConfig)
     }
 
     /**
@@ -222,7 +247,7 @@ export default class restHelper {
         if (Object.hasOwnProperty.call(body, 'default')) {
             delete body.default
         }
-        return fetchUtil.post<string>(postUrl, { workspace: body }, restXhrConfig)
+        return fetchUtil.post<string>(postUrl, { workspace: body }, this.restXhrConfig)
     }
     /**
      * @description: 更新工作空间
@@ -231,7 +256,7 @@ export default class restHelper {
      * @return {Promise<string>}
      */
     updateWorkspaceApi(orignWorkspaceName: string, body: IWorkspace.WorkspaceOperationForm) {
-        return fetchUtil.put<string>(`${this.url}/rest/workspaces/${orignWorkspaceName}`, { workspace: body }, restXhrConfig)
+        return fetchUtil.put<string>(`${this.url}/rest/workspaces/${orignWorkspaceName}`, { workspace: body }, this.restXhrConfig)
     }
 
     /**
@@ -240,7 +265,7 @@ export default class restHelper {
      * @return {Promise<string>}
      */
     deleteWorkspaceApi(workspaceName: string) {
-        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}`, {}, restXhrConfig)
+        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}`, {}, this.restXhrConfig)
     }
     /*************************************************工作空间相关end**************************************************** */
     /*************************************************命名空间相关start**************************************************** */
@@ -258,7 +283,7 @@ export default class restHelper {
      * @return {Promise<INamespaces.NamespaceInfo>}
      */
     getNamespacesInfoApi(namespaceName: string) {
-        return fetchUtil.get<INamespaces.NamespaceInfo>(`${this.url}/rest/namespaces/${namespaceName}`, {}, restXhrConfig)
+        return fetchUtil.get<INamespaces.NamespaceInfo>(`${this.url}/rest/namespaces/${namespaceName}`, {}, this.restXhrConfig)
     }
 
     /*************************************************命名空间相关end**************************************************** */
@@ -266,7 +291,7 @@ export default class restHelper {
 
     getStylesListApi(workspaceName?: string) {
         const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles` : `${this.url}/rest/styles`
-        return fetchUtil.get<IStyle.StyleList>(queryUrl, {}, restXhrConfig)
+        return fetchUtil.get<IStyle.StyleList>(queryUrl, {}, this.restXhrConfig)
     }
 
     /**
@@ -279,7 +304,7 @@ export default class restHelper {
         const queryUrl = workspaceName
             ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}.sld`
             : `${this.url}/rest/styles/${styleName}.sld`
-        return fetchUtil.get<string>(queryUrl, {}, restXhrConfig)
+        return fetchUtil.get<string>(queryUrl, {}, this.restXhrConfig)
     }
 
     /**
@@ -291,8 +316,8 @@ export default class restHelper {
      */
     addStyleApi(body: any, styleName: string, workspaceName?: string) {
         const postUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles?name=${styleName}` : `${this.url}/rest/styles?name=${styleName}`
-        const tempHeadersConfig = Object.assign(restXhrConfig.headers, { 'Content-Type': 'application/vnd.ogc.sld+xml' })
-        const tempXhrConfig = Object.assign(restXhrConfig, {
+        const tempHeadersConfig = Object.assign(JSON.parse(JSON.stringify(this.restXhrConfig.headers)), { 'Content-Type': 'application/vnd.ogc.sld+xml' })
+        const tempXhrConfig = Object.assign(JSON.parse(JSON.stringify(this.restXhrConfig)), {
             headers: tempHeadersConfig,
         })
         return fetchUtil.post<string>(postUrl, body, tempXhrConfig)
@@ -307,8 +332,8 @@ export default class restHelper {
      */
     updateStyleApi(body: any, styleName: string, newStyleName?: string, workspaceName?: string) {
         const putUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}?style=${newStyleName || styleName}` : `${this.url}/rest/styles/${styleName}?style=${newStyleName || styleName}`
-        const tempHeadersConfig = Object.assign(restXhrConfig.headers, { 'Content-Type': 'application/vnd.ogc.sld+xml' })
-        const tempXhrConfig = Object.assign(restXhrConfig, {
+        const tempHeadersConfig = Object.assign(JSON.parse(JSON.stringify(this.restXhrConfig.headers)), { 'Content-Type': 'application/vnd.ogc.sld+xml' })
+        const tempXhrConfig = Object.assign(JSON.parse(JSON.stringify(this.restXhrConfig)), {
             headers: tempHeadersConfig,
         })
         return fetchUtil.put<string>(putUrl, body, tempXhrConfig)
@@ -324,7 +349,7 @@ export default class restHelper {
         const deleteUrl = workspaceName
             ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}`
             : `${this.url}/rest/styles/${styleName}`
-        return fetchUtil.delete<string>(deleteUrl, {}, restXhrConfig)
+        return fetchUtil.delete<string>(deleteUrl, {}, this.restXhrConfig)
     }
-    /*************************************************命名空间相关end**************************************************** */
+    /*************************************************样式相关end**************************************************** */
 }
