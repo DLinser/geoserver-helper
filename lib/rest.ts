@@ -168,7 +168,7 @@ export default class restHelper {
                 threadCount: 1,
             },
         }
-        const seedOption = Object.assign(defaultSeedOption, seedRequestOption)
+        const seedOption = Object.assign(defaultSeedOption, { seedRequest: seedRequestOption })
         return fetchUtil.post<ILayer.LayerCacheTasks>(
             `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
             seedOption,

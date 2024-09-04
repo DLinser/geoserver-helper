@@ -1,7 +1,7 @@
 {
   "name": "geoserver-helper",
   "private": false,
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "files": [
     "dist"
@@ -30,6 +30,12 @@
       "import": "./dist/wfs.js",
       "default": "./dist/wfs.cjs",
       "require": "./dist/wfs.cjs"
+    },
+    "./rest": {
+      "types": "./dist/rest.d.ts",
+      "import": "./dist/rest.js",
+      "default": "./dist/rest.cjs",
+      "require": "./dist/rest.cjs"
     },
     "./wps": {
       "types": "./dist/wps.d.ts",
