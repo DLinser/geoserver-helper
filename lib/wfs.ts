@@ -374,7 +374,6 @@ export default class wfsHelper {
      * @return {*}
      */
     Transaction(option: IWfs.Transaction.FeatureTransactionOption) {
-        debugger
         const xmlParam = creatFeatureTransactionXml(option)
         return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam, this.restXhrConfig)
     }
