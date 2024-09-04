@@ -1,20 +1,18 @@
 # geoserver-helper
-## 语言（Languages）
+## Languages
 
 - [English](./README_en.md)
 - [中文](./README.md)
+## Introduction
+Used to request interface information such as REST, WFS, WMS, WPS for Geoserver
 
-## 介绍
-用于请求geoserver的rest、wfs、wms、wps等接口信息
-
-## 软件架构
-
-* 脚手架：create-vite
-* 主语言：Typescript
-* 声明文件框架：vite-plugin-dts
-* 单元测试框架：vitest
-* api文档框架：typedoc
-* 创建流程：
+## Software Architecture
+* Scaffolding：create-vite
+* Main language：Typescript
+* Declaration file framework：vite-plugin-dts
+* Unit testing framework：vitest
+* API documentation framework：typedoc
+* Creation process：
 ```shell
 # 1.创建入口
 npm create vite
@@ -25,71 +23,71 @@ npm create vite
 # 5.选择预配置语言变量（Select a variant: » TypeScript）
 ```
 
-### 文件资源目录 📚
-├─dist  打包后的文件目录  
-├─lib   代码库  
-│  ├─interface       接口  
-│  ├─config          配置文件  
-│  └─utils           工具  
-├─public             普通前端的public用于预览和测试  
-└─src                普通前端的src用于预览和测试  
-### 二次开发指引
-1. 克隆项目
+### File resource directory 📚
+├─dist    
+├─lib     
+│  ├─interface        
+│  ├─config          
+│  └─utils            
+├─public             
+└─src                
+### Development
+1. clone
 ```shell
 git clone https://gitee.com/lyxstart/geoserver-helper.git
 ```
-2. 安装依赖
+2. install
 ```shell
 npm i  /  pnpm i
 ```
-3. 运行
+3. run
 ```shell
 npm run dev
 ```
-4. 打包
+4. build
 ```shell
 npm run build
 ```
-* 单元测试
+* test
 ```shell
 # 测试的geoserver地址可能要做一下变更
 npm run test
 ```
-* 发布前调试(发布到本地,类似虚拟的 npm publish)
+* link(just like npm publish)
 ```shell
 npm run link
 pnpm link --global
 ```
-* 发布前测试项目测试
+* link install(just like npm i)
 ```shell
 npm link geoserver-helper
 pnpm link --global geoserver-helper
 ```
-* 关闭发布前的调试
+* close link
 ```shell
 npm run unlink
 pnpm unlink geoserver-helper
 ```
 
-## 安装教程
+## Installation Tutorial
 ```shell
 # 安装依赖
 npm i geoserver-helper
 ```
 
-### 使用说明
-1.  引入依赖
+### Instructions
+1.  Introducing Dependency
 ```javascript
-// 整体引入依赖
+// Introducing dependencies as a whole
 import geoserverHelper from 'geoserver-helper'
-// 按需引入依赖
+// Introduce dependencies on demand
 import utils from 'geoserver-helper/utils'
 import wfsHelper from 'geoserver-helper/wfs'
 import wpsHelper from 'geoserver-helper/wps'
 import wmsHelper from 'geoserver-helper/wms'
 import restHelper from 'geoserver-helper/rest'
 ```
-2.  使用
+2.  use
 ```javascript
 //对象转Query字符串
 const aa = utils.common.formateObjToParamStr({
@@ -107,20 +105,20 @@ console.log(res.layers)
 const res = await restHelperInstance.getWorkspaceListApi()
 console.log(res.workspaces)
 ```
-3. 注意
-如果您的项目用到了Typescript，因为Typescript版本问题，目前支持exports映射的只有Typescript 4.7（2022 年 6 月）往后的版本，也就是说使用的时候必须用高版本的解析器（node16、nodenext、Bundler），也就是说您的tsconfig.json中的  "moduleResolution": "Bundler",必须修改为node16、nodenext、Bundler中的某一个，如果因为某些特殊原因您不愿意更改或者不能更改也可以使用下面绝对路径的引用方式
+3. attention  
+If your project uses Typescript, due to Typescript version issues, currently only Typescript 4.7 (June 2022) and later versions support exports mapping, which means that a higher version parser (node16 nodenext、Bundler）， That is to say, the "moduleSolution": "Bundler" in your tsconfig. json must be modified to one of node16, nodenext, or Bundler. If for some special reason you are unwilling or unable to change it, you can also use the following absolute path reference method
 ```javascript
-// 整体引入依赖
+// Introducing dependencies as a whole
 import geoserverHelper from 'geoserver-helper'
-// 按需引入依赖
+// Introduce dependencies on demand
 import utils from 'geoserver-helper/dist/utils'
 import wfsHelper from 'geoserver-helper/dist/wfs'
 import wpsHelper from 'geoserver-helper/dist/wps'
 import wmsHelper from 'geoserver-helper/dist/wms'
 ```
-## 版本变更日志
-[传送门](./CHANGELOG.md)
-#### 参与贡献
+## Version change log
+[Portal](./CHANGELOG.md)
+#### Participate and contribute
 
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支

@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     lib: {
-      entry: ['./lib/geoserver-helper.ts', './lib/utils/utils.ts', './lib/interface/interface.ts', './lib/wfs.ts', './lib/wps.ts'],
+      entry: ['./lib/geoserver-helper.ts', './lib/utils/utils.ts', './lib/interface/interface.ts', './lib/rest.ts', './lib/wfs.ts', './lib/wms.ts', './lib/wps.ts'],
       name: 'geoserver-helper',
       // fileName: 'geoserver-helper',
       fileName: (format, entryName: string) => {

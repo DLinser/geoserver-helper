@@ -167,7 +167,7 @@ export const formateFeatures = (features: Feature[] | featureOption[]) => {
   features.forEach(singleFeature => {
     let initedFeature: Feature
     if (singleFeature instanceof Feature || (singleFeature as unknown as Feature).getProperties) {
-      initedFeature = singleFeature as Feature
+      initedFeature = (singleFeature as Feature).clone()
     } else {
       if (singleFeature.type == "Point") {
         initedFeature = new Feature({

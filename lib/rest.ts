@@ -152,7 +152,7 @@ export default class restHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {Promise<ILayer.LayerCacheTasks>}
+     * @return {Promise<string>} 只要请求的状态码是200就说明成功了 返回的是个空字符串
      */
     sendLayerCacheTaskApi(seedRequestOption: ILayer.SeedRequest) {
         const realLayerNameWithWorkspace = seedRequestOption.name ? seedRequestOption.name : this.workspace ? `${this.workspace}:${this.layer}` : `${this.layer}`;
@@ -169,7 +169,7 @@ export default class restHelper {
             },
         }
         const seedOption = Object.assign(defaultSeedOption, { seedRequest: seedRequestOption })
-        return fetchUtil.post<ILayer.LayerCacheTasks>(
+        return fetchUtil.post<string>(
             `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
             seedOption,
             this.restXhrConfig,

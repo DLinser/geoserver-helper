@@ -272,12 +272,15 @@ export namespace ILayer {
         name?: string
         zoomStart?: number
         zoomStop?: number
-        formats?: string[]
+        format?: string
         bounds?: {
             coords: {
                 double: [number, number, number, number]
             }
         }
+        /**
+         * 切片类型（seed | reseed | truncate）
+         */
         type?: string
         threadCount?: number
     }
