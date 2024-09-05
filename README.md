@@ -5,7 +5,9 @@
 - [中文](./README.md)
 
 ## 介绍
-用于请求geoserver的rest、wfs、wms、wps等接口信息
+用于前端请求geoserver的OGC服务包括rest接口、wfs接口、wms接口、wps接口等，http请求采用原生的js的fetch方法，同时简化了geoserver原始请求方式，调用更加简单，方便。
+### 使用人群
+以geoserver为地图服务的webgis开发者
 
 ## 软件架构
 
