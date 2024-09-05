@@ -1,10 +1,11 @@
 
 import { formateObjToParamStr } from "./utils/common";
-import { creatFeatureRequestXml, creatFeatureTransactionXml } from "./utils/wfsXml";
+import { creatFeatureRequestXml, creatFeatureTransactionXml, formatFeatureTransactionResult } from "./utils/wfsXml";
 import { type ILayer } from "./interface/layer"
 import fetchUtil from './utils/fetch'
 import X2JS from 'x2js';
 import { IWfs } from "./interface/wfs";
+import { TransactionResponse } from "ol/format/WFS";
 
 const x2js = new X2JS();
 export default class wfsHelper {
@@ -371,10 +372,17 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {*}
+     * @return {Promise<TransactionResponse | undefined>}
      */
     Transaction(option: IWfs.Transaction.FeatureTransactionOption) {
         const xmlParam = creatFeatureTransactionXml(option)
-        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam, this.restXhrConfig)
+        return new Promise<TransactionResponse | undefined>((resolve, reject) => {
+            fetchUtil.postXml<string>(`${this.url}`, xmlParam, this.restXhrConfig).then((res: string) => {
+                resolve(formatFeatureTransactionResult(res))
+            }).catch((err) => {
+                reject(err)
+            })
+        })
+
     }
 }

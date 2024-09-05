@@ -23,4 +23,10 @@
 - wfs的formateFeatures方法修复会修改源数据的问题
 - rest的sendLayerCacheTaskApi接口修复返回值类型错误问题
 - vite.config.ts 打包入口修复以前漏掉的rest入口配置问题
+## [0.0.16] - 2024-09-05
+### Changed
+- 完善wfs的Transaction方法，使其返回json格式
+## [0.0.17] - 2024-09-05
+### Fixed
+- 修复wfs的Transaction编辑要素时id丢失问题
 

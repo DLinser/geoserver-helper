@@ -168,6 +168,7 @@ export const formateFeatures = (features: Feature[] | featureOption[]) => {
     let initedFeature: Feature
     if (singleFeature instanceof Feature || (singleFeature as unknown as Feature).getProperties) {
       initedFeature = (singleFeature as Feature).clone()
+      initedFeature?.setId((singleFeature as unknown as Feature).getId())
     } else {
       if (singleFeature.type == "Point") {
         initedFeature = new Feature({
@@ -254,4 +255,13 @@ export const creatFeatureTransactionXml = (option: IWfs.Transaction.FeatureTrans
     });
   }
   return new XMLSerializer().serializeToString(featObject)
+}
+
+/**
+ * 格式化FeatureTransaction的结果
+ * @param textResult 字符串类型的结果
+ * @returns json类型的结果
+ */
+export const formatFeatureTransactionResult = (textResult: string) => {
+  return WFSTSerializer.readTransactionResponse(textResult);
 }
