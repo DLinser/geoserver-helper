@@ -122,34 +122,74 @@ export const creatFeatureRequestXml = (option: {
     outputFormat: option.outputFormat,
   }
   if (option.cql) {
-    let nonSpatialCql = option.cql + ""
-    geometryFilterArray = []
-    const regex = /(INTERSECTS|WITHIN|CONTAINS|DISJOINT)\s*\(\s*([\w_]+)\s*,\s*((POINT|LINESTRING|MULTIPOLYGON|POLYGON)\((?:(?:[\d\s,.]+)|(?:\([\d\s,.]+\))|(?:\(\([\d\s,.]+\)\)))\))\)/g;
-    let spatialMatch;
-    while ((spatialMatch = regex.exec(option.cql)) !== null) {
-      const wktGeometry = spatialMatch[3];
-      const spatialField = spatialMatch[2];
-      let geometry = new WKT().readGeometry(wktGeometry, {});
-      if (spatialMatch[1].toUpperCase() === 'INTERSECTS') {
-        geometryFilterArray.push(intersectsFilter(spatialField, geometry))
-      } else if (spatialMatch[1].toUpperCase() === 'WITHIN') {
-        geometryFilterArray.push(withinFilter(spatialField, geometry))
-      } else if (spatialMatch[1].toUpperCase() === 'CONTAINS') {
-        geometryFilterArray.push(containsFilter(spatialField, geometry))
-      } else if (spatialMatch[1].toUpperCase() === 'DISJOINT') {
-        geometryFilterArray.push(disjointFilter(spatialField, geometry))
-      } else if (spatialMatch[1].toUpperCase() === 'TOUCHES') {
-        geometryFilterArray.push(disjointFilter(spatialField, geometry))
+    //cql太长的话正则匹配会因崩溃而失效
+    if (option.cql.length <= 680) {
+      let nonSpatialCql = option.cql + ""
+      geometryFilterArray = []
+      const regex = /(INTERSECTS|WITHIN|CONTAINS|DISJOINT)\s*\(\s*([\w_]+)\s*,\s*((POINT|LINESTRING|MULTIPOLYGON|POLYGON)\((?:(?:[\d\s,.]+)|(?:\([\d\s,.]+\))|(?:\(\([\d\s,.]+\)\)))\))\)/g;
+      let spatialMatch;
+      while ((spatialMatch = regex.exec(option.cql)) !== null) {
+        const wktGeometry = spatialMatch[3];
+        const spatialField = spatialMatch[2];
+        let geometry = new WKT().readGeometry(wktGeometry, {});
+        if (spatialMatch[1].toUpperCase() === 'INTERSECTS') {
+          geometryFilterArray.push(intersectsFilter(spatialField, geometry))
+        } else if (spatialMatch[1].toUpperCase() === 'WITHIN') {
+          geometryFilterArray.push(withinFilter(spatialField, geometry))
+        } else if (spatialMatch[1].toUpperCase() === 'CONTAINS') {
+          geometryFilterArray.push(containsFilter(spatialField, geometry))
+        } else if (spatialMatch[1].toUpperCase() === 'DISJOINT') {
+          geometryFilterArray.push(disjointFilter(spatialField, geometry))
+        } else if (spatialMatch[1].toUpperCase() === 'TOUCHES') {
+          geometryFilterArray.push(disjointFilter(spatialField, geometry))
+        }
+        nonSpatialCql = spatialMatch ? nonSpatialCql.replace(spatialMatch[0], `spatialMatch${geometryFilterArray.length - 1} = 0`) : option.cql;
       }
-      nonSpatialCql = spatialMatch ? nonSpatialCql.replace(spatialMatch[0], `spatialMatch${geometryFilterArray.length - 1} = 0`) : option.cql;
+      const geoStyleCql = cqlParser.read(nonSpatialCql)
+      const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
+      writeGetFeatureOptions.filter = cqlFilter
+    } else { //这种情况一般都是带有空间查询的
+      if (option.cql.includes("AND") || option.cql.includes("OR")) { //复杂条件暂时不支持
+        let nonSpatialCql = option.cql + ""
+        const unitSimpleCqlArray = option.cql.replaceAll(" AND ", " splitTag ").replaceAll(" OR ", " splitTag ").split(" splitTag ")
+        for (let i = 0; i < unitSimpleCqlArray.length; i++) {
+          if (unitSimpleCqlArray[i].includes("INTERSECTS") || unitSimpleCqlArray[i].includes("WITHIN") || unitSimpleCqlArray[i].includes("CONTAINS") || unitSimpleCqlArray[i].includes("DISJOINT") || unitSimpleCqlArray[i].includes("TOUCHES")) {
+            creatGeometryFilter(unitSimpleCqlArray[i])
+            nonSpatialCql = nonSpatialCql.replace(unitSimpleCqlArray[i], `spatialMatch${geometryFilterArray.length - 1} = 0`);
+          }
+        }
+        const geoStyleCql = cqlParser.read(nonSpatialCql)
+        const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
+        writeGetFeatureOptions.filter = cqlFilter
+      } else {
+        creatGeometryFilter(option.cql)
+        writeGetFeatureOptions.filter = geometryFilterArray[0]
+      }
     }
-    const geoStyleCql = cqlParser.read(nonSpatialCql)
-    const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
-    writeGetFeatureOptions.filter = cqlFilter
   }
   const featureRequest = WFSTSerializer.writeGetFeature(writeGetFeatureOptions);
   return new XMLSerializer().serializeToString(featureRequest)
 }
+
+
+
+export const creatGeometryFilter = (geometryFilterCql: string) => {
+  const wktGeometry = geometryFilterCql.substring(geometryFilterCql.indexOf(", ") + 1, geometryFilterCql.length - 1);
+  let spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("("), geometryFilterCql.indexOf(", ")).trim()
+  let geometry = new WKT().readGeometry(wktGeometry, {});
+  if (geometryFilterCql.includes("INTERSECTS")) {
+    geometryFilterArray.push(intersectsFilter(spatialField, geometry))
+  } else if (geometryFilterCql.includes("WITHIN")) {
+    geometryFilterArray.push(withinFilter(spatialField, geometry))
+  } else if (geometryFilterCql.includes("CONTAINS")) {
+    geometryFilterArray.push(containsFilter(spatialField, geometry))
+  } else if (geometryFilterCql.includes("DISJOINT")) {
+    geometryFilterArray.push(disjointFilter(spatialField, geometry))
+  } else if (geometryFilterCql.includes("TOUCHES")) {
+    geometryFilterArray.push(disjointFilter(spatialField, geometry))
+  }
+}
+
 export type featureOption = {
   type: "Point" | "LineString" | "MultiPolygon" | "Polygon",
   coordinates: Array<number | number[] | Array<number[]>>,
