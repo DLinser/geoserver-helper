@@ -29,4 +29,7 @@
 ## [0.0.17] - 2024-09-05
 ### Fixed
 - 修复wfs的Transaction编辑要素时id丢失问题
+## [0.0.18] - 2024-09-09
+### Fixed
+- 修复wfs的GetFeatureByPost的cql太长导致的正则失效问题问题
 

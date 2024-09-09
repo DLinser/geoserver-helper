@@ -175,7 +175,7 @@ export const creatFeatureRequestXml = (option: {
 
 export const creatGeometryFilter = (geometryFilterCql: string) => {
   const wktGeometry = geometryFilterCql.substring(geometryFilterCql.indexOf(", ") + 1, geometryFilterCql.length - 1);
-  let spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("("), geometryFilterCql.indexOf(", ")).trim()
+  let spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("(") + 1, geometryFilterCql.indexOf(", ")).trim()
   let geometry = new WKT().readGeometry(wktGeometry, {});
   if (geometryFilterCql.includes("INTERSECTS")) {
     geometryFilterArray.push(intersectsFilter(spatialField, geometry))
