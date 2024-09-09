@@ -2,8 +2,9 @@
 import fetchUtil from './utils/fetch'
 import { type ILayer } from "./interface/layer"
 import { type IWorkspace } from "./interface/workspace"
-import { INamespaces } from "./interface/namespaces";
-import { IStyle } from './interface/style'
+import { type INamespaces } from "./interface/namespaces";
+import { type IStyle } from './interface/style'
+import { type IDatastore } from './interface/datastore'
 export default class restHelper {
     private restXhrConfig: Record<string, any> = {
         headers: {},
@@ -352,4 +353,114 @@ export default class restHelper {
         return fetchUtil.delete<string>(deleteUrl, {}, this.restXhrConfig)
     }
     /*************************************************样式相关end**************************************************** */
+    /*************************************************数据存储相关start**************************************************** */
+    /**
+     * 获取矢量数据存储列表
+     * @param workspaceName 工作空间名称
+     * @returns 
+     */
+    getDatastoreListApi = (workspaceName: string) => {
+        return fetchUtil.get<IDatastore.ResDatastoreList>(`/rest/workspaces/${workspaceName}/datastores`, {}, this.restXhrConfig)
+    }
+    /**
+     * 获取栅格数据存储列表
+     * @param workspaceName 工作空间名称
+     * @returns 
+     */
+    getCoveragestoresListApi = (workspaceName: string) => {
+        return fetchUtil.get<IDatastore.ResCoveragestoreList>(`/rest/workspaces/${workspaceName}/coveragestores`, {}, this.restXhrConfig)
+    }
+
+    /**
+     * 获取单个矢量数据存储详情
+     * @param workspaceName 工作空间名称
+     * @param datastoreName 存储名称
+     * @returns 
+     */
+    getDatastoreInfoApi = (workspaceName: string, datastoreName: string) => {
+        return fetchUtil.get<IDatastore.ResDatastoreInfo>(
+            `/rest/workspaces/${workspaceName}/datastores/${datastoreName}`,
+            {},
+            this.restXhrConfig,
+        )
+    }
+    /**
+     * 获取单个栅格数据存储详情
+     * @param workspaceName 工作空间名称
+     * @param storeName 存储名称
+     * @returns 
+     */
+    getCoveragestoreInfoApi = (workspaceName: string, storeName: string) => {
+        return fetchUtil.get<IDatastore.ResCoveragestoreInfo>(
+            `/rest/workspaces/${workspaceName}/coveragestores/${storeName}`,
+            {},
+            this.restXhrConfig,
+        )
+    }
+
+    /**
+     * 新增数据存储
+     * @param body 
+     * @returns 
+     */
+    addDatastoreApi = (body: IDatastore.DatastoreOperationForm) => {
+        const postUrl = `/rest/workspaces/${body.workspace}/datastores`
+        // 清理掉对后台无用的参数数据
+        if (Object.hasOwnProperty.call(body, 'workspace')) {
+            delete body.workspace
+        }
+        if (Object.hasOwnProperty.call(body, 'type')) {
+            delete body.type
+        }
+        if (Object.hasOwnProperty.call(body, 'connectionParameters')) {
+            body.connectionParameters?.entry.forEach(singleEntry => {
+                if (Object.hasOwnProperty.call(singleEntry, 'label')) {
+                    delete singleEntry.label
+                }
+                if (Object.hasOwnProperty.call(singleEntry, 'needShow')) {
+                    delete singleEntry.needShow
+                }
+                if (Object.hasOwnProperty.call(singleEntry, 'required')) {
+                    delete singleEntry.required
+                }
+            })
+        }
+        return fetchUtil.post<string>(postUrl, { dataStore: body }, this.restXhrConfig)
+    }
+    // * 更新数据存储
+    updateDatastoreApi = (
+        orignDatastoreParam: IDatastore.DatastoreInfo,
+        body: IDatastore.DatastoreOperationForm,
+    ) => {
+        // 清理掉对后台无用的参数数据
+        if (Object.hasOwnProperty.call(body, 'workspace')) {
+            delete body.workspace
+        }
+        if (Object.hasOwnProperty.call(body, 'type')) {
+            delete body.type
+        }
+        if (Object.hasOwnProperty.call(body, 'connectionParameters')) {
+            body.connectionParameters?.entry.forEach(singleEntry => {
+                if (Object.hasOwnProperty.call(singleEntry, 'label')) {
+                    delete singleEntry.label
+                }
+                if (Object.hasOwnProperty.call(singleEntry, 'needShow')) {
+                    delete singleEntry.needShow
+                }
+                if (Object.hasOwnProperty.call(singleEntry, 'required')) {
+                    delete singleEntry.required
+                }
+            })
+        }
+        return fetchUtil.put<string>(
+            `/rest/workspaces/${orignDatastoreParam.workspace.name}/datastores/${orignDatastoreParam.name}`,
+            { dataStore: body },
+            this.restXhrConfig,
+        )
+    }
+    // * 删除数据存储
+    deleteDatastoreApi = (workspaceName: string, storeName: string) => {
+        return fetchUtil.delete<string>(`/rest/workspaces/${workspaceName}/datastores/${storeName}`, {}, this.restXhrConfig)
+    }
+    /*************************************************数据存储相关end**************************************************** */
 }

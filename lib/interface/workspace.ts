@@ -1,14 +1,14 @@
 //工作空间模块
 export namespace IWorkspace {
     //返回结果单项
-    export interface WorkspaceItemOfList {
+    export interface WorkspaceOverview {
         name: string
         href: string
     }
     //查询的工作空间列表结果
     export interface WorkspaceList {
         workspaces: {
-            workspace: WorkspaceItemOfList[]
+            workspace: WorkspaceOverview[]
         }
     }
     //查询的单个工作空间结果
