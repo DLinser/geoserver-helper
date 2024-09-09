@@ -360,7 +360,7 @@ export default class restHelper {
      * @returns 
      */
     getDatastoreListApi = (workspaceName: string) => {
-        return fetchUtil.get<IDatastore.ResDatastoreList>(`/rest/workspaces/${workspaceName}/datastores`, {}, this.restXhrConfig)
+        return fetchUtil.get<IDatastore.ResDatastoreList>(`${this.url}/rest/workspaces/${workspaceName}/datastores`, {}, this.restXhrConfig)
     }
     /**
      * 获取栅格数据存储列表
@@ -368,7 +368,7 @@ export default class restHelper {
      * @returns 
      */
     getCoveragestoresListApi = (workspaceName: string) => {
-        return fetchUtil.get<IDatastore.ResCoveragestoreList>(`/rest/workspaces/${workspaceName}/coveragestores`, {}, this.restXhrConfig)
+        return fetchUtil.get<IDatastore.ResCoveragestoreList>(`${this.url}/rest/workspaces/${workspaceName}/coveragestores`, {}, this.restXhrConfig)
     }
 
     /**
@@ -379,7 +379,7 @@ export default class restHelper {
      */
     getDatastoreInfoApi = (workspaceName: string, datastoreName: string) => {
         return fetchUtil.get<IDatastore.ResDatastoreInfo>(
-            `/rest/workspaces/${workspaceName}/datastores/${datastoreName}`,
+            `${this.url}/rest/workspaces/${workspaceName}/datastores/${datastoreName}`,
             {},
             this.restXhrConfig,
         )
@@ -392,7 +392,7 @@ export default class restHelper {
      */
     getCoveragestoreInfoApi = (workspaceName: string, storeName: string) => {
         return fetchUtil.get<IDatastore.ResCoveragestoreInfo>(
-            `/rest/workspaces/${workspaceName}/coveragestores/${storeName}`,
+            `${this.url}/rest/workspaces/${workspaceName}/coveragestores/${storeName}`,
             {},
             this.restXhrConfig,
         )
@@ -404,7 +404,7 @@ export default class restHelper {
      * @returns 
      */
     addDatastoreApi = (body: IDatastore.DatastoreOperationForm) => {
-        const postUrl = `/rest/workspaces/${body.workspace}/datastores`
+        const postUrl = `${this.url}/rest/workspaces/${body.workspace}/datastores`
         // 清理掉对后台无用的参数数据
         if (Object.hasOwnProperty.call(body, 'workspace')) {
             delete body.workspace
@@ -453,14 +453,14 @@ export default class restHelper {
             })
         }
         return fetchUtil.put<string>(
-            `/rest/workspaces/${orignDatastoreParam.workspace.name}/datastores/${orignDatastoreParam.name}`,
+            `${this.url}/rest/workspaces/${orignDatastoreParam.workspace.name}/datastores/${orignDatastoreParam.name}`,
             { dataStore: body },
             this.restXhrConfig,
         )
     }
     // * 删除数据存储
     deleteDatastoreApi = (workspaceName: string, storeName: string) => {
-        return fetchUtil.delete<string>(`/rest/workspaces/${workspaceName}/datastores/${storeName}`, {}, this.restXhrConfig)
+        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}/datastores/${storeName}`, {}, this.restXhrConfig)
     }
     /*************************************************数据存储相关end**************************************************** */
 }
