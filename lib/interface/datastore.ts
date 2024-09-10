@@ -1,17 +1,6 @@
 import { IWorkspace } from "./workspace"
 
 export namespace IDatastore {
-    interface DatastoreCommonInfo {
-        code?: string
-        dateCreated?: string
-        dateModified?: string
-        description?: string
-        enabled?: boolean
-        id?: string
-        name?: string
-        type?: string
-        workspaceId?: string
-    }
     export type DatastoreType = 'Shapefile' | 'GeoTIFF' | 'PostGIS'
     //新增或者编辑表单
     export interface DatastoreOperationForm {

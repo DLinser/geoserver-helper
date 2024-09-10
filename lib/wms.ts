@@ -33,7 +33,18 @@ export default class wmsHelper {
     }
 
     /**
-     * @description: 获取wms能力集(不同version会有细微的不同)
+     * 获取wms能力集(不同version会有细微的不同)
+     * @example
+     * import wmsHelper from 'geoserver-helper/wms'
+     * const wmsHelperInstance = new wmsHelper({
+     *   url: "/geoserver/wfs",
+     *   workspace: "qhd",
+     * });
+     * wfsHelperInstance.GetCapabilities({
+     *   version: "1.0.0",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {IWms.WMSCapabilities.GetCapabilitiesResponse} 能力集
      */
     GetCapabilities(option: {
@@ -57,8 +68,20 @@ export default class wmsHelper {
     }
 
     /**
-     * @description: 获取要素信息
+     * 获取要素信息(一般用于点选查询)
      * @param {IWms.GetFeatureInfoParameters} option
+     * @example
+     * import wmsHelper from 'geoserver-helper/wms'
+     * const wmsHelperInstance = new wmsHelper({
+     *   url: "/geoserver/wms",
+     * });
+     * wfsHelperInstance.GetFeatureInfo({
+     *   layers: "workspaceName:layerName",
+     *   version: "1.0.0",
+     *   bbox:"118.85559,39.47113,119.17419,39.776",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {*}
      */
     GetFeatureInfo(option: IWms.GetFeatureInfoParameters) {
@@ -92,8 +115,18 @@ export default class wmsHelper {
     }
 
     /**
-     * @description: 获取图例信息
+     * 获取图例信息
      * @param {*} option
+     * @example
+     * import wmsHelper from 'geoserver-helper/wms'
+     * const wmsHelperInstance = new wmsHelper({
+     *   url: "/geoserver/wms",
+     * });
+     * wfsHelperInstance.GetLegendGraphic({
+     *   layer: "workspaceName:layerName",
+     * }).then(res => {
+     *   console.log(res)
+     * })
      * @return {*}
      */
     GetLegendGraphic(option: IWms.GetLegendGraphic.QueryParameters) {

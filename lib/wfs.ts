@@ -361,6 +361,8 @@ export default class wfsHelper {
      * import wfsHelper from 'geoserver-helper/wfs'
      * const wfsHelperInstance = new wfsHelper({
      *   url: "/geoserver/wfs",
+     *   userName: "admin", //这个地方需要登录认证所以必须要传用户名和密码
+     *   password: "geoserver",
      * });
      * wfsHelperInstance.Transaction({
      *   type:"modif",
