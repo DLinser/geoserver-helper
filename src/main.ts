@@ -219,15 +219,24 @@ feature.setId("jiquanxian_1045_2.353")
 //   console.log(res)
 // })
 
-restHelperInstance.getSystemStatus().then(res => {
+// restHelperInstance.getSystemStatus().then(res => {
+//   debugger
+//   console.log(res)
+// })
+// restHelperInstance.getVersion().then(res => {
+//   debugger
+//   console.log(res)
+// })
+// restHelperInstance.getFonts().then(res => {
+//   debugger
+//   console.log(res)
+// })
+
+restHelperInstance.getLayerGroupListApi().then(res => {
   debugger
   console.log(res)
 })
-restHelperInstance.getVersion().then(res => {
-  debugger
-  console.log(res)
-})
-restHelperInstance.getFonts().then(res => {
+restHelperInstance.getLayerGroupInfoApi("tasmania").then(res => {
   debugger
   console.log(res)
 })

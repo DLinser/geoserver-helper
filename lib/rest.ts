@@ -79,6 +79,67 @@ export default class restHelper {
             }
         }
     }
+    /*************************************************系统相关start**************************************************** */
+
+    /**
+     * 获取系统状态
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getSystemStatus().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getSystemStatus() {
+        return fetchUtil.get<ISystem.Status>(`${this.url}/rest/about/system-status.json`, {}, this.restXhrConfig)
+    }
+    /**
+     * 获取版本信息（包括Geoserver、Geotools、GeoWebCache）
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getVersion().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getVersion() {
+        return fetchUtil.get<ISystem.Version>(`${this.url}/rest/about/version.json`, {}, this.restXhrConfig)
+    }
+    /**
+     * 获取支持的字体列表
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getFonts().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getFonts() {
+        return fetchUtil.get<ISystem.Fonts>(`${this.url}/rest/fonts`, {}, this.restXhrConfig)
+    }
+
+    /*************************************************系统相关end**************************************************** */
     /*************************************************图层相关start**************************************************** */
 
     /**
@@ -124,7 +185,7 @@ export default class restHelper {
      */
     getLayerInfoApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        return fetchUtil.get<ILayer.ResLayerInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, this.restXhrConfig)
+        return fetchUtil.get<ILayer.ResLayerGroupInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, this.restXhrConfig)
     }
 
     /**
@@ -234,6 +295,91 @@ export default class restHelper {
         )
     }
     /*************************************************图层相关end**************************************************** */
+    /*************************************************图层组相关start**************************************************** */
+    /**
+     * 获取图层组列表
+     * @group 图层组
+     * @example
+    * ```typescript
+    * import restHelper from 'geoserver-helper/rest'
+    * const restHelperInstance = new restHelper({
+    *      url: "/geoserver",
+    *      userName: "admin",
+    *      password: "geoserver",
+    * })
+    * restHelperInstance.getLayerGroupListApi().then(res => {
+    *  console.log(res)
+    * })
+    * ```
+     * @return {Promise<IWorkspace.LayerGroupList>}
+     */
+    getLayerGroupListApi(workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/workspaceName/layergroups.json` : `${this.url}/rest/layergroups.json`
+        return fetchUtil.get<ILayer.ResLayerGroupList>(queryUrl, {}, this.restXhrConfig)
+    }
+
+    /**
+     * 获取图层组详情
+     * @group 图层组
+     * @param layergroupName 图层组名称
+     * @param workspaceName 工作空间名称
+     * @example
+     * ```typescript
+     * import restHelper from 'geoserver-helper/rest'
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver",
+     *      userName: "admin",
+     *      password: "geoserver",
+     * })
+     * restHelperInstance.getLayerGroupInfoApi("layergroupName").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getLayerGroupInfoApi(layergroupName: string, workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layergroups/${layergroupName}.json` : `${this.url}/rest/layergroups/${layergroupName}.json`
+        return fetchUtil.get<ILayer.ResLayerGroupInfo>(queryUrl, {}, this.restXhrConfig)
+    }
+
+    /**
+     * 编辑/更新图层
+     * @group 图层组
+     * @param  layergroupName 图层组名
+     * @param  layerGroupBody 编辑/更新信息
+     * @param workspaceName 工作空间名称
+     * @return {Promise<string>}
+     */
+    modifyLayerGroupApi(layergroupName: string, layerGroupBody: ILayer.LayerGroupModifyInfo, workspaceName?: string) {
+        const putUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layergroups/${layergroupName}` : `${this.url}/rest/layergroups/${layergroupName}`
+        return fetchUtil.put<string>(putUrl, { layerGroup: layerGroupBody }, this.restXhrConfig)
+    }
+
+    /**
+     * 删除图层组
+     * @group 图层组
+     * @param layergroupName 图层组名称
+     * @param workspaceName 工作空间名称
+     * @example
+     * ```typescript
+     * import restHelper from 'geoserver-helper/rest'
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver",
+     *      userName: "admin",
+     *      password: "geoserver",
+     * })
+     * restHelperInstance.deleteLayerGroupApi("layergroupName").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    deleteLayerGroupApi(layergroupName: string, workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layergroups/${layergroupName}.json` : `${this.url}/rest/layergroups/${layergroupName}.json`
+        return fetchUtil.delete<ILayer.ResLayerGroupInfo>(queryUrl, {}, this.restXhrConfig)
+    }
+
+    /*************************************************图层组相关end**************************************************** */
     /*************************************************工作空间相关start**************************************************** */
     /**
      * 获取工作空间列表 
@@ -621,65 +767,4 @@ export default class restHelper {
     }
 
     /*************************************************数据存储相关end**************************************************** */
-    /*************************************************系统相关start**************************************************** */
-
-    /**
-     * 获取系统状态
-     * @group 系统
-     * @example
-     * ``` typescript
-     * const restHelperInstance = new restHelper({
-     *      url: "/geoserver"
-     *      userName: "admin",
-     *      password: "geoserver",
-     *  })
-     * restHelperInstance.getSystemStatus().then(res => {
-     *  console.log(res)
-     * })
-     * ```
-     * @returns 
-     */
-    getSystemStatus() {
-        return fetchUtil.get<ISystem.Status>(`${this.url}/rest/about/system-status.json`, {}, this.restXhrConfig)
-    }
-    /**
-     * 获取版本信息（包括Geoserver、Geotools、GeoWebCache）
-     * @group 系统
-     * @example
-     * ``` typescript
-     * const restHelperInstance = new restHelper({
-     *      url: "/geoserver"
-     *      userName: "admin",
-     *      password: "geoserver",
-     *  })
-     * restHelperInstance.getVersion().then(res => {
-     *  console.log(res)
-     * })
-     * ```
-     * @returns 
-     */
-    getVersion() {
-        return fetchUtil.get<ISystem.Version>(`${this.url}/rest/about/version.json`, {}, this.restXhrConfig)
-    }
-    /**
-     * 获取支持的字体列表
-     * @group 系统
-     * @example
-     * ``` typescript
-     * const restHelperInstance = new restHelper({
-     *      url: "/geoserver"
-     *      userName: "admin",
-     *      password: "geoserver",
-     *  })
-     * restHelperInstance.getFonts().then(res => {
-     *  console.log(res)
-     * })
-     * ```
-     * @returns 
-     */
-    getFonts() {
-        return fetchUtil.get<ISystem.Fonts>(`${this.url}/rest/fonts`, {}, this.restXhrConfig)
-    }
-
-    /*************************************************系统相关end**************************************************** */
 }

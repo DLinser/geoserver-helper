@@ -201,6 +201,7 @@ export namespace ILayer {
     //返回结果单项
     export interface ResLayerListItem {
         name: string
+        herf: string
     }
     //接口返回的图层详情结果
     export interface ResLayerInfo {
@@ -296,4 +297,106 @@ export namespace ILayer {
             }>[]
         }
     }
+    /*************************************************************************图层组相关end************************************************************* */
+
+    /**
+     * 图层组详情
+     */
+    export interface LayerGroupInfo {
+        name: string
+        mode: string
+        title: string
+        abstractTxt: string
+        publishables: {
+            published: {
+                "@type": string,
+                name: string,
+                href: string
+            }[]
+        },
+        styles: {
+            style: ({
+                name: string
+                href: string
+            } | string)[]
+        },
+        bounds: {
+            minx: number
+            maxx: number
+            miny: number
+            maxy: number
+            crs: string
+        },
+        metadata: {
+            entry:
+            {
+                "@key": string
+                "$": string
+            }
+        }
+    }
+
+    /**
+     * 图层组修改参数
+     */
+    export interface LayerGroupModifyInfo {
+        "name": string
+        "mode": string
+        "title": string
+        "abstractTxt": string
+        "workspace": {
+            "name": string
+        },
+        "publishables": {
+            "published": [
+                {
+                    "name": string
+                    "link": string
+                }
+            ]
+        },
+        "styles": {
+            "style": {
+                "name": string
+                "link": string
+            }[]
+        },
+        "metadataLinks": {
+            "type": string
+            "metadataType": string
+            "content": string
+        }[],
+        "bounds": {
+            "minx": number,
+            "maxx": number,
+            "miny": number,
+            "maxy": number,
+            "crs": string
+        },
+        "keywords": {
+            "keyword": string[]
+        }
+    }
+    /**
+     * 图层组列表单项
+     */
+    export interface LayerGroupOverview {
+        name: string
+        herf: string
+    }
+    /**
+     * 图层组详情
+     */
+    export interface ResLayerGroupInfo {
+        layerGroup: LayerGroupInfo
+    }
+    /**
+     * 图层组列表
+     */
+    export interface ResLayerGroupList {
+        layerGroups: {
+            layerGroup: LayerGroupOverview[]
+        }
+    }
+    /*************************************************************************图层组相关end************************************************************* */
 }
