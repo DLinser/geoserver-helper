@@ -59,4 +59,16 @@ export namespace ISystem {
     export interface Fonts {
         fonts: string[]
     }
+
+    /**
+     * 日志配置
+     */
+    export interface LogConfiguration {
+        logging: {
+            id?: string
+            level: "DEFAULT_LOGGING" | "GEOSERVER_DEVELOPER_LOGGING" | "GEOTOOLS_DEVELOPER_LOGGING" | "PRODUCTION_LOGGING" | "QUIET_LOGGING" | "TEST_LOGGING" | "VERBOSE_LOGGING"
+            location: string;
+            stdOutLogging: boolean;
+        };
+    }
 }

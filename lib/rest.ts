@@ -6,6 +6,7 @@ import { type INamespaces } from "./interface/namespaces";
 import { type IStyle } from './interface/style'
 import { type IDatastore } from './interface/datastore'
 import { ISystem } from './interface/system';
+import { ISecurity } from './interface/security';
 export default class restHelper {
     private restXhrConfig: Record<string, any> = {
         headers: {},
@@ -139,7 +140,117 @@ export default class restHelper {
         return fetchUtil.get<ISystem.Fonts>(`${this.url}/rest/fonts`, {}, this.restXhrConfig)
     }
 
+    /**
+     * 获取日志配置
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getLoggingConfig().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+    */
+    getLoggingConfig() {
+        return fetchUtil.get<ISystem.LogConfiguration>(`${this.url}/rest/logging.json`, {}, this.restXhrConfig)
+    }
+    /**
+     * 更新（编辑）日志配置
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.updateLoggingConfig({
+     *   "logging": {
+     *      "level": "PRODUCTION_LOGGING",
+     *      "location": "logs/geoserver.log",
+     *      "stdOutLogging": true
+     *   }
+     *  }).then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    updateLoggingConfig(config: ISystem.LogConfiguration) {
+        return fetchUtil.put<string>(`${this.url}/rest/logging`, config, this.restXhrConfig)
+    }
+
     /*************************************************系统相关end**************************************************** */
+    /*************************************************安全相关start**************************************************** */
+
+    /**
+     * 获取超级管理员密码
+     * @group 安全
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getMasterPassword().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getMasterPassword() {
+        return fetchUtil.get<ISecurity.MasterPassword>(`${this.url}/rest/security/masterpw.json`, {}, this.restXhrConfig)
+    }
+    /**
+     * 更新（编辑）超级管理员密码
+     * @group 安全
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.updateMasterPassword({
+     *   "oldMasterPassword": "geoserver",
+     *   "newMasterPassword": "geoserver2"
+     *  }).then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    updateMasterPassword(updateForm: ISecurity.MasterPasswordUpdateForm) {
+        return fetchUtil.put<string>(`${this.url}/rest/logging`, updateForm, this.restXhrConfig)
+    }
+
+    /**
+    * 获取基于图层的安全校验规则
+    * @group 安全
+    * @example
+    * ``` typescript
+    * const restHelperInstance = new restHelper({
+    *      url: "/geoserver"
+    *      userName: "admin",
+    *      password: "geoserver",
+    *  })
+    * restHelperInstance.getSecurityRulesOfLayersBased().then(res => {
+    *  console.log(res)
+    * })
+    * ```
+    * @returns 
+    */
+    getSecurityRulesOfLayersBased() {
+        return fetchUtil.get<ISecurity.SecurityRules>(`${this.url}/rest/security/acl/layers.json`, {}, this.restXhrConfig)
+    }
+
+    /*************************************************安全相关end**************************************************** */
     /*************************************************图层相关start**************************************************** */
 
     /**
@@ -767,4 +878,6 @@ export default class restHelper {
     }
 
     /*************************************************数据存储相关end**************************************************** */
+
+
 }
