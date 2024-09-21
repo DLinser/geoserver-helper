@@ -76,3 +76,9 @@
 ### Fixed
 
 - 修复 wfs 的 GetFeatureByPost 的 cql 的 like 不生效问题
+
+## [0.0.20-alpha] - 2024-09-21
+
+### Added
+
+- rest 添加日志配置 以及安全部分接口
