@@ -16,6 +16,12 @@ export namespace ISecurity {
         newMasterPassword: string
     }
     /**
+     * 角色
+     */
+    export interface Roles {
+        roles: string[]
+    }
+    /**
      * 数据安全校验规则
      */
     export type SecurityRules = Record<string, string>

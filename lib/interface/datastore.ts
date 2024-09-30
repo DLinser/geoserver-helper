@@ -17,9 +17,13 @@ export namespace IDatastore {
          */
         name: string
         /**
+         * 是否启用(默认是true)
+         */
+        enabled?: boolean
+        /**
          * 描述
          */
-        description: string
+        description?: string
         // 数据库链接参数
         connectionParameters?: DatastoreConnectionParameters
     }
@@ -41,7 +45,13 @@ export namespace IDatastore {
 
     // 数据库链接参数单参数对象
     export interface ConnectionRecord {
+        /**
+         * 键
+         */
         '@key': string
+        /**
+         * 值
+         */
         $: string
         label?: string
         required?: boolean

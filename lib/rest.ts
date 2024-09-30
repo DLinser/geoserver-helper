@@ -207,6 +207,26 @@ export default class restHelper {
     getMasterPassword() {
         return fetchUtil.get<ISecurity.MasterPassword>(`${this.url}/rest/security/masterpw.json`, {}, this.restXhrConfig)
     }
+
+    /**
+     * 获取角色列表
+     * @group 安全
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getRoles().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * */
+    getRoles() {
+        return fetchUtil.get<ISecurity.Roles>(`${this.url}/rest/security/roles.json`, {}, this.restXhrConfig)
+    }
+
     /**
      * 更新（编辑）超级管理员密码
      * @group 安全
@@ -792,6 +812,63 @@ export default class restHelper {
      * 新增数据存储
      * @group 数据存储
      * @param body 
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * // GeoPackage类型
+     * restHelperInstance.addDatastoreApi({
+     *      "name": "nyc",
+     *      "connectionParameters": {
+     *          "entry": [
+     *              {"@key":"database","$":"file:///path/to/nyc.gpkg"},
+     *              {"@key":"dbtype","$":"geopkg"}
+     *          ]
+     *      }
+     * }).then(res => {
+     *  console.log(res)
+     * })
+     * 
+     * // PostGIS类型
+     * restHelperInstance.addDatastoreApi({
+     *  "name": "nyc",
+     *  "connectionParameters": {
+     *      "entry": [
+     *          {"@key":"host","$":"localhost"},
+     *          {"@key":"port","$":"5432"},
+     *          {"@key":"database","$":"nyc"},
+     *          {"@key":"user","$":"bob"},
+     *          {"@key":"passwd","$":"postgres"},
+     *          {"@key":"dbtype","$":"postgis"}
+     *      ]
+     *   }
+     * }).then(res => {
+     *  console.log(res)
+     * })
+     * 
+     * // Shapefile 类型
+     * restHelperInstance.addDatastoreApi({
+     *  "name": "nyc",
+     *  "connectionParameters": {
+     *      "entry": [{"@key":"url","$":"file:/path/to/nyc.shp"}]
+     *   }
+     * }).then(res => {
+     *  console.log(res)
+     * })
+
+     * // Shapefile文件夹类型
+     * restHelperInstance.addDatastoreApi({
+     *  "name": "nyc",
+     *  "connectionParameters": {
+     *      "entry": [{"@key":"url","$":"file:/path/to"}]
+     *   }
+     * }).then(res => {
+     *  console.log(res)
+     * })
+     * ```
      * @returns 
      */
     addDatastoreApi(body: IDatastore.DatastoreOperationForm) {
