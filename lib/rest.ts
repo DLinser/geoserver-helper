@@ -6,7 +6,7 @@ import { type INamespaces } from "./interface/namespaces";
 import { type IStyle } from './interface/style'
 import { type IDatastore } from './interface/datastore'
 import { ISystem } from './interface/system';
-import { IResource } from './interface/system';
+import { IResource } from './interface/resource';
 import { ISecurity } from './interface/security';
 export default class restHelper {
     private restXhrConfig: Record<string, any> = {
