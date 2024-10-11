@@ -54,7 +54,8 @@
     "unlink": "npm unlink geoserver-helper -g",
     "pnpmunlink": "pnpm unlink --global geoserver-helper -g",
     "setproxy": "npm config set proxy http://localhost:10809",
-    "deleteproxy": "npm config delete proxy   "
+    "deleteproxy": "npm config delete proxy",
+    "unsetgitproxy": "git config --global --unset http.proxy"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
