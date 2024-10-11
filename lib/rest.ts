@@ -6,6 +6,7 @@ import { type INamespaces } from "./interface/namespaces";
 import { type IStyle } from './interface/style'
 import { type IDatastore } from './interface/datastore'
 import { ISystem } from './interface/system';
+import { IResource } from './interface/system';
 import { ISecurity } from './interface/security';
 export default class restHelper {
     private restXhrConfig: Record<string, any> = {
@@ -83,7 +84,7 @@ export default class restHelper {
     /*************************************************系统相关start**************************************************** */
 
     /**
-     * 获取系统状态
+     * 获取系统状态(包括磁盘状态，cpu状态等)
      * @group 系统
      * @example
      * ``` typescript
@@ -185,7 +186,192 @@ export default class restHelper {
         return fetchUtil.put<string>(`${this.url}/rest/logging`, config, this.restXhrConfig)
     }
 
+    /**
+     * 从磁盘重新加载配置，并重置所有缓存。
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.reload().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    reload() {
+        return fetchUtil.post<string>(
+            `${this.url}/rest/reload`,
+            {},
+            this.restXhrConfig,
+        )
+    }
+
+    /**
+     * 重置所有身份验证、存储、栅格和架构缓存(请谨慎调用)。
+     * @group 系统
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.reset().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    reset() {
+        return fetchUtil.post<string>(
+            `${this.url}/rest/reset`,
+            {},
+            this.restXhrConfig,
+        )
+    }
+
     /*************************************************系统相关end**************************************************** */
+    /*************************************************文件资源相关start**************************************************** */
+
+
+    /**
+     * 获取资源目录信息（geoserver安装目录的data_dir下的文件夹信息）
+     * @group 文件资源
+     * @param relativePath 相对于data_dir的路径 默认为空字符串
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.getResourceDirectoryInfo().then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getResourceDirectoryInfo(relativePath: string = '') {
+        return new Promise<IResource.IDirectoryItem>((resolve, reject) => {
+            fetchUtil.get<string>(`${this.url}/rest/resource${relativePath}`, {}, this.restXhrConfig).then(res => {
+                // 使用DOMParser解析HTML字符串
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(res, 'text/html');
+
+                // 获取最外层ul元素
+                const ulElement = doc.querySelector('ul'); // Get the first ul element
+                const directoryInfo: IResource.IDirectoryItem = {}
+                if (ulElement) {
+                    Array.from(ulElement.children).forEach((liElement) => {
+                        // 获取 liElement 的文本内容，并去除首尾空格
+                        const inputString = liElement.textContent?.trim()!;
+                        // 正则表达式匹配 "Name: ''" 或 "Parent: ''" 的模式
+                        const regex = /^(Name|Parent):\s*'?([^']*)'?/;
+
+                        // 使用正则表达式执行匹配
+                        const match = inputString.match(regex);
+                        if (match && match[1]) {
+                            debugger
+                            directoryInfo[match[1] as "Name"] = match[2]
+                        }
+                        const nestedUl = liElement.querySelector('ul');
+                        if (nestedUl) {
+                            directoryInfo.children = [];
+                            Array.from(nestedUl.children).forEach(eachChildrenItem => {
+                                const a = eachChildrenItem.querySelector('a');
+                                if (a) {
+                                    const childrenItem: IResource.IChildrenItem = {
+                                        link: "",
+                                        Name: "",
+                                    }
+                                    if (a.getAttribute('href')) {
+                                        childrenItem.link = a.getAttribute('href') as string;
+                                    }
+                                    childrenItem.Name = a.textContent?.trim() || "";
+                                    directoryInfo.children?.push(childrenItem)
+                                }
+                            })
+                        }
+
+                    });
+                }
+                resolve(directoryInfo)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
+
+    /**
+     * 复制资源（只能是文件不能是目录）
+     * @group 文件资源
+     * @param newPath 新文件路径（相对于data_dir的路径）
+     * @param orignPath 原始路径（相对于data_dir的路径）
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.copyResource("/test.txt","/test2.txt").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    copyResource(newPath: string, orignPath: string) {
+        return fetchUtil.put<string>(`${this.url}/rest/resource${newPath}?operation=copy`, orignPath, this.restXhrConfig)
+    }
+
+    /**
+     * 移动资源（只能是文件不能是目录）
+     * @group 文件资源
+     * @param newPath 新文件路径（相对于data_dir的路径）
+     * @param orignPath 原始路径（相对于data_dir的路径）
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.moveResource("/testData/test.txt","/testData2/test.txt").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    moveResource(newPath: string, orignPath: string) {
+        return fetchUtil.put<string>(`${this.url}/rest/resource${newPath}?operation=move`, orignPath, this.restXhrConfig)
+    }
+
+    /**
+     * 删除资源或目录（如果是目录则会递归删除）
+     * @group 文件资源
+     * @param relativePath 要删除的目录或者文件路径（相对于data_dir的路径）
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.deleteResource("/relativePath").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    deleteResource(relativePath: string) {
+        return fetchUtil.delete<string>(`${this.url}/rest/resource${relativePath}`, {}, this.restXhrConfig)
+    }
+
+    /*************************************************文件资源相关end**************************************************** */
     /*************************************************安全相关start**************************************************** */
 
     /**
