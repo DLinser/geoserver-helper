@@ -268,7 +268,15 @@ feature.setId("jiquanxian_1045_2.353");
 // })
 
 
-restHelperInstance.copyResource("/testData/dem.sld", "/styles/dem.sld").then((res) => {
-  console.log("资源移动成功");
+// restHelperInstance.copyResource("/testData/dem.sld", "/styles/dem.sld").then((res) => {
+//   console.log("资源移动成功");
+// })
+
+// restHelperInstance.creatResource("/testData/test.txt", "666666666").then((res) => {
+//   console.log("资源创建成功");
+// })
+
+restHelperInstance.deleteResource("/testData/test.txt").then((res) => {
+  console.log("资源删除成功");
 })
 

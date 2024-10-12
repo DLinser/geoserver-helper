@@ -275,7 +275,6 @@ export default class restHelper {
                         // 使用正则表达式执行匹配
                         const match = inputString.match(regex);
                         if (match && match[1]) {
-                            debugger
                             directoryInfo[match[1] as "Name"] = match[2]
                         }
                         const nestedUl = liElement.querySelector('ul');
@@ -304,6 +303,28 @@ export default class restHelper {
                 reject(err)
             })
         })
+    }
+
+    /**
+     * 创建资源（只能是文本文件,如果文件存在则会覆盖）
+     * @group 文件资源
+     * @param relativePath 要创建的文件路径（相对于data_dir的路径）
+     * @param stringData 文本内容
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.creatResource("/test.txt","Hellow World").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    creatResource(relativePath: string, stringData: string) {
+        return fetchUtil.put<string>(`${this.url}/rest/resource${relativePath}?operation=default`, stringData, this.restXhrConfig)
     }
 
     /**
