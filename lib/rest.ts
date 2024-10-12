@@ -256,53 +256,7 @@ export default class restHelper {
      * @returns 
      */
     getResourceDirectoryInfo(relativePath: string = '') {
-        return new Promise<IResource.IDirectoryItem>((resolve, reject) => {
-            fetchUtil.get<string>(`${this.url}/rest/resource${relativePath}`, {}, this.restXhrConfig).then(res => {
-                // 使用DOMParser解析HTML字符串
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(res, 'text/html');
-
-                // 获取最外层ul元素
-                const ulElement = doc.querySelector('ul'); // Get the first ul element
-                const directoryInfo: IResource.IDirectoryItem = {}
-                if (ulElement) {
-                    Array.from(ulElement.children).forEach((liElement) => {
-                        // 获取 liElement 的文本内容，并去除首尾空格
-                        const inputString = liElement.textContent?.trim()!;
-                        // 正则表达式匹配 "Name: ''" 或 "Parent: ''" 的模式
-                        const regex = /^(Name|Parent):\s*'?([^']*)'?/;
-
-                        // 使用正则表达式执行匹配
-                        const match = inputString.match(regex);
-                        if (match && match[1]) {
-                            directoryInfo[match[1] as "Name"] = match[2]
-                        }
-                        const nestedUl = liElement.querySelector('ul');
-                        if (nestedUl) {
-                            directoryInfo.children = [];
-                            Array.from(nestedUl.children).forEach(eachChildrenItem => {
-                                const a = eachChildrenItem.querySelector('a');
-                                if (a) {
-                                    const childrenItem: IResource.IChildrenItem = {
-                                        link: "",
-                                        Name: "",
-                                    }
-                                    if (a.getAttribute('href')) {
-                                        childrenItem.link = a.getAttribute('href') as string;
-                                    }
-                                    childrenItem.Name = a.textContent?.trim() || "";
-                                    directoryInfo.children?.push(childrenItem)
-                                }
-                            })
-                        }
-
-                    });
-                }
-                resolve(directoryInfo)
-            }).catch(err => {
-                reject(err)
-            })
-        })
+        return fetchUtil.get<IResource.IDirectoryInfo>(`${this.url}/rest/resource${relativePath}?format=json`, {}, this.restXhrConfig)
     }
 
     /**

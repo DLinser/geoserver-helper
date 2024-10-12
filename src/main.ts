@@ -263,9 +263,9 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log(res);
 //   console.log("重新加载成功");
 // })
-// restHelperInstance.getResourceDirectoryInfo("/styles").then((res) => {
-//   console.log("资源目录加载成功");
-// })
+restHelperInstance.getResourceDirectoryInfo("/styles").then((res) => {
+  console.log("资源目录加载成功");
+})
 
 
 // restHelperInstance.copyResource("/testData/dem.sld", "/styles/dem.sld").then((res) => {
@@ -276,7 +276,7 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log("资源创建成功");
 // })
 
-restHelperInstance.deleteResource("/testData/test.txt").then((res) => {
-  console.log("资源删除成功");
-})
+// restHelperInstance.deleteResource("/testData/test.txt").then((res) => {
+//   console.log("资源删除成功");
+// })
 
