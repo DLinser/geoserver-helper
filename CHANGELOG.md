@@ -94,3 +94,9 @@
 ### Added
 
 - rest 添加资源目录的创建接口
+
+## [0.0.21] - 2024-10-12
+
+### Fixed
+
+- rest getLayerInfoApi 修复返回结果的类型错误
