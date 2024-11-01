@@ -477,7 +477,7 @@ export default class restHelper {
      */
     getLayerInfoApi(layerNameWithWorkspace?: string) {
         const realLayerNameWithWorkspace = layerNameWithWorkspace ? layerNameWithWorkspace : `${this.workspace}:${this.layer}`
-        return fetchUtil.get<ILayer.ResLayerGroupInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, this.restXhrConfig)
+        return fetchUtil.get<ILayer.ResLayerInfo>(`${this.url}/rest/layers/${realLayerNameWithWorkspace}`, {}, this.restXhrConfig)
     }
 
     /**
