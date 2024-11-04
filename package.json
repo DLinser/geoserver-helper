@@ -61,6 +61,7 @@
     "pnpmunlink": "pnpm unlink --global geoserver-helper -g",
     "setproxy": "npm config set proxy http://localhost:10809",
     "deleteproxy": "npm config delete proxy",
+    "setgitproxy": "git config --global http.proxy http://localhost:10809",
     "unsetgitproxy": "git config --global --unset http.proxy"
   },
   "devDependencies": {
