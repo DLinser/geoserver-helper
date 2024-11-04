@@ -100,3 +100,9 @@
 ### Fixed
 
 - rest getLayerInfoApi 修复返回结果的类型错误
+
+## [0.0.22] - 2024-11-04
+
+### Fixed
+
+- wms 修复没有到处 wms 相关 interfacebug
