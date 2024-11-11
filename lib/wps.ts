@@ -358,6 +358,20 @@ export default class wpsHelper {
     /**
      * 对图层进行字段唯一值计算。
      * @param {Object} option 配置
+     * @example
+     * import wpsHelper from "geoserver-helper/wps";
+     * import helperUtils from "geoserver-helper/utils";
+     * const wpsHelperInstance = new wpsHelper(`${MAPSERVER}/ows`);
+     * const xmlString = wpsHelperInstance.formatUniqueXmlString({
+     *  workspace: "workspace",
+     *  workspaceURI: "namespaceUri",
+     *  queryName: "queryName",
+     *  fieldName: "fieldName",
+     *  outputMimiType: "application/json"
+     * });
+     * const finishXmlString = wpsHelperInstance.finishXML(xmlString);
+     * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
+     *  cons
      * @returns {XML} Execute Execute
      */
     formatUniqueXmlString = function (option: {
@@ -451,6 +465,24 @@ export default class wpsHelper {
     /**
      * 对图层属性的统计计算。
      * @param {Object} option 配置
+     * @example
+     * import wpsHelper from "geoserver-helper/wps";
+     * import helperUtils from "geoserver-helper/utils";
+     * const wpsHelperInstance = new wpsHelper(`${MAPSERVER}/ows`);
+     * const xmlString = wpsHelperInstance.formatAggregateXmlString({
+     *  workspace: "workspace",
+     *  workspaceURI: "namespaceUri",
+     *  queryName: "queryName",
+     *  groupByAttributes: "groupByAttributes",
+     *  fieldName: "fieldName",
+     *  functionName: "Sum",
+     *  cql: "",
+     *  outputMimiType: "application/json"
+     * });
+     * const finishXmlString = wpsHelperInstance.finishXML(xmlString);
+     * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
+     *  console.log(res)
+     * })
      * @returns {XML} Execute Execute
      */
     formatAggregateXmlString = (option: {
