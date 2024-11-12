@@ -122,10 +122,10 @@ export const creatFeatureRequestXml = (option: {
     outputFormat: option.outputFormat,
   }
   if (option.cql) {
+    geometryFilterArray = []
     //cql太长的话正则匹配会因崩溃而失效
     if (option.cql.length <= 680) {
       let nonSpatialCql = option.cql + ""
-      geometryFilterArray = []
       const regex = /(INTERSECTS|WITHIN|CONTAINS|DISJOINT)\s*\(\s*([\w_]+)\s*,\s*((POINT|LINESTRING|MULTIPOLYGON|POLYGON)\((?:(?:[\d\s,.]+)|(?:\([\d\s,.]+\))|(?:\(\([\d\s,.]+\)\)))\))\)/g;
       let spatialMatch;
       while ((spatialMatch = regex.exec(option.cql)) !== null) {

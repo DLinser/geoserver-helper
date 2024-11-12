@@ -106,3 +106,9 @@
 ### Fixed
 
 - wms 修复没有到处 wms 相关 interfacebug
+
+## [0.0.23] - 2024-11-12
+
+### Fixed
+
+- wfs 修复 GetFeatureByPost 第二次请求时总是使用第一次的请求参数问题
