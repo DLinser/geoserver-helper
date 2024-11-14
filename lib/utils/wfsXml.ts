@@ -38,7 +38,7 @@ let geometryFilterArray: Filter[] = []
  */
 const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoPropertyType>) => {
   // TODO 因为cqlCondition还有自定义的类型 所以这个地方可能会有特殊情况
-  let cqlOperator: GeoOperator | "LikePredicate" = "=="
+  let cqlOperator: GeoOperator | "LikePredicate" | 'InExpressionListPredicate' = '=='
   let cqlProperty: GeoFilter | GeoExpression<GeoPropertyType> = ""
   let cqlValue: GeoFilter | GeoExpression<GeoPropertyType> = ""
   if (cqlCondition instanceof Array && cqlCondition.length > 0) {
@@ -86,6 +86,9 @@ const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoProper
     case 'LikePredicate':
       filter = likeFilter(cqlProperty as string, cqlValue as string);
       break;
+    // case 'InExpressionListPredicate':
+    //   console.log("暂不支持in");
+    //     break;
     // 添加更多的操作符和过滤器类型
     default:
       filter = equalToFilter(cqlProperty as string, cqlValue as string | number);
