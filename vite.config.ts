@@ -38,7 +38,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/geoserver": {
-        target: "http://192.168.0.110:8083/geoserver",
+        target: "http://192.168.0.110:8082/geoserver",
         //target: "https://ahocevar.com/geoserver",//openlayers官方地址
         // target: "https://maps5.geosolutionsgroup.com/geoserver",//geosolutions官方地址
         changeOrigin: true,
