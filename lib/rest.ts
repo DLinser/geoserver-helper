@@ -717,6 +717,27 @@ export default class restHelper {
     }
 
     /**
+     * 获取默认工作空间详情
+     * @group 工作空间
+     * @example
+     * ``` typescript
+     * import restHelper from 'geoserver-helper/rest'
+     * const restHelperInstance = new restHelper({
+     *     url: "/geoserver",
+     *     userName: "admin",
+     *     password: "geoserver",
+     *  })
+     * restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    getDefaultWorkspaceInfoApi() {
+        return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/default`, {}, this.restXhrConfig)
+    }
+
+    /**
      * 新增工作空间
      * @group 工作空间
      * @param {IWorkspace.WorkspaceOperationForm} body 新增的参数

@@ -118,3 +118,9 @@
 ### Fixed
 
 - 补充上次
+
+## [0.0.25-alpha] - 2024-12-10
+
+### Added
+
+- rest 添加 getDefaultWorkspaceInfoApi 接口(Add the getDefaultWorkspaceInfoApi interface)
