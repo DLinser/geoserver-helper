@@ -713,7 +713,7 @@ export default class restHelper {
      * @returns 
      */
     getWorkspaceInfoApi(workspaceName?: string) {
-        return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/${workspaceName}`, {}, this.restXhrConfig)
+        return fetchUtil.get<IWorkspace.ResWorkspaceInfo>(`${this.url}/rest/workspaces/${workspaceName}`, {}, this.restXhrConfig)
     }
 
     /**
@@ -734,7 +734,7 @@ export default class restHelper {
      * @returns 
      */
     getDefaultWorkspaceInfoApi() {
-        return fetchUtil.get<IWorkspace.WorkspaceInfo>(`${this.url}/rest/workspaces/default`, {}, this.restXhrConfig)
+        return fetchUtil.get<IWorkspace.ResWorkspaceInfo>(`${this.url}/rest/workspaces/default`, {}, this.restXhrConfig)
     }
 
     /**

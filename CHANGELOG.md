@@ -124,3 +124,4 @@
 ### Added
 
 - rest 添加 getDefaultWorkspaceInfoApi 接口(Add the getDefaultWorkspaceInfoApi interface)
+- interface IWorkspace 添加 WorkspaceInfo(add IWorkspace.WorkspaceInfo interface)

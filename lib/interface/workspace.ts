@@ -11,8 +11,18 @@ export namespace IWorkspace {
             workspace: WorkspaceOverview[]
         }
     }
-    //查询的单个工作空间结果
+    //工作空间详情
     export interface WorkspaceInfo {
+        coverageStores: string
+        dataStores: string
+        dateCreated: string
+        isolated: false
+        name: string
+        wmsStores: string
+        wmtsStores: string
+    }
+    //查询的单个工作空间结果
+    export interface ResWorkspaceInfo {
         workspace: {
             coverageStores: string
             dataStores: string
