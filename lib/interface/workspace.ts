@@ -36,6 +36,9 @@ export namespace IWorkspace {
     //新增或者编辑表单
     export interface WorkspaceOperationForm {
         name: string
+        /**
+         * 在新增的时候用到，编辑时用不到(Used during addition, not during editing)
+         */
         default?: boolean
     }
 }
