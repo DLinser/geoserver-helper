@@ -125,3 +125,9 @@
 
 - rest 添加 getDefaultWorkspaceInfoApi 接口(Add the getDefaultWorkspaceInfoApi interface)
 - interface IWorkspace 添加 WorkspaceInfo(add IWorkspace.WorkspaceInfo interface)
+
+## [0.0.25-alpha] - 2024-12-12
+
+### Added
+
+- interface IWfs 添加 GetFeatureParameters((add IWfs.GetFeatureParameters interface))
