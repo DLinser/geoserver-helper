@@ -7,23 +7,28 @@ export namespace IResource {
         rel: string;
         type: string;
     }
+
+    /**
+     * 文件资源详情 
+     */    
+    export interface IResourceInfo {
+        name: string;
+        parent: {
+            path: string;
+            link: ILinkItem;
+        };
+        lastModified: string;
+        children: {
+            child: {
+                name: string;
+                link: ILinkItem;
+            }[];
+        };
+    }
     /**
      * 文件目录信息
      */
     export interface IDirectoryInfo {
-        ResourceDirectory: {
-            name: string;
-            parent: {
-                path: string;
-                link: ILinkItem;
-            };
-            lastModified: string;
-            children: {
-                child: {
-                    name: string;
-                    link: ILinkItem;
-                }[];
-            };
-        };
+        ResourceDirectory: IResourceInfo;
     }
 }

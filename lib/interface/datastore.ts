@@ -1,7 +1,15 @@
 import { IWorkspace } from "./workspace"
 
 export namespace IDatastore {
-    export type DatastoreType = 'Shapefile' | 'GeoTIFF' | 'PostGIS'
+    export enum DatastoreType {
+        postgis = 'postgis',
+        mysql = 'mysql',
+        geopkg = 'geopkg',
+        shapefile= 'shapefile',
+        shapefiles= 'shapefiles',
+        geotiff= 'geotiff',
+        imagemosaic= 'imagemosaic',
+    }
     //新增或者编辑表单
     export interface DatastoreOperationForm {
         /**
