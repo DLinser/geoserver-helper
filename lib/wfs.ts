@@ -178,24 +178,7 @@ export default class wfsHelper {
         extension?: Record<string, string | number>;
     }) {
         return new Promise<ILayer.LayerPropertySheetInfo>((resolve, reject) => {
-            interface wfsQueryParams {
-                service: "WFS";
-                version: "1.0.0";
-                request: "GetFeature";
-                srsName: string;
-                typename: string;
-                outputFormat: "application/json";
-                featureId?: string;
-                CQL_FILTER?: string;
-                propertyname?: string;
-                maxFeatures?: number | string;
-                startIndex?: number | string;
-            }
-            // 使用索引签名来允许任意数量的额外属性
-            interface ExtendedWfsQueryParams extends wfsQueryParams {
-                [key: string]: string | number | undefined; // 这里允许任意类型的额外属性
-            }
-            let featureRequest: ExtendedWfsQueryParams = {
+            let featureRequest: IWfs.GetFeatureParameters = {
                 service: "WFS",
                 version: "1.0.0",
                 request: "GetFeature",

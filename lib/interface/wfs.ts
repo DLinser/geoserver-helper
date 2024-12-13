@@ -78,6 +78,10 @@ export namespace IWfs {
          */
         sortBy?: string;
         outputFormat: "application/json";
+        /**
+         * 这里允许任意类型的额外属性
+         */
+        [key: string]: string | number | undefined;
     }
     /**
      * 1.x版本的GetFeature参数(包括1.0.0和1.1.0)
