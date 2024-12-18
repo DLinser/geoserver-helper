@@ -991,7 +991,7 @@ export default class restHelper {
     }
 
     /**
-     * 新增数据存储
+     * 新增矢量数据存储
      * @group 数据存储
      * @param body 
      * @example
@@ -1004,6 +1004,7 @@ export default class restHelper {
      * // GeoPackage类型
      * restHelperInstance.addDatastoreApi({
      *      "name": "nyc",
+     *      "type": "GeoPackage类型",
      *      "connectionParameters": {
      *          "entry": [
      *              {"@key":"database","$":"file:///path/to/nyc.gpkg"},
@@ -1017,6 +1018,7 @@ export default class restHelper {
      * // PostGIS类型
      * restHelperInstance.addDatastoreApi({
      *  "name": "nyc",
+     *  "type": "PostGIS",
      *  "connectionParameters": {
      *      "entry": [
      *          {"@key":"host","$":"localhost"},
@@ -1034,6 +1036,7 @@ export default class restHelper {
      * // Shapefile 类型
      * restHelperInstance.addDatastoreApi({
      *  "name": "nyc",
+     *  "type": "Shapefile",
      *  "connectionParameters": {
      *      "entry": [{"@key":"url","$":"file:/path/to/nyc.shp"}]
      *   }
@@ -1044,6 +1047,7 @@ export default class restHelper {
      * // Shapefile文件夹类型
      * restHelperInstance.addDatastoreApi({
      *  "name": "nyc",
+     *  "type": "Directory of spatial files (shapefiles)",
      *  "connectionParameters": {
      *      "entry": [{"@key":"url","$":"file:/path/to"}]
      *   }
@@ -1059,9 +1063,6 @@ export default class restHelper {
         if (Object.hasOwnProperty.call(body, 'workspace')) {
             delete body.workspace
         }
-        if (Object.hasOwnProperty.call(body, 'type')) {
-            delete body.type
-        }
         if (Object.hasOwnProperty.call(body, 'connectionParameters')) {
             body.connectionParameters?.entry.forEach(singleEntry => {
                 if (Object.hasOwnProperty.call(singleEntry, 'label')) {
@@ -1073,12 +1074,31 @@ export default class restHelper {
                 if (Object.hasOwnProperty.call(singleEntry, 'required')) {
                     delete singleEntry.required
                 }
+                if (Object.hasOwnProperty.call(singleEntry, 'type')) {
+                    delete singleEntry.type
+                }
             })
         }
         return fetchUtil.post<string>(postUrl, { dataStore: body }, this.restXhrConfig)
     }
+    
     /**
-     * 更新数据存储
+     * 添加栅格数据存储
+     * @group 数据存储
+     * @param {IDatastore.DatastoreOperationForm} body
+     * @return {*}
+     */    
+    addCoverageDatastoreApi(body: IDatastore.DatastoreOperationForm) {
+        const postUrl = `${this.url}/rest/workspaces/${body.workspace}/coveragestores`
+        // 这个官网描述有问题 工作空间需要作为参数带进去
+        // if (Object.hasOwnProperty.call(body, 'workspace')) {
+        //     delete body.workspace
+        // }
+        return fetchUtil.post<string>(postUrl, { coverageStore: body }, this.restXhrConfig)
+    }
+
+    /**
+     * 更新矢量数据存储
      * @group 数据存储
      * @param orignDatastoreParam  源信息
      * @param body 要更新的实体
@@ -1092,9 +1112,6 @@ export default class restHelper {
         if (Object.hasOwnProperty.call(body, 'workspace')) {
             delete body.workspace
         }
-        if (Object.hasOwnProperty.call(body, 'type')) {
-            delete body.type
-        }
         if (Object.hasOwnProperty.call(body, 'connectionParameters')) {
             body.connectionParameters?.entry.forEach(singleEntry => {
                 if (Object.hasOwnProperty.call(singleEntry, 'label')) {
@@ -1106,6 +1123,9 @@ export default class restHelper {
                 if (Object.hasOwnProperty.call(singleEntry, 'required')) {
                     delete singleEntry.required
                 }
+                if (Object.hasOwnProperty.call(singleEntry, 'type')) {
+                    delete singleEntry.type
+                }
             })
         }
         return fetchUtil.put<string>(
@@ -1114,11 +1134,34 @@ export default class restHelper {
             this.restXhrConfig,
         )
     }
+
+    /**
+     * 更新矢量数据存储
+     * @group 数据存储
+     * @param orignDatastoreParam  源信息
+     * @param body 要更新的实体
+     * @returns 
+     */
+    updateCoverageDatastoreApi(
+        orignDatastoreParam: IDatastore.DatastoreInfo,
+        body: IDatastore.DatastoreOperationForm,
+    ) {
+        // 清理掉对后台无用的参数数据
+        if (Object.hasOwnProperty.call(body, 'workspace')) {
+            delete body.workspace
+        }
+        return fetchUtil.put<string>(
+            `${this.url}/rest/workspaces/${orignDatastoreParam.workspace.name}/coveragestores/${orignDatastoreParam.name}`,
+            { coverageStore: body },
+            this.restXhrConfig,
+        )
+    }
     /**
      * 删除数据存储
      * @group 数据存储
      * @param workspaceName 工作空间
      * @param storeName 存储名称
+     * @param recurse 是否循环递归的删除
      * @example
      * ``` typescript
      * const restHelperInstance = new restHelper({
@@ -1132,8 +1175,31 @@ export default class restHelper {
      * ```
      * @returns 
      */
-    deleteDatastoreApi(workspaceName: string, storeName: string) {
-        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}/datastores/${storeName}`, {}, this.restXhrConfig)
+    deleteDatastoreApi(workspaceName: string, storeName: string, recurse:boolean = false) {
+        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}/datastores/${storeName}?recurse=${recurse}`, {}, this.restXhrConfig)
+    }
+
+        /**
+     * 删除数据存储
+     * @group 数据存储
+     * @param workspaceName 工作空间
+     * @param storeName 存储名称
+     * @param recurse 是否循环递归的删除
+     * @example
+     * ``` typescript
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver"
+     *      userName: "admin",
+     *      password: "geoserver",
+     *  })
+     * restHelperInstance.deleteDatastoreApi("workspaceName","datastoreName").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    deleteCoverageDatastoreApi(workspaceName: string, storeName: string, recurse:boolean = false) {
+        return fetchUtil.delete<string>(`${this.url}/rest/workspaces/${workspaceName}/coveragestores/${storeName}?recurse=${recurse}`, {}, this.restXhrConfig)
     }
 
     /*************************************************数据存储相关end**************************************************** */
