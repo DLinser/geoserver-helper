@@ -83,8 +83,88 @@
 
 - rest 添加日志配置 以及安全部分接口
 
-## [0.0.20-alpha] - 2024-10-11
+## [0.0.20] - 2024-10-11
 
 ### Added
 
 - rest 添加资源目录的查询，资源的复制，移动功能
+
+## [0.0.21-alpha] - 2024-10-12
+
+### Added
+
+- rest 添加资源目录的创建接口
+
+## [0.0.21] - 2024-10-12
+
+### Fixed
+
+- rest getLayerInfoApi 修复返回结果的类型错误
+
+## [0.0.22] - 2024-11-04
+
+### Fixed
+
+- wms 修复没有到处 wms 相关 interfacebug
+
+## [0.0.23] - 2024-11-12
+
+### Fixed
+
+- wfs 修复 GetFeatureByPost 第二次请求时总是使用第一次的请求参数问题
+
+## [0.0.24] - 2024-11-20
+
+### Fixed
+
+- 补充上次
+
+## [0.0.25-alpha] - 2024-12-10
+
+### Added
+
+- rest 添加 getDefaultWorkspaceInfoApi 接口(Add the getDefaultWorkspaceInfoApi interface)
+- interface IWorkspace 添加 WorkspaceInfo(add IWorkspace.WorkspaceInfo interface)
+
+## [0.0.25-alpha] - 2024-12-12
+
+### Added
+
+- interface IWfs 添加 GetFeatureParameters(add IWfs.GetFeatureParameters interface)
+
+## [0.0.25] - 2024-12-16
+
+### Fixed
+
+- rest addDatastoreApi 接口去掉 type 参数的限制
+
+## [0.0.26] - 2024-12-16
+
+### Added
+
+- rest 添加 addCoverageDatastoreApi 和 updateCoverageDatastoreApi 接口(Add addCoverageDatastoreApi and updateCoverageDatastoreApi interfaces)
+- interface IDatastore.DatastoreInfo 添加 url 属性(Add URL attribute)
+
+## [0.0.27] - 2024-12-16
+
+### Fixed
+
+- rest 修复 addCoverageDatastoreApi 和 updateCoverageDatastoreApi 接口(Fixed addCoverageDatastoreApi and updateCoverageDatastoreApi interfaces)
+
+## [0.0.28-alpha] - 2024-12-16
+
+### Added
+
+- rest deleteDatastoreApi 添加 循环递归参数 recurse(Add parameter recurrence)
+
+## [0.0.28] - 2024-12-18
+
+### Fixed
+
+- rest addCoverageDatastoreApi workspace 参数修复 recurse(fix parameter of workspace)
+
+## [0.0.29] - 2024-12-18
+
+### Added
+
+- rest 添加 deleteLayerApi 接口 (add interfaces of deleteLayerApi)

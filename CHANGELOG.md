@@ -162,3 +162,9 @@
 ### Fixed
 
 - rest addCoverageDatastoreApi workspace 参数修复 recurse(fix parameter of workspace)
+
+## [0.0.29] - 2024-12-18
+
+### Added
+
+- rest 添加 deleteLayerApi 接口 (add interfaces of deleteLayerApi)

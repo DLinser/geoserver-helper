@@ -494,6 +494,30 @@ export default class restHelper {
     }
 
     /**
+     * 删除图层
+     * @group 图层
+     * @param layerName 图层名称
+     * @param workspaceName 工作空间名称
+     * @example
+     * ```typescript
+     * import restHelper from 'geoserver-helper/rest'
+     * const restHelperInstance = new restHelper({
+     *      url: "/geoserver",
+     *      userName: "admin",
+     *      password: "geoserver",
+     * })
+     * restHelperInstance.deleteLayerApi("layerName").then(res => {
+     *  console.log(res)
+     * })
+     * ```
+     * @returns 
+     */
+    deleteLayerApi(layerName: string, workspaceName?: string) {
+        const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/layers/${layerName}.json` : `${this.url}/rest/layers/${layerName}.json`
+        return fetchUtil.delete<ILayer.ResLayerGroupInfo>(queryUrl, {}, this.restXhrConfig)
+    }
+
+    /**
      * 获取图层源详情
      * @group 图层
      * @param {string} sourceInfoHref URL of the source
