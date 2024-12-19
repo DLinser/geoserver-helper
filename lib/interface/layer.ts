@@ -263,7 +263,7 @@ export namespace ILayer {
      * 图层切片任务列表
      */
     export interface LayerCacheTasks {
-        'long-array-array': string[]
+        'long-array-array': Array<number[]>
     }
 
     /**
