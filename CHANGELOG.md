@@ -168,3 +168,17 @@
 ### Added
 
 - rest 添加 deleteLayerApi 接口 (add interfaces of deleteLayerApi)
+
+## [0.0.30] - 2024-12-24
+
+### Added
+
+- interface wfs 添加 WfsFormats 类型
+- interface wms 添加 WmsFormats 类型
+
+## [0.0.31-alpha] - 2024-12-24
+
+### Added
+
+- interface wfs 修改 WfsFormats 类型
+- interface wms 修改 WmsFormats 类型

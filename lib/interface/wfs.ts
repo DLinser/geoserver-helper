@@ -110,4 +110,9 @@ export namespace IWfs {
         count: number | string;
     }
     export type GetFeatureParameters = GetFeatureParametersOfVersionOne | GetFeatureParametersOfVersionTwo
+
+    /**
+     * wfs服务支持的类型
+     */
+    export type WfsFormats = 'application/json' | 'shape-zip' | 'csv' | 'GML2' | 'GML3' | 'JSONP'
 }
