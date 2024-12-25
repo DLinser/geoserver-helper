@@ -26,21 +26,25 @@ export namespace IStyle {
      * 单个样式详细
      */
     export interface StyleDetailInfo {
-        style: {
-            name: string
-            format: string
-            languageVersion: {
-                version: string
-            }
-            filename: string
-            dateCreated: string
-            dateModified: string
-            /**
-             * 工作空间
-             */
-            workspace?: {
-                name: string
-            }
+        name: string
+        format: string
+        languageVersion: {
+            version: string
         }
+        filename: string
+        dateCreated: string
+        dateModified: string
+        /**
+         * 工作空间
+         */
+        workspace?: {
+            name: string
+        }
+    }
+    /**
+     * 返回的样式详细结果
+     */
+    export interface StyleDetailInfoRes {
+        style: StyleDetailInfo
     }
 }

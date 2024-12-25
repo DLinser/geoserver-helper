@@ -815,10 +815,10 @@ export default class restHelper {
      *  console.log(res)
      * })
      * ```
-     * @return {Promise<INamespaces.NamespaceInfo>}
+     * @return {Promise<INamespaces.NamespaceInfoRes>}
      */
     getNamespacesInfoApi(namespaceName: string) {
-        return fetchUtil.get<INamespaces.NamespaceInfo>(`${this.url}/rest/namespaces/${namespaceName}`, {}, this.restXhrConfig)
+        return fetchUtil.get<INamespaces.NamespaceInfoRes>(`${this.url}/rest/namespaces/${namespaceName}`, {}, this.restXhrConfig)
     }
 
     /*************************************************命名空间相关end**************************************************** */
@@ -845,6 +845,20 @@ export default class restHelper {
     getStylesListApi(workspaceName?: string) {
         const queryUrl = workspaceName ? `${this.url}/rest/workspaces/${workspaceName}/styles` : `${this.url}/rest/styles`
         return fetchUtil.get<IStyle.StyleList>(queryUrl, {}, this.restXhrConfig)
+    }
+
+    /**
+     * 获取样式的xld字符串
+     * @group 样式
+     * @param {string} styleName 样式名称
+     * @param {string} workspaceName 工作空间
+     * @return {*}
+     */
+    getStyleInfoApi(styleName: string, workspaceName?: string) {
+        const queryUrl = workspaceName
+            ? `${this.url}/rest/workspaces/${workspaceName}/styles/${styleName}.json`
+            : `${this.url}/rest/styles/${styleName}.json`
+        return fetchUtil.get<IStyle.StyleDetailInfoRes>(queryUrl, {}, this.restXhrConfig)
     }
 
     /**

@@ -182,3 +182,10 @@
 
 - interface wfs 修改 WfsFormats 类型
 - interface wms 修改 WmsFormats 类型
+
+## [0.0.31] - 2024-12-25
+
+### Added
+
+- interface namespaces 添加 NamespaceInfoRes 与 NamespaceInfo 类型
+- interface style 添加 StyleDetailInfoRes 与 StyleDetailInfo 类型
