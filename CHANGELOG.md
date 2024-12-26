@@ -189,3 +189,15 @@
 
 - interface namespaces 添加 NamespaceInfoRes 与 NamespaceInfo 类型
 - interface style 添加 StyleDetailInfoRes 与 StyleDetailInfo 类型
+
+## [0.0.32] - 2024-12-26
+
+### Added
+
+- interface system 添加 VersionItem 与 StatusItem 类型
+
+## [0.0.33] - 2024-12-26
+
+### Added
+
+- rest 添加用户和角色相关接口(Add user and role related interfaces)
