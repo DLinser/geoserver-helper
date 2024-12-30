@@ -8,3 +8,4 @@ export type { IResource } from './resource';
 export type { IStyle } from './style';
 export type { IWms } from './wms';
 export type { IWps } from './wps';
+export type { ISecurity } from './security';

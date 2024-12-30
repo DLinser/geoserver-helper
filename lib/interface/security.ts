@@ -46,10 +46,6 @@ export namespace ISecurity {
    * 用户新增或者编辑参数
    */
   export interface UserOperateParameters {
-    user: {
-      userName: string;
-      password: string;
-      enabled: boolean;
-    };
+    user: UserInfo;
   }
 }

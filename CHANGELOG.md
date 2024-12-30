@@ -201,3 +201,9 @@
 ### Added
 
 - rest 添加用户和角色相关接口(Add user and role related interfaces)
+
+## [0.0.34] - 2024-12-26
+
+### Fixed
+
+- rest 补充缺失的 ISecurity(Add actual interfaces)

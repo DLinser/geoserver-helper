@@ -932,6 +932,62 @@ export default class restHelper {
       tempXhrConfig
     );
   }
+
+   /**
+   * 获取图层源信息列表
+   * @group 图层
+   * @param {string} workspace 工作空间名
+   * @param {string} dataStore 数据存储名
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.getFeaturetypesApi("workspace", "dataStore").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+   getFeaturetypesApi(workspace: string , dataStore:string) {
+    return fetchUtil.get<ILayer.ResFeatureTypes>(
+      `${this.url}/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes.json`,
+      {},
+      this.restXhrConfig
+    );
+  }
+
+  /**
+   * 获取图层源信息列表
+   * @group 图层
+   * @param {string} workspace 工作空间名
+   * @param {string} dataStore 数据存储名
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.getFeaturetypeInfoApi("workspace", "dataStore", "featureType").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+  getFeaturetypeInfoApi(workspace: string , dataStore:string, featureType:string) {
+    return fetchUtil.get<ILayer.LayerSourceDetailInfo>(
+      `${this.url}/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes/${featureType}.json`,
+      {},
+      this.restXhrConfig
+    );
+  }
+
+
   /*************************************************图层相关end**************************************************** */
   /*************************************************图层组相关start**************************************************** */
   /**

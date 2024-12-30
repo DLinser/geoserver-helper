@@ -213,6 +213,13 @@ export namespace ILayer {
             layer: ResLayerListItem[]
         }
     }
+
+    //图层特征源信息返回结果
+    export interface ResFeatureTypes {
+        featureTypes: {
+            featureType:ResLayerListItem[]
+        }
+    }
     export interface LayerModifyInfo {
         name?: string
         path?: string
