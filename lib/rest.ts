@@ -936,8 +936,9 @@ export default class restHelper {
    /**
    * 获取图层源信息列表
    * @group 图层
-   * @param {string} workspace 工作空间名
-   * @param {string} dataStore 数据存储名
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名
+   * @param {string} list 返回的类型 configured: 已配置的, available: 可用的, available_with_geom: 可用的且有几何类型, all: 所有的
    * @example
    * ``` typescript
    * import restHelper from 'geoserver-helper/rest'
@@ -946,25 +947,30 @@ export default class restHelper {
    *      userName: "admin",
    *      password: "geoserver",
    *  })
-   * restHelperInstance.getFeaturetypesApi("workspace", "dataStore").then(res => {
+   * restHelperInstance.getFeaturetypesApi("workspaceName ", "storeName ").then(res => {
    *  console.log(res)
    * })
    * ```
    * @return {Promise}
    */
-   getFeaturetypesApi(workspace: string , dataStore:string) {
-    return fetchUtil.get<ILayer.ResFeatureTypes>(
-      `${this.url}/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes.json`,
+   getFeaturetypesApi(workspaceName : string , storeName? :string, list?:"configured"|"available"|"available_with_geom"|"all") {
+    const dataStoreString = storeName?`/datastores/${storeName }`:'';
+    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
+    if(list){
+      queryUrl = queryUrl + `?list=${list}`;
+    }
+    return fetchUtil.get<ILayer.ResFeatureTypes>(queryUrl,
       {},
       this.restXhrConfig
     );
   }
 
   /**
-   * 获取图层源信息列表
+   * 获取图层源信息详情
    * @group 图层
-   * @param {string} workspace 工作空间名
-   * @param {string} dataStore 数据存储名
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名(可以传空字符串)
+   * @param {string} featureTypeName 图层名
    * @example
    * ``` typescript
    * import restHelper from 'geoserver-helper/rest'
@@ -973,16 +979,48 @@ export default class restHelper {
    *      userName: "admin",
    *      password: "geoserver",
    *  })
-   * restHelperInstance.getFeaturetypeInfoApi("workspace", "dataStore", "featureType").then(res => {
+   * restHelperInstance.getFeaturetypeInfoApi("workspaceName", "storeName", "featureTypeName").then(res => {
    *  console.log(res)
    * })
    * ```
    * @return {Promise}
    */
-  getFeaturetypeInfoApi(workspace: string , dataStore:string, featureType:string) {
+  getFeaturetypeInfoApi(workspaceName: string , storeName:string, featureTypeName:string) {
+    const dataStoreString = storeName?`/datastores/${storeName }`:'';
     return fetchUtil.get<ILayer.LayerSourceDetailInfo>(
-      `${this.url}/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes/${featureType}.json`,
+      `${this.url}/rest/workspaces/${workspaceName}${dataStoreString}/featuretypes/${featureTypeName}.json`,
       {},
+      this.restXhrConfig
+    );
+  }
+
+  /**
+   * 创建/发布图层
+   * @group 图层
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名(可以传空字符串)
+   * @param {ILayer.FeatureTypeInfo} featureType 图层特征信息
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.creatFeaturetypeApi("workspaceName", "storeName", "youfeatureType").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+  creatFeaturetypeApi(workspaceName: string , storeName:string, featureType : ILayer.FeatureTypeAddParam) {
+    const dataStoreString = storeName?`/datastores/${storeName }`:'';
+    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
+    return fetchUtil.post<ILayer.LayerSourceDetailInfo>(queryUrl,
+      {
+        featureType: featureType
+      },
       this.restXhrConfig
     );
   }

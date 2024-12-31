@@ -263,9 +263,9 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log(res);
 //   console.log("重新加载成功");
 // })
-restHelperInstance.getResourceDirectoryInfo("/styles").then((res) => {
-  console.log("资源目录加载成功");
-})
+// restHelperInstance.getResourceDirectoryInfo("/styles").then((res) => {
+//   console.log("资源目录加载成功");
+// })
 
 
 // restHelperInstance.copyResource("/testData/dem.sld", "/styles/dem.sld").then((res) => {
@@ -279,4 +279,20 @@ restHelperInstance.getResourceDirectoryInfo("/styles").then((res) => {
 // restHelperInstance.deleteResource("/testData/test.txt").then((res) => {
 //   console.log("资源删除成功");
 // })
+
+// restHelperInstance.getFeaturetypesApi("qhd","qhd").then(res => {
+//   console.log(res)
+// })
+
+restHelperInstance.creatFeaturetypeApi("qhd","qhd",{
+  "name":"ceshiRESTPIBLISH",
+  "nativeName":"d966d61455f74093b679bd6f3c9d76f7",
+  "title":"测试图层rest发布",
+  "abstract":"测试摘要",
+  "nativeCRS":"EPSG:4326",
+  "srs":"EPSG:4326",
+  "projectionPolicy":"REPROJECT_TO_DECLARED"
+}).then(res => {
+  console.log(res,"创建成功")
+})
 

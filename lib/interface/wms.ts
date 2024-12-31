@@ -156,7 +156,7 @@ export namespace IWms {
             version?: WmsVersion,
             request?: "GetLegendGraphic",
             layer?: string,
-            format?: "application/json"
+            format?: "application/json" | WmsFormats
         }
         export interface LegendItem {
             layerId: string

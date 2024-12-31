@@ -207,3 +207,9 @@
 ### Fixed
 
 - rest 补充缺失的 ISecurity(Add actual interfaces)
+
+## [0.0.35] - 2024-12-31
+
+### Added
+
+- rest 添加 Featuretypes 相关接口(Add featuretypes related interfaces)
