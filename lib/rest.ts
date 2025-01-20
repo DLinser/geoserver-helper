@@ -953,7 +953,7 @@ export default class restHelper {
    * ```
    * @return {Promise}
    */
-   getFeaturetypesApi(workspaceName : string , storeName? :string, list?:"configured"|"available"|"available_with_geom"|"all") {
+   getFeaturetypesApi(workspaceName : string , storeName? :string, list?:ILayer.FeatureTypeQueryTypes) {
     const dataStoreString = storeName?`/datastores/${storeName }`:'';
     let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
     if(list){

@@ -279,6 +279,10 @@ export namespace ILayer {
       layer: ResLayerListItem[];
     };
   }
+  /**
+   * FeatureType 查询时的类型
+   */
+  export type FeatureTypeQueryTypes = "configured" | "available" | "available_with_geom" | "all"
 
   //图层特征源信息返回结果
   export interface ResFeatureTypes {
