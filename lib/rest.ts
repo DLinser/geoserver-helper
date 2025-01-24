@@ -934,7 +934,7 @@ export default class restHelper {
   }
 
    /**
-   * 获取图层源信息列表
+   * 获取矢量图层源信息列表
    * @group 图层
    * @param {string} workspaceName 工作空间名
    * @param {string} storeName 数据存储名
@@ -966,7 +966,39 @@ export default class restHelper {
   }
 
   /**
-   * 获取图层源信息详情
+   * 获取栅格图层源信息列表
+   * @group 图层
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名
+   * @param {string} list 返回的类型 all: 所有的 有all的话不管有没有发布过都会返回
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.getCoveragesApi("workspaceName ", "storeName ").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+     getCoveragesApi(workspaceName : string , storeName? :string, list?:"all") {
+      const dataStoreString = storeName?`/coveragestores/${storeName }`:'';
+      let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
+      if(list){
+        queryUrl = queryUrl + `?list=${list}`;
+      }
+      return fetchUtil.get<ILayer.ResCoverages>(queryUrl,
+        {},
+        this.restXhrConfig
+      );
+    }
+
+  /**
+   * 获取矢量图层源信息详情
    * @group 图层
    * @param {string} workspaceName 工作空间名
    * @param {string} storeName 数据存储名(可以传空字符串)
@@ -995,7 +1027,36 @@ export default class restHelper {
   }
 
   /**
-   * 创建/发布图层
+   * 获取栅格图层源信息详情
+   * @group 图层
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名(可以传空字符串)
+   * @param {string} coverageName 图层名
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.getCoverageInfoApi("workspaceName", "storeName", "coverageName").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+  getCoverageInfoApi(workspaceName: string , storeName:string, coverageName:string) {
+    const dataStoreString = storeName?`/coveragestores/${storeName }`:'';
+    return fetchUtil.get<ILayer.LayerSourceDetailInfo>(
+      `${this.url}/rest/workspaces/${workspaceName}${dataStoreString}/coverages/${coverageName}.json`,
+      {},
+      this.restXhrConfig
+    );
+  }
+
+  /**
+   * 创建/发布矢量图层
    * @group 图层
    * @param {string} workspaceName 工作空间名
    * @param {string} storeName 数据存储名(可以传空字符串)
@@ -1017,7 +1078,38 @@ export default class restHelper {
   creatFeaturetypeApi(workspaceName: string , storeName:string, featureType : ILayer.FeatureTypeAddParam) {
     const dataStoreString = storeName?`/datastores/${storeName }`:'';
     let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
-    return fetchUtil.post<ILayer.LayerSourceDetailInfo>(queryUrl,
+    return fetchUtil.post<string>(queryUrl,
+      {
+        featureType: featureType
+      },
+      this.restXhrConfig
+    );
+  }
+
+  /**
+   * 创建/发布栅格图层
+   * @group 图层
+   * @param {string} workspaceName 工作空间名
+   * @param {string} storeName 数据存储名(可以传空字符串)
+   * @param {ILayer.CoverageAddParam} coverage 图层特征信息
+   * @example
+   * ``` typescript
+   * import restHelper from 'geoserver-helper/rest'
+   * const restHelperInstance = new restHelper({
+   *      url: "/geoserver",
+   *      userName: "admin",
+   *      password: "geoserver",
+   *  })
+   * restHelperInstance.creatCoverageApi("workspaceName", "storeName", "youcoverages").then(res => {
+   *  console.log(res)
+   * })
+   * ```
+   * @return {Promise}
+   */
+  creatCoverageApi(workspaceName: string , storeName:string, featureType : ILayer.CoverageAddParam) {
+    const dataStoreString = storeName?`/coveragestores/${storeName }`:'';
+    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
+    return fetchUtil.post<string>(queryUrl,
       {
         featureType: featureType
       },

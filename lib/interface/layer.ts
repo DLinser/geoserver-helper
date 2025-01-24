@@ -64,13 +64,22 @@ export namespace ILayer {
       string: string | string[];
     };
     /**
+     * 描述
+     */
+    description: string;
+    /**
      * 数据本身的坐标系
      */
     nativeCRS?: string;
     /**
      * 定义的坐标系
      */
-    srs?: string;
+    srs?:
+      | string
+      | {
+          "@class": string;
+          $: string;
+        };
     /**
      * 投影策略(强制声明、重投影、无)
      */
@@ -99,6 +108,17 @@ export namespace ILayer {
      * 是否可用
      */
     enabled?: boolean;
+    store: {
+      "@class": "dataStore" | "coverageStore";
+      name: string;
+      href: string;
+    };
+  }
+
+  /**
+   * 矢量图层要素特征信息
+   */
+  export interface FeatureTypeInfo extends BaseFeatureTypeInfo {
     /**
      * cql过滤条件
      */
@@ -118,67 +138,68 @@ export namespace ILayer {
   }
 
   /**
-   * 图层要素特征信息
+   * 栅格图层特征信息
    */
-  export interface FeatureTypeInfo  extends BaseFeatureTypeInfo {
-
+  export interface CoverageInfo extends BaseFeatureTypeInfo {
+    dimensions: {
+      coverageDimension: ICoverageDimension[] | ICoverageDimension;
+    };
+    /**
+     * 原始栅格文件名称
+     */
+    nativeCoverageName: string;
+    /**
+     * 栅格文件格式
+     */
+    nativeFormat: string;
+    /**
+     * 栅格信息
+     */
+    grid: {
+      "@dimension": number;
+      range: {
+        low: string;
+        high: string;
+      };
+      transform: {
+        scaleX: string;
+        scaleY: string;
+        shearX: number;
+        shearY: number;
+        translateX: number;
+        translateY: number;
+      };
+      crs: string;
+    };
+    supportedFormats: {
+      string: Array<
+        | "GEOTIFF"
+        | "ArcGrid"
+        | "GIF"
+        | "PNG"
+        | "JPEG"
+        | "TIFF"
+        | "GeoPackage (mosaic)"
+        | "ImageMosaic"
+      >;
+    };
   }
   /**
    * 图层特征信息新增参数
    */
-  export interface FeatureTypeAddParam extends BaseFeatureTypeInfo {
-    /**
-     * 数据本身的坐标系(不为空)
-     */
-    nativeCRS: string;
-  }
+  export interface FeatureTypeAddParam extends FeatureTypeInfo {}
+
+  /**
+   * 栅格图层特征信息新增参数
+   */
+  export interface CoverageAddParam extends CoverageInfo {}
+  
   //图层源详细
   export interface LayerSourceDetailInfo {
     //矢量源
     featureType?: FeatureTypeInfo;
     //栅格源
-    coverage?: {
-      name: string;
-      nativeName: string;
-      namespace: {
-        name: string;
-        href: string;
-      };
-      dimensions: {
-        coverageDimension: ICoverageDimension[] | ICoverageDimension;
-      };
-      title: string;
-      srs: string;
-      nativeBoundingBox: {
-        minx: number;
-        maxx: number;
-        miny: number;
-        maxy: number;
-        crs:
-          | string
-          | {
-              "@class": string;
-              $: string;
-            };
-      };
-      latLonBoundingBox: {
-        minx: number;
-        maxx: number;
-        miny: number;
-        maxy: number;
-        crs: string;
-      };
-      enabled: boolean;
-      attributes: {
-        attribute: {
-          name: string;
-          minOccurs: number;
-          maxOccurs: number;
-          nillable: boolean;
-          binding: string;
-        }[];
-      };
-    };
+    coverage?: CoverageInfo;
   }
 
   //图层详情
@@ -280,13 +301,28 @@ export namespace ILayer {
     };
   }
 
-  //图层特征源信息返回结果
+  //矢量图层特征源信息返回结果
   export interface ResFeatureTypes {
     /**
      * 已经发布的图层返回结构
      */
     featureTypes?: {
       featureType: ResLayerListItem[];
+    };
+    /**
+     * 未发布或者全部的特征表返回结构
+     */
+    list?: {
+      string: string[];
+    };
+  }
+  //栅格图层特征源信息返回结果
+  export interface ResCoverages {
+    /**
+     * 已经发布的图层返回结构
+     */
+    coverages?: {
+      coverage: ResLayerListItem[];
     };
     /**
      * 未发布或者全部的特征表返回结构

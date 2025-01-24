@@ -213,3 +213,9 @@
 ### Added
 
 - rest 添加 Featuretypes 相关接口(Add featuretypes related interfaces)
+
+## [0.0.36] - 2025-01-24
+
+### Added
+
+- rest 添加 Coverages 相关接口(Add coverages related interfaces)

@@ -201,3 +201,21 @@
 ### Added
 
 - rest 添加用户和角色相关接口(Add user and role related interfaces)
+
+## [0.0.34] - 2024-12-26
+
+### Fixed
+
+- rest 补充缺失的 ISecurity(Add actual interfaces)
+
+## [0.0.35] - 2024-12-31
+
+### Added
+
+- rest 添加 Featuretypes 相关接口(Add featuretypes related interfaces)
+
+## [0.0.36] - 2025-01-24
+
+### Added
+
+- rest 添加 Coverages 相关接口(Add coverages related interfaces)
