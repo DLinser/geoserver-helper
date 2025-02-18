@@ -176,9 +176,10 @@ export namespace IWms {
         }
 
         export interface LegendSymbolizer {
-            Point: LegendPointSymbolizer
-            Polygon: LegendPolygonSymbolizer
-            Raster: LegendRasterSymbolizer
+            Point?: LegendPointSymbolizer
+            Line?: LegendLineSymbolizer
+            Polygon?: LegendPolygonSymbolizer
+            Raster?: LegendRasterSymbolizer
         }
 
         export interface LegendPointSymbolizer {
@@ -191,14 +192,22 @@ export namespace IWms {
             graphics: Graphic[]
         }
 
+        export interface LegendLineSymbolizer {
+            stroke: string
+            "stroke-opacity"?: string
+            "stroke-width"?: string
+            "stroke-linecap?": string
+            "stroke-linejoin"?: string
+        }
+
         export interface LegendPolygonSymbolizer {
             fill: string
-            "fill-opacity": string
-            stroke: string
-            "stroke-linecap": string
-            "stroke-linejoin": string
-            "stroke-opacity": string
-            "stroke-width": number
+            "fill-opacity"?: string
+            stroke?: string
+            "stroke-linecap"?: string
+            "stroke-linejoin"?: string
+            "stroke-opacity"?: string
+            "stroke-width"?: number
         }
 
         export interface LegendRasterSymbolizer {
@@ -216,7 +225,12 @@ export namespace IWms {
         export interface Graphic {
             mark: string
             fill: string
-            "fill-opacity": string
+            "fill-opacity"?: string
+            stroke?: string
+            "stroke-width"?: string
+            "stroke-opacity"?: string
+            "stroke-linecap"?: string
+            "stroke-linejoin"?: string
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -219,3 +219,9 @@
 ### Added
 
 - rest 添加 Coverages 相关接口(Add coverages related interfaces)
+
+## [0.0.37] - 2025-02-18
+
+### Added
+
+- rest 添加 IWms.GetLegendGraphic.LegendLineSymbolizer 接口(Add interfaces of IWms.GetLegendGraphic.LegendLineSymbolizer)
