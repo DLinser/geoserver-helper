@@ -99,7 +99,7 @@ export namespace IWms {
         }
     }
     export type GetFeatureInfoParameters = {
-        version?: "1.0.0" | "1.1.0" | "1.1.1"
+        version?: Extract<WmsVersion, "1.0.0" | "1.1.0" | "1.1.1">
         layers?: string
         styles?: string
         //坐标系
@@ -124,7 +124,7 @@ export namespace IWms {
         //报错时报错信息的格式
         exceptions?: "text/plain" | "application/vnd.ogc.gml" | "application/vnd.ogc.gml/3.1.1" | "text/html" | "application/json" | "text/javascript"
     } | {
-        version?: "1.3.0"
+        version?: Extract<WmsVersion, "1.3.0">
         layers?: string
         styles?: string
         //坐标系（WMS 1.3.0 +）
