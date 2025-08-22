@@ -225,3 +225,10 @@
 ### Added
 
 - rest 添加 IWms.GetLegendGraphic.LegendLineSymbolizer 接口(Add interfaces of IWms.GetLegendGraphic.LegendLineSymbolizer)
+
+## [0.0.38] - 2025-08-21
+
+### Fixed
+
+- wfs 修复GetFeature方法中startIndex为0不识别的问题
+

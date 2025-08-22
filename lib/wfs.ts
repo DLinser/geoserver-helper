@@ -208,7 +208,7 @@ export default class wfsHelper {
                 if (queryOption.maxFeatures) {
                     featureRequest.maxFeatures = queryOption.maxFeatures;
                 }
-                if (queryOption.startIndex) {
+                if (queryOption.startIndex !== undefined && queryOption.startIndex !== null) {
                     featureRequest.startIndex = queryOption.startIndex;
                 }
                 if (

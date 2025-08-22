@@ -89,12 +89,12 @@ export default class wmsHelper {
             ? `${this.workspace}:${this.layer}`
             : this.layer);
         const versionParameters = option.version == "1.3.0" ? {
-            x: "0",
-            y: "0",
-            srs: "EPSG:4326"
-        } : {
             i: "0",
             j: "0",
+            srs: "EPSG:4326"
+        } : {
+            x: "0",
+            y: "0",
             crs: "EPSG:4326"
         }
         const featureRequest: IWms.GetFeatureInfoParameters = Object.assign({
