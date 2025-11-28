@@ -1139,7 +1139,7 @@ export default class restHelper {
    */
   getLayerGroupListApi(workspaceName?: string) {
     const queryUrl = workspaceName
-      ? `${this.url}/rest/workspaces/workspaceName/layergroups.json`
+      ? `${this.url}/rest/workspaces/${workspaceName}/layergroups.json`
       : `${this.url}/rest/layergroups.json`;
     return fetchUtil.get<ILayer.ResLayerGroupList>(
       queryUrl,

@@ -234,7 +234,7 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log(res)
 // })
 
-// restHelperInstance.getLayerGroupListApi().then(res => {
+// restHelperInstance.getLayerGroupListApi("ne").then(res => {
 //   debugger
 //   console.log(res)
 // })
@@ -284,15 +284,15 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log(res)
 // })
 
-restHelperInstance.creatFeaturetypeApi("qhd","qhd",{
-  "name":"ceshiRESTPIBLISH",
-  "nativeName":"d966d61455f74093b679bd6f3c9d76f7",
-  "title":"测试图层rest发布",
-  "abstract":"测试摘要",
-  "nativeCRS":"EPSG:4326",
-  "srs":"EPSG:4326",
-  "projectionPolicy":"REPROJECT_TO_DECLARED"
-}).then(res => {
-  console.log(res,"创建成功")
-})
+// restHelperInstance.creatFeaturetypeApi("qhd","qhd",{
+//   "name":"ceshiRESTPIBLISH",
+//   "nativeName":"d966d61455f74093b679bd6f3c9d76f7",
+//   "title":"测试图层rest发布",
+//   "abstract":"测试摘要",
+//   "nativeCRS":"EPSG:4326",
+//   "srs":"EPSG:4326",
+//   "projectionPolicy":"REPROJECT_TO_DECLARED"
+// }).then(res => {
+//   console.log(res,"创建成功")
+// })
 
