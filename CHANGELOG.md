@@ -242,5 +242,5 @@
 
 ### Fixed
 
-- rest 修复getLayerGroupListApi传工作空间名无效的问题
+- rest 修复getLayerGroupListApi传工作空间名无效的问题 (Fix the issue where getLayerGroupListApi passes invalid workspace names)
 
