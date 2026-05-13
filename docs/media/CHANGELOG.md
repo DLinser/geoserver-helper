@@ -219,3 +219,28 @@
 ### Added
 
 - rest 添加 Coverages 相关接口(Add coverages related interfaces)
+
+## [0.0.37] - 2025-02-18
+
+### Added
+
+- rest 添加 IWms.GetLegendGraphic.LegendLineSymbolizer 接口(Add interfaces of IWms.GetLegendGraphic.LegendLineSymbolizer)
+
+## [0.0.38] - 2025-08-21
+
+### Fixed
+
+- wfs 修复GetFeature方法中startIndex为0不识别的问题
+
+## [1.0.0] - 2025-09-15
+
+### Changed
+
+- 发布正式版本1.0.0
+
+## [1.0.1] - 2025-11-28
+
+### Fixed
+
+- rest 修复getLayerGroupListApi传工作空间名无效的问题 (Fix the issue where getLayerGroupListApi passes invalid workspace names)
+

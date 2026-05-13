@@ -244,3 +244,8 @@
 
 - rest 修复getLayerGroupListApi传工作空间名无效的问题 (Fix the issue where getLayerGroupListApi passes invalid workspace names)
 
+## [1.0.2] - 2026-05-13
+
+### Added
+
+- 添加wcs服务相关接口

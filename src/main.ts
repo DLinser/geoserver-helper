@@ -4,6 +4,8 @@ import fetchUtil from "../lib/utils/fetch";
 import restHelper from "../lib/rest";
 import wfsHelper from "../lib/wfs";
 import wmsHelper from "../lib/wms";
+import wcsHelper from "../lib/wcs";
+
 import Feature from "ol/Feature";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
@@ -37,6 +39,9 @@ const wfsHelperInstance = new wfsHelper({
 const wmsHelperInstance = new wmsHelper({
   url: "/geoserver/wms",
   workspace: "qhd",
+});
+const wcsHelperInstance = new wcsHelper({
+  url: "/geoserver/wcs",
 });
 
 const countXml = wpsHelper.formatFeatureCountXmlString({
@@ -267,7 +272,6 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log("资源目录加载成功");
 // })
 
-
 // restHelperInstance.copyResource("/testData/dem.sld", "/styles/dem.sld").then((res) => {
 //   console.log("资源移动成功");
 // })
@@ -296,3 +300,12 @@ feature.setId("jiquanxian_1045_2.353");
 //   console.log(res,"创建成功")
 // })
 
+wcsHelperInstance
+  .DescribeCoverage({
+    version: "2.0.1",
+    coverage: "henan:郑州经开区",
+  })
+  .then((res) => {
+    debugger;
+    console.log(res);
+  });

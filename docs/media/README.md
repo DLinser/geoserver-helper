@@ -113,6 +113,7 @@ import geoserverHelper from "geoserver-helper";
 // 按需引入依赖
 import utils from "geoserver-helper/utils";
 import wfsHelper from "geoserver-helper/wfs";
+import wcsHelper from "geoserver-helper/wcs";
 import wpsHelper from "geoserver-helper/wps";
 import wmsHelper from "geoserver-helper/wms";
 import restHelper from "geoserver-helper/rest";
@@ -147,9 +148,12 @@ import geoserverHelper from "geoserver-helper";
 // 按需引入依赖
 import utils from "geoserver-helper/dist/utils";
 import wfsHelper from "geoserver-helper/dist/wfs";
+import wcsHelper from "geoserver-helper/dist/wcs";
 import wpsHelper from "geoserver-helper/dist/wps";
 import wmsHelper from "geoserver-helper/dist/wms";
 ```
+
+开发文档地址：[传送门](https://dlinser.github.io/geoserver-helper/)
 
 ## 版本变更日志
 
