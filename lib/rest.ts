@@ -4,9 +4,9 @@ import { type IWorkspace } from "./interface/workspace";
 import { type INamespaces } from "./interface/namespaces";
 import { type IStyle } from "./interface/style";
 import { type IDatastore } from "./interface/datastore";
-import { ISystem } from "./interface/system";
-import { IResource } from "./interface/resource";
-import { ISecurity } from "./interface/security";
+import { type ISystem } from "./interface/system";
+import { type IResource } from "./interface/resource";
+import { type ISecurity } from "./interface/security";
 export default class restHelper {
   private restXhrConfig: Record<string, any> = {
     headers: {},
@@ -290,7 +290,7 @@ export default class restHelper {
    *      userName: "admin",
    *      password: "geoserver",
    *  })
-   * restHelperInstance.creatResource("/test.txt","Hellow World").then(res => {
+   * restHelperInstance.creatResource("/test.txt","Hello World").then(res => {
    *  console.log(res)
    * })
    * ```
@@ -308,7 +308,7 @@ export default class restHelper {
    * 复制资源（只能是文件不能是目录）
    * @group 文件资源
    * @param newPath 新文件路径（相对于data_dir的路径）
-   * @param orignPath 原始路径（相对于data_dir的路径）
+   * @param originPath 原始路径（相对于data_dir的路径）
    * @example
    * ``` typescript
    * const restHelperInstance = new restHelper({
@@ -322,10 +322,10 @@ export default class restHelper {
    * ```
    * @returns
    */
-  copyResource(newPath: string, orignPath: string) {
+  copyResource(newPath: string, originPath: string) {
     return fetchUtil.put<string>(
       `${this.url}/rest/resource${newPath}?operation=copy`,
-      orignPath,
+      originPath,
       this.restXhrConfig
     );
   }
@@ -334,7 +334,7 @@ export default class restHelper {
    * 移动资源（只能是文件不能是目录）
    * @group 文件资源
    * @param newPath 新文件路径（相对于data_dir的路径）
-   * @param orignPath 原始路径（相对于data_dir的路径）
+   * @param originPath 原始路径（相对于data_dir的路径）
    * @example
    * ``` typescript
    * const restHelperInstance = new restHelper({
@@ -348,10 +348,10 @@ export default class restHelper {
    * ```
    * @returns
    */
-  moveResource(newPath: string, orignPath: string) {
+  moveResource(newPath: string, originPath: string) {
     return fetchUtil.put<string>(
       `${this.url}/rest/resource${newPath}?operation=move`,
-      orignPath,
+      originPath,
       this.restXhrConfig
     );
   }
@@ -429,7 +429,7 @@ export default class restHelper {
    */
   updateMasterPassword(updateForm: ISecurity.MasterPasswordUpdateForm) {
     return fetchUtil.put<string>(
-      `${this.url}/rest/logging`,
+      `${this.url}/rest/security/masterpw.json`,
       updateForm,
       this.restXhrConfig
     );
@@ -538,11 +538,11 @@ export default class restHelper {
    *      userName: "admin",
    *      password: "geoserver",
    *  })
-   * restHelperInstance.getRoles().then(res => {
-   *  console.log(res)
-   * })
-   * ```
-   * */
+    * restHelperInstance.getUsers().then(res => {
+    *  console.log(res)
+    * })
+    * ```
+    * */
   getUsers() {
     return fetchUtil.get<ISecurity.Users>(
       `${this.url}/rest/security/usergroup/users.json`,
@@ -811,7 +811,7 @@ export default class restHelper {
     const queryUrl = workspaceName
       ? `${this.url}/rest/workspaces/${workspaceName}/layers/${layerName}.json`
       : `${this.url}/rest/layers/${layerName}.json`;
-    return fetchUtil.delete<ILayer.ResLayerGroupInfo>(
+    return fetchUtil.delete<string>(
       queryUrl,
       {},
       this.restXhrConfig
@@ -889,9 +889,13 @@ export default class restHelper {
         threadCount: 1,
       },
     };
-    const seedOption = Object.assign(defaultSeedOption, {
-      seedRequest: seedRequestOption,
-    });
+    // 合并默认值，避免调用方只传部分参数时默认值被整体覆盖
+    const seedOption: ISeedOption = {
+      seedRequest: {
+        ...defaultSeedOption.seedRequest,
+        ...seedRequestOption,
+      },
+    };
     return fetchUtil.post<string>(
       `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}.json`,
       seedOption,
@@ -910,27 +914,38 @@ export default class restHelper {
    *      userName: "admin",
    *      password: "geoserver",
    *  })
-   * restHelperInstance.clostLayerCacheTaskApi("workspace:layername").then(res => {
+   * restHelperInstance.closeLayerCacheTaskApi("workspace:layername").then(res => {
    *   console.log(res)
    * })
    * @return {Promise<string>}
    */
-  clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
+  closeLayerCacheTaskApi(layerNameWithWorkspace?: string) {
     const realLayerNameWithWorkspace = layerNameWithWorkspace
       ? layerNameWithWorkspace
       : `${this.workspace}:${this.layer}`;
-    const tempHeadersConfig = Object.assign(
-      { "Content-Type": "application/javascript" },
-      JSON.parse(JSON.stringify(this.restXhrConfig.headers))
-    );
-    const tempXhrConfig = Object.assign(this.restXhrConfig, {
-      headers: tempHeadersConfig,
-    });
+    const tempXhrConfig = {
+      ...this.restXhrConfig,
+      headers: {
+        ...this.restXhrConfig.headers,
+        "Content-Type": "application/javascript",
+      },
+    };
     return fetchUtil.post<string>(
       `${this.url}/gwc/rest/seed/${realLayerNameWithWorkspace}`,
       "kill_all=all" as any,
       tempXhrConfig
     );
+  }
+
+  /**
+   * 关闭图层切片任务
+   * @deprecated 请使用 closeLayerCacheTaskApi（原方法名存在拼写错误，仅为兼容保留）
+   * @group 图层
+   * @param {string} layerNameWithWorkspace 图层名（为空时默认使用构造函数中的图层名称）
+   * @return {Promise<string>}
+   */
+  clostLayerCacheTaskApi(layerNameWithWorkspace?: string) {
+    return this.closeLayerCacheTaskApi(layerNameWithWorkspace);
   }
 
    /**
@@ -987,10 +1002,10 @@ export default class restHelper {
    */
      getCoveragesApi(workspaceName : string , storeName? :string, list?:"all") {
       const dataStoreString = storeName?`/coveragestores/${storeName }`:'';
-      let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
-      if(list){
-        queryUrl = queryUrl + `?list=${list}`;
-      }
+    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
+    if(list){
+      queryUrl = queryUrl + `?list=${list}`;
+    }
       return fetchUtil.get<ILayer.ResCoverages>(queryUrl,
         {},
         this.restXhrConfig
@@ -1077,7 +1092,7 @@ export default class restHelper {
    */
   creatFeaturetypeApi(workspaceName: string , storeName:string, featureType : ILayer.FeatureTypeAddParam) {
     const dataStoreString = storeName?`/datastores/${storeName }`:'';
-    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
+    const queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/featuretypes.json`;
     return fetchUtil.post<string>(queryUrl,
       {
         featureType: featureType
@@ -1108,7 +1123,7 @@ export default class restHelper {
    */
   creatCoverageApi(workspaceName: string , storeName:string, featureType : ILayer.CoverageAddParam) {
     const dataStoreString = storeName?`/coveragestores/${storeName }`:'';
-    let queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
+    const queryUrl = `${this.url}/rest/workspaces/${workspaceName }${dataStoreString}/coverages.json`;
     return fetchUtil.post<string>(queryUrl,
       {
         featureType: featureType
@@ -1277,8 +1292,9 @@ export default class restHelper {
    * @returns
    */
   getWorkspaceInfoApi(workspaceName?: string) {
+    const name = workspaceName ?? this.workspace;
     return fetchUtil.get<IWorkspace.ResWorkspaceInfo>(
-      `${this.url}/rest/workspaces/${workspaceName}`,
+      `${this.url}/rest/workspaces/${name}`,
       {},
       this.restXhrConfig
     );
@@ -1295,12 +1311,12 @@ export default class restHelper {
    *     userName: "admin",
    *     password: "geoserver",
    *  })
-   * restHelperInstance.getWorkspaceInfoApi("qhd").then(res => {
-   *  console.log(res)
-   * })
-   * ```
-   * @returns
-   */
+    * restHelperInstance.getDefaultWorkspaceInfoApi().then(res => {
+    *  console.log(res)
+    * })
+    * ```
+    * @returns
+    */
   getDefaultWorkspaceInfoApi() {
     return fetchUtil.get<IWorkspace.ResWorkspaceInfo>(
       `${this.url}/rest/workspaces/default`,
@@ -1316,32 +1332,34 @@ export default class restHelper {
    * @return {Promise<string>}
    */
   addWorkspaceApi(body: IWorkspace.WorkspaceOperationForm) {
+    //浅拷贝，避免修改调用方传入的对象
+    const workspaceBody: IWorkspace.WorkspaceOperationForm = { ...body };
     let postUrl = `${this.url}/rest/workspaces`;
-    if (body.default) {
-      postUrl += `?default=${body.default}`;
+    if (workspaceBody.default) {
+      postUrl += `?default=${workspaceBody.default}`;
     }
-    if (Object.hasOwnProperty.call(body, "default")) {
-      delete body.default;
+    if (Object.hasOwnProperty.call(workspaceBody, "default")) {
+      delete workspaceBody.default;
     }
     return fetchUtil.post<string>(
       postUrl,
-      { workspace: body },
+      { workspace: workspaceBody },
       this.restXhrConfig
     );
   }
   /**
    * 更新工作空间
    * @group 工作空间
-   * @param {string} orignWorkspaceName 原工作空间名称
+   * @param {string} originWorkspaceName 原工作空间名称
    * @param {IWorkspace.WorkspaceOperationForm} body 更新的参数
    * @return {Promise<string>}
    */
   updateWorkspaceApi(
-    orignWorkspaceName: string,
+    originWorkspaceName: string,
     body: IWorkspace.WorkspaceOperationForm
   ) {
     return fetchUtil.put<string>(
-      `${this.url}/rest/workspaces/${orignWorkspaceName}`,
+      `${this.url}/rest/workspaces/${originWorkspaceName}`,
       { workspace: body },
       this.restXhrConfig
     );
@@ -1417,7 +1435,7 @@ export default class restHelper {
   }
 
   /**
-   * 获取样式的xld字符串
+   * 获取样式的json信息
    * @group 样式
    * @param {string} styleName 样式名称
    * @param {string} workspaceName 工作空间
@@ -1435,7 +1453,7 @@ export default class restHelper {
   }
 
   /**
-   * 获取样式的xld字符串
+   * 获取样式的sld字符串
    * @group 样式
    * @param {string} styleName 样式名称
    * @param {string} workspaceName 工作空间
@@ -1754,20 +1772,31 @@ export default class restHelper {
   /**
    * 更新矢量数据存储
    * @group 数据存储
-   * @param orignDatastoreParam  源信息
-   * @param body 要更新的实体
-   * @returns
-   */
+    * @param originDatastoreParam  源信息
+    * @param body 要更新的实体
+    * @returns
+    */
   updateDatastoreApi(
-    orignDatastoreParam: IDatastore.DatastoreInfo,
+    originDatastoreParam: IDatastore.DatastoreInfo,
     body: IDatastore.DatastoreOperationForm
   ) {
+    // 浅拷贝一层，避免修改调用方传入的对象
+    const requestBody: IDatastore.DatastoreOperationForm = {
+      ...body,
+      connectionParameters: body.connectionParameters
+        ? {
+            entry: body.connectionParameters.entry.map((singleEntry) => ({
+              ...singleEntry,
+            })),
+          }
+        : undefined,
+    };
     // 清理掉对后台无用的参数数据
-    if (Object.hasOwnProperty.call(body, "workspace")) {
-      delete body.workspace;
+    if (Object.hasOwnProperty.call(requestBody, "workspace")) {
+      delete requestBody.workspace;
     }
-    if (Object.hasOwnProperty.call(body, "connectionParameters")) {
-      body.connectionParameters?.entry.forEach((singleEntry) => {
+    if (Object.hasOwnProperty.call(requestBody, "connectionParameters")) {
+      requestBody.connectionParameters?.entry.forEach((singleEntry) => {
         if (Object.hasOwnProperty.call(singleEntry, "label")) {
           delete singleEntry.label;
         }
@@ -1783,8 +1812,8 @@ export default class restHelper {
       });
     }
     return fetchUtil.put<string>(
-      `${this.url}/rest/workspaces/${orignDatastoreParam.workspace.name}/datastores/${orignDatastoreParam.name}`,
-      { dataStore: body },
+      `${this.url}/rest/workspaces/${originDatastoreParam.workspace.name}/datastores/${originDatastoreParam.name}`,
+      { dataStore: requestBody },
       this.restXhrConfig
     );
   }
@@ -1792,21 +1821,32 @@ export default class restHelper {
   /**
    * 更新矢量数据存储
    * @group 数据存储
-   * @param orignDatastoreParam  源信息
-   * @param body 要更新的实体
-   * @returns
-   */
+    * @param originDatastoreParam  源信息
+    * @param body 要更新的实体
+    * @returns
+    */
   updateCoverageDatastoreApi(
-    orignDatastoreParam: IDatastore.DatastoreInfo,
+    originDatastoreParam: IDatastore.DatastoreInfo,
     body: IDatastore.DatastoreOperationForm
   ) {
+    // 浅拷贝一层，避免修改调用方传入的对象
+    const requestBody: IDatastore.DatastoreOperationForm = {
+      ...body,
+      connectionParameters: body.connectionParameters
+        ? {
+            entry: body.connectionParameters.entry.map((singleEntry) => ({
+              ...singleEntry,
+            })),
+          }
+        : undefined,
+    };
     // 清理掉对后台无用的参数数据
-    if (Object.hasOwnProperty.call(body, "workspace")) {
-      delete body.workspace;
+    if (Object.hasOwnProperty.call(requestBody, "workspace")) {
+      delete requestBody.workspace;
     }
     return fetchUtil.put<string>(
-      `${this.url}/rest/workspaces/${orignDatastoreParam.workspace.name}/coveragestores/${orignDatastoreParam.name}`,
-      { coverageStore: body },
+      `${this.url}/rest/workspaces/${originDatastoreParam.workspace.name}/coveragestores/${originDatastoreParam.name}`,
+      { coverageStore: requestBody },
       this.restXhrConfig
     );
   }

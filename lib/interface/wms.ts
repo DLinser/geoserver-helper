@@ -233,7 +233,6 @@ export namespace IWms {
             "stroke-linejoin"?: string
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         export interface Response {
             Legend: LegendItem[]
         }

@@ -130,11 +130,11 @@ export const creatFeatureRequestXml = (option: {
     if (option.cql.length <= 680) {
       let nonSpatialCql = option.cql + ""
       const regex = /(INTERSECTS|WITHIN|CONTAINS|DISJOINT)\s*\(\s*([\w_]+)\s*,\s*((POINT|LINESTRING|MULTIPOLYGON|POLYGON)\((?:(?:[\d\s,.]+)|(?:\([\d\s,.]+\))|(?:\(\([\d\s,.]+\)\)))\))\)/g;
-      let spatialMatch;
-      while ((spatialMatch = regex.exec(option.cql)) !== null) {
+        let spatialMatch;
+        while ((spatialMatch = regex.exec(option.cql)) !== null) {
         const wktGeometry = spatialMatch[3];
         const spatialField = spatialMatch[2];
-        let geometry = new WKT().readGeometry(wktGeometry, {});
+        const geometry = new WKT().readGeometry(wktGeometry, {});
         if (spatialMatch[1].toUpperCase() === 'INTERSECTS') {
           geometryFilterArray.push(intersectsFilter(spatialField, geometry))
         } else if (spatialMatch[1].toUpperCase() === 'WITHIN') {
@@ -178,8 +178,8 @@ export const creatFeatureRequestXml = (option: {
 
 export const creatGeometryFilter = (geometryFilterCql: string) => {
   const wktGeometry = geometryFilterCql.substring(geometryFilterCql.indexOf(", ") + 1, geometryFilterCql.length - 1);
-  let spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("(") + 1, geometryFilterCql.indexOf(", ")).trim()
-  let geometry = new WKT().readGeometry(wktGeometry, {});
+  const spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("(") + 1, geometryFilterCql.indexOf(", ")).trim()
+  const geometry = new WKT().readGeometry(wktGeometry, {});
   if (geometryFilterCql.includes("INTERSECTS")) {
     geometryFilterArray.push(intersectsFilter(spatialField, geometry))
   } else if (geometryFilterCql.includes("WITHIN")) {
@@ -239,11 +239,11 @@ export const formateFeatures = (features: Feature[] | featureOption[]) => {
     }
     if (initedFeature) {
       // 转换坐标
-      var geometry = initedFeature.getGeometry()?.clone();
+      const geometry = initedFeature.getGeometry()?.clone();
       geometry?.applyTransform(function (flatCoordinates, _flatCoordinates2, stride = 2) {
-        for (var j = 0; j < flatCoordinates.length; j += stride) {
-          var y = flatCoordinates[j];
-          var x = flatCoordinates[j + 1];
+        for (let j = 0; j < flatCoordinates.length; j += stride) {
+          const y = flatCoordinates[j];
+          const x = flatCoordinates[j + 1];
           flatCoordinates[j] = x;
           flatCoordinates[j + 1] = y;
         }

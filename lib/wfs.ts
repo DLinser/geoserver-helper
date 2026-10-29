@@ -104,8 +104,8 @@ export default class wfsHelper {
             fetchUtil.get<any>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<any>(xmlString)
                 resolve(jsonResult)
-            }).catch(() => {
-                reject
+            }).catch((err) => {
+                reject(err)
             })
         })
     }
@@ -145,8 +145,8 @@ export default class wfsHelper {
             fetchUtil.get<string>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<ILayer.LayerPropertyValue>(xmlString)
                 resolve(jsonResult)
-            }).catch(() => {
-                reject
+            }).catch((err) => {
+                reject(err)
             })
         })
     }
@@ -228,6 +228,7 @@ export default class wfsHelper {
                 headers: new Headers({
                     Accept: "application/json;charset=utf-8",
                     "Content-Type": "application/x-www-form-urlencoded",
+                    ...this.restXhrConfig.headers,
                 }),
                 mode: "cors",
             })

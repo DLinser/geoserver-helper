@@ -123,20 +123,19 @@ const aa = utils.common.formateObjToParamStr({
   name: "zhangsan",
 });
 
-//查询所有的图层列表
 const restHelperInstance = new restHelper({
   url: "http://localhost:8080/geoserver",
 });
-//查询所有的图层列表
+//Query all layer list
 const res = await restHelperInstance.getLayerListApi();
 console.log(res.layers);
-//查询所有的工作空间列表
-const res = await restHelperInstance.getWorkspaceListApi();
-console.log(res.workspaces);
+//Query all workspace list
+const res2 = await restHelperInstance.getWorkspaceListApi();
+console.log(res2.workspaces);
 ```
 
 3. attention  
-   If your project uses Typescript, due to Typescript version issues, currently only Typescript 4.7 (June 2022) and later versions support exports mapping, which means that a higher version parser (node16 nodenext、Bundler）， That is to say, the "moduleSolution": "Bundler" in your tsconfig. json must be modified to one of node16, nodenext, or Bundler. If for some special reason you are unwilling or unable to change it, you can also use the following absolute path reference method
+   If your project uses Typescript, due to Typescript version issues, currently only Typescript 4.7 (June 2022) and later versions support exports mapping, which means that a higher version parser (node16, nodenext, Bundler) must be used. That is to say, the "moduleResolution" in your tsconfig.json must be modified to one of node16, nodenext, or Bundler. If for some special reason you are unwilling or unable to change it, you can also use the following absolute path reference method
 
 ```javascript
 // Introducing dependencies as a whole
@@ -147,6 +146,7 @@ import wfsHelper from "geoserver-helper/dist/wfs";
 import wcsHelper from "geoserver-helper/dist/wcs";
 import wpsHelper from "geoserver-helper/dist/wps";
 import wmsHelper from "geoserver-helper/dist/wms";
+import restHelper from "geoserver-helper/dist/rest";
 ```
 
 Document：[Portal](https://dlinser.github.io/geoserver-helper/)

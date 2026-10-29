@@ -127,7 +127,6 @@ const aa = utils.common.formateObjToParamStr({
   name: "zhangsan",
 });
 
-//查询所有的图层列表
 const restHelperInstance = new restHelper({
   url: "http://localhost:8080/geoserver",
 });
@@ -135,8 +134,8 @@ const restHelperInstance = new restHelper({
 const res = await restHelperInstance.getLayerListApi();
 console.log(res.layers);
 //查询所有的工作空间列表
-const res = await restHelperInstance.getWorkspaceListApi();
-console.log(res.workspaces);
+const res2 = await restHelperInstance.getWorkspaceListApi();
+console.log(res2.workspaces);
 ```
 
 3. 注意
@@ -151,6 +150,7 @@ import wfsHelper from "geoserver-helper/dist/wfs";
 import wcsHelper from "geoserver-helper/dist/wcs";
 import wpsHelper from "geoserver-helper/dist/wps";
 import wmsHelper from "geoserver-helper/dist/wms";
+import restHelper from "geoserver-helper/dist/rest";
 ```
 
 开发文档地址：[传送门](https://dlinser.github.io/geoserver-helper/)

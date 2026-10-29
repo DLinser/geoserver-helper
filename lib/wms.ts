@@ -37,10 +37,10 @@ export default class wmsHelper {
      * @example
      * import wmsHelper from 'geoserver-helper/wms'
      * const wmsHelperInstance = new wmsHelper({
-     *   url: "/geoserver/wfs",
-     *   workspace: "qhd",
-     * });
-     * wfsHelperInstance.GetCapabilities({
+      *   url: "/geoserver/wms",
+      *   workspace: "qhd",
+      * });
+      * wmsHelperInstance.GetCapabilities({
      *   version: "1.0.0",
      * }).then(res => {
      *   console.log(res)
@@ -61,8 +61,8 @@ export default class wmsHelper {
         return new Promise<IWms.WMSCapabilities.GetCapabilitiesResponse>((resolve, reject) => {
             fetchUtil.get<string>(fetchUrl).then(xmlString => {
                 resolve(new WMSCapabilities().read(xmlString))
-            }).catch(() => {
-                reject
+            }).catch((err) => {
+                reject(err)
             })
         })
     }
@@ -75,7 +75,7 @@ export default class wmsHelper {
      * const wmsHelperInstance = new wmsHelper({
      *   url: "/geoserver/wms",
      * });
-     * wfsHelperInstance.GetFeatureInfo({
+      * wmsHelperInstance.GetFeatureInfo({
      *   layers: "workspaceName:layerName",
      *   version: "1.0.0",
      *   bbox:"118.85559,39.47113,119.17419,39.776",
@@ -122,7 +122,7 @@ export default class wmsHelper {
      * const wmsHelperInstance = new wmsHelper({
      *   url: "/geoserver/wms",
      * });
-     * wfsHelperInstance.GetLegendGraphic({
+      * wmsHelperInstance.GetLegendGraphic({
      *   layer: "workspaceName:layerName",
      * }).then(res => {
      *   console.log(res)

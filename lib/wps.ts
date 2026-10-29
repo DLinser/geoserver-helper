@@ -166,8 +166,8 @@ export default class wpsHelper {
             fetchUtil.get<any>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<IWps.WPSCapabilities.WpsCapabilitiesResponse>(xmlString)
                 resolve(jsonResult)
-            }).catch(() => {
-                reject
+            }).catch((err) => {
+                reject(err)
             })
         })
     }
@@ -187,8 +187,8 @@ export default class wpsHelper {
             fetchUtil.get<any>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<IWps.DescribeProcess.DescribeProcessResponse>(xmlString)
                 resolve(jsonResult)
-            }).catch(() => {
-                reject
+            }).catch((err) => {
+                reject(err)
             })
         })
     }
@@ -370,9 +370,10 @@ export default class wpsHelper {
      *  outputMimiType: "application/json"
      * });
      * const finishXmlString = wpsHelperInstance.finishXML(xmlString);
-     * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
-     *  cons
-     * @returns {XML} Execute Execute
+      * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
+      *  console.log(res)
+      * })
+      * @returns {XML} Execute Execute
      */
     formatUniqueXmlString = function (option: {
         workspace: string;

@@ -288,7 +288,12 @@ export namespace ILayer {
   //返回结果单项
   export interface ResLayerListItem {
     name: string;
-    herf: string;
+    /**
+     * 详情地址
+     * @deprecated 兼容旧版本拼写错误字段，正确字段为 href
+     */
+    herf?: string;
+    href?: string;
   }
   //接口返回的图层详情结果
   export interface ResLayerInfo {
@@ -509,7 +514,12 @@ export namespace ILayer {
    */
   export interface LayerGroupOverview {
     name: string;
-    herf: string;
+    /**
+     * 详情地址
+     * @deprecated 兼容旧版本拼写错误字段，正确字段为 href
+     */
+    herf?: string;
+    href?: string;
   }
   /**
    * 图层组详情

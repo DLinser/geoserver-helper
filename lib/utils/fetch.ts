@@ -14,6 +14,9 @@ function fetchData<T>(url: string, config: RequestConfig): Promise<T> {
         mode: "cors",
         body: config.body,
     }).then(res => {
+        if (!res.ok) {
+            throw new Error(`请求失败: ${res.status} ${res.statusText} (${url})`);
+        }
         if (res.headers.get('content-type') && res.headers.get('content-type')!.includes('application/json')) {
             // 服务器返回的是JSON
             return res.json();
