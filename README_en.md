@@ -15,7 +15,7 @@ Used to request interface information such as REST, WFS, WMS, WPS for Geoserver
 - Main language：Typescript
 - Declaration file framework：vite-plugin-dts
 - Unit testing framework：vitest
-- API documentation framework：typedoc
+- Documentation site：VitePress (`docs/`)
 - Creation process：
 
 ```shell
@@ -150,6 +150,26 @@ import restHelper from "geoserver-helper/dist/rest";
 ```
 
 Document：[Portal](https://dlinser.github.io/geoserver-helper/)
+
+
+## Documentation
+
+This repo uses **VitePress** as the single docs site under `docs/` (guides + TypeScript API signatures).
+
+### Local preview
+
+```shell
+npm i
+npm run docs:dev
+npm run docs:build
+npm run docs:preview
+```
+
+### Deploy (GitHub Pages)
+
+Push to `master` or run `.github/workflows/docs.yml` via `workflow_dispatch`. CI runs `npm ci` + `npm run docs:build` and deploys `docs/.vitepress/dist`. Site `base` is `/geoserver-helper/`.
+
+Docs：[Portal](https://dlinser.github.io/geoserver-helper/)
 
 ## Version change log
 

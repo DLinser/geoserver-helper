@@ -1,10 +1,12 @@
 import { formateObjToParamStr } from "./common"
 
+/** 与 rest/wfs 的 restXhrConfig 对齐：仅传 headers 等 RequestInit 子集 */
+export type RestRequestConfig = Pick<RequestInit, 'headers'>
 // 定义请求配置类型  
 interface RequestConfig {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
     headers?: HeadersInit;
-    body?: any; // 根据需要，可以进一步细化这个类型  
+    body?: BodyInit | null;  
 }
 // 定义一个泛型函数来处理fetch请求，以便我们可以指定响应数据的类型  
 function fetchData<T>(url: string, config: RequestConfig): Promise<T> {
@@ -35,9 +37,9 @@ const request = {
      * @param config 请求配置
      * @returns 
      */
-    post<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
+    post<T>(url: string, data: unknown, config?: RestRequestConfig): Promise<T> {
         let requestBody: string | FormData = ""
-        let requestHeaders: Record<string, any> = {}
+        let requestHeaders: Record<string, string> = {}
         if (typeof data == "string") {
             requestBody = data
             requestHeaders['Content-Type'] = "application/json;charset=UTF-8"
@@ -49,7 +51,7 @@ const request = {
         }
         //如果外部传值，优先使用外部的传值
         if (config?.headers) {
-            requestHeaders = Object.assign(requestHeaders, config.headers)
+            requestHeaders = Object.assign(requestHeaders, config.headers as Record<string, string>)
         }
         return fetchData<T>(url, { method: 'POST', body: requestBody, headers: new Headers(requestHeaders) });
     },
@@ -60,15 +62,15 @@ const request = {
      * @param config 请求配置
      * @returns 
      */
-    postXml<T>(url: string, data: BodyInit, config?: Record<string, any>): Promise<T> {
+    postXml<T>(url: string, data: BodyInit, config?: RestRequestConfig): Promise<T> {
         //默认值
-        let requestHeaders: Record<string, any> = {
+        let requestHeaders: Record<string, string> = {
             'Accept': 'application/json;charset=utf-8',
             'Content-Type': 'text/xml'
         }
         //如果外部传值，优先使用外部的传值
         if (config?.headers) {
-            requestHeaders = Object.assign(requestHeaders, config.headers)
+            requestHeaders = Object.assign(requestHeaders, config.headers as Record<string, string>)
         }
         return fetchData<T>(url, {
             method: "POST",
@@ -92,8 +94,8 @@ const request = {
      * ```
      * @returns 
      */
-    get<T>(url: string, data?: Record<string, any>, config?: Record<string, any>): Promise<T> {
-        let requestHeaders: Record<string, any> = { 'Content-Type': "application/json;charset=UTF-8" }
+    get<T>(url: string, data?: Record<string, string | number | undefined>, config?: RestRequestConfig): Promise<T> {
+        let requestHeaders: Record<string, string> = { 'Content-Type': "application/json;charset=UTF-8" }
         let fetchUrl = ''
         if (data && Object.keys(data).length > 0) {
             fetchUrl = `${url}${url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(data)}`;
@@ -102,7 +104,7 @@ const request = {
         }
         //如果外部传值，优先使用外部的传值
         if (config?.headers) {
-            requestHeaders = Object.assign(requestHeaders, config.headers)
+            requestHeaders = Object.assign(requestHeaders, config.headers as Record<string, string>)
         }
         //get请求一般不允许传请求体参数
         return fetchData<T>(fetchUrl, { method: 'GET', headers: new Headers(requestHeaders) });
@@ -114,9 +116,9 @@ const request = {
      * @param config 请求配置
      * @returns 
      */
-    put<T>(url: string, data: any, config?: Record<string, any>): Promise<T> {
+    put<T>(url: string, data: unknown, config?: RestRequestConfig): Promise<T> {
         let requestBody: string = ""
-        let requestHeaders: Record<string, any> = {}
+        let requestHeaders: Record<string, string> = {}
         if (typeof data == "string") {
             requestBody = data
             requestHeaders['Content-Type'] = "application/json;charset=UTF-8"
@@ -126,7 +128,7 @@ const request = {
         }
         //如果外部传值，优先使用外部的传值
         if (config?.headers) {
-            requestHeaders = Object.assign(requestHeaders, config.headers)
+            requestHeaders = Object.assign(requestHeaders, config.headers as Record<string, string>)
         }
         return fetchData<T>(url, { method: 'PUT', body: requestBody, headers: new Headers(requestHeaders) });
     },
@@ -137,11 +139,11 @@ const request = {
      * @param config 请求配置
      * @returns 
      */
-    delete<T>(url: string, data?: Record<string, any>, config?: Record<string, any>): Promise<T> {
-        let requestHeaders: Record<string, any> = {}
+    delete<T>(url: string, data?: Record<string, string | number | undefined>, config?: RestRequestConfig): Promise<T> {
+        let requestHeaders: Record<string, string> = {}
         //如果外部传值，优先使用外部的传值
         if (config?.headers) {
-            requestHeaders = Object.assign(requestHeaders, config.headers)
+            requestHeaders = Object.assign(requestHeaders, config.headers as Record<string, string>)
         }
         //一般不允许传请求体参数
         let fetchUrl = ''

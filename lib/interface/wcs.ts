@@ -3,13 +3,13 @@ export namespace IWcs {
 
     export namespace WCSCapabilities {
         export interface GetCapabilitiesResponse {
-            [key: string]: any
+            [key: string]: unknown
         }
     }
 
     export namespace DescribeCoverage {
         export interface Response {
-            [key: string]: any
+            [key: string]: unknown
         }
     }
 

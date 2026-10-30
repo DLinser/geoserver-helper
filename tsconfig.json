@@ -19,32 +19,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-  },
-  "typedocOptions": {
-    "name": "geoserver-helper",
-    "entryPoints": [
-      "lib/rest.ts",
-      "lib/wfs.ts",
-      "lib/wcs.ts",
-      "lib/wms.ts",
-      "lib/wps.ts",
-      "lib/interface/interface.ts",
-      "lib/utils/utils.ts",
-    ],
-    "out": "docs",
-    "locales": {
-      "zh": {
-        "flag_private": "私有"
-      }
-    },
-    "lang": "zh",
-    "theme": "default",
-    "exclude": [
-      "**/*.test.ts",
-      "**/node_modules/**"
-    ],
-    "readme": "README.md"
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "lib/**/*.ts"

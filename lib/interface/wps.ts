@@ -26,7 +26,7 @@ export namespace IWps {
                 ServiceProvider: {
                     ProviderName: stringExtension;
                     ProviderSite: stringExtension;
-                    ServiceContact: any;
+                    ServiceContact: unknown;
                 };
                 OperationsMetadata: {
                     Operation: Operation[];
@@ -108,7 +108,7 @@ export namespace IWps {
 
         interface LiteralData {
             DataType: stringExtension;
-            AnyValue?: any;
+            AnyValue?: unknown;
             AllowedValues?: AllowedValues;
         }
 

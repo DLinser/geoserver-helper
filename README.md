@@ -19,7 +19,7 @@
 - 主语言：Typescript
 - 声明文件框架：vite-plugin-dts
 - 单元测试框架：vitest
-- api 文档框架：typedoc
+- 文档站点：VitePress（源码目录 `docs/`）
 - 创建流程：
 
 ```shell
@@ -154,6 +154,26 @@ import restHelper from "geoserver-helper/dist/rest";
 ```
 
 开发文档地址：[传送门](https://dlinser.github.io/geoserver-helper/)
+
+
+## 文档
+
+本仓库使用 **VitePress** 作为唯一文档站（目录 `docs/`），内含快速开始、各模块用法与 TypeScript API 签名。
+
+### 本地预览
+
+```shell
+npm i
+npm run docs:dev      # http://localhost:5173/geoserver-helper/
+npm run docs:build    # 输出到 docs/.vitepress/dist
+npm run docs:preview  # 预览构建结果
+```
+
+### 部署（GitHub Pages）
+
+推送到 `master` 或手动触发 `.github/workflows/docs.yml`：CI 执行 `npm ci` + `npm run docs:build`，并将 `docs/.vitepress/dist` 部署到 GitHub Pages。站点 `base` 为 `/geoserver-helper/`。
+
+在线文档：[传送门](https://dlinser.github.io/geoserver-helper/)
 
 ## 版本变更日志
 

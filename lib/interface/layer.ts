@@ -274,11 +274,11 @@ export namespace ILayer {
       geometry_name: string;
       //几何信息
       geometry: {
-        coordinates: any;
+        coordinates: number | number[] | number[][] | number[][][];
         type: string;
       };
       type: string;
-      properties: Record<string, any>;
+      properties: Record<string, unknown>;
     }[];
     //命名空间
     targetNamespace: string;

@@ -8,7 +8,7 @@ import { type ISystem } from "./interface/system";
 import { type IResource } from "./interface/resource";
 import { type ISecurity } from "./interface/security";
 export default class restHelper {
-  private restXhrConfig: Record<string, any> = {
+  private restXhrConfig: RequestInit = {
     headers: {},
   };
   /**

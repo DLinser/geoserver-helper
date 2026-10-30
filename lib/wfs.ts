@@ -9,7 +9,7 @@ import { TransactionResponse } from "ol/format/WFS";
 
 const x2js = new X2JS();
 export default class wfsHelper {
-    private restXhrConfig: Record<string, any> = {
+    private restXhrConfig: RequestInit = {
         headers: {},
     }
     /**

@@ -1,4 +1,4 @@
-
+﻿
 import { formateObjToParamStr } from "./utils/common";
 import fetchUtil from './utils/fetch'
 import WMSCapabilities from 'ol/format/WMSCapabilities';
@@ -140,8 +140,9 @@ export default class wmsHelper {
             request: "GetLegendGraphic",
             format: "application/json",
         }, option)
-        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParameters as any)}`;
+        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParameters as unknown as Record<string, string | number | undefined>)}`;
         return fetchUtil.get<IWms.GetLegendGraphic.Response>(fetchUrl)
 
     }
 }
+

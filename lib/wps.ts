@@ -163,7 +163,7 @@ export default class wpsHelper {
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParams)}`;
         // return fetchUtil.get<string>(fetchUrl)
         return new Promise<IWps.WPSCapabilities.WpsCapabilitiesResponse>((resolve, reject) => {
-            fetchUtil.get<any>(fetchUrl).then(xmlString => {
+            fetchUtil.get<string>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<IWps.WPSCapabilities.WpsCapabilitiesResponse>(xmlString)
                 resolve(jsonResult)
             }).catch((err) => {
@@ -184,7 +184,7 @@ export default class wpsHelper {
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(requestParams)}`;
         // return fetchUtil.get<string>(fetchUrl)
         return new Promise<IWps.DescribeProcess.DescribeProcessResponse>((resolve, reject) => {
-            fetchUtil.get<any>(fetchUrl).then(xmlString => {
+            fetchUtil.get<string>(fetchUrl).then(xmlString => {
                 const jsonResult = x2js.xml2js<IWps.DescribeProcess.DescribeProcessResponse>(xmlString)
                 resolve(jsonResult)
             }).catch((err) => {
@@ -370,7 +370,7 @@ export default class wpsHelper {
      *  outputMimiType: "application/json"
      * });
      * const finishXmlString = wpsHelperInstance.finishXML(xmlString);
-      * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
+      * helperUtils.request.postXml<unknown>(wpsurl, finishXmlString).then(res => {
       *  console.log(res)
       * })
       * @returns {XML} Execute Execute
@@ -481,7 +481,7 @@ export default class wpsHelper {
      *  outputMimiType: "application/json"
      * });
      * const finishXmlString = wpsHelperInstance.finishXML(xmlString);
-     * helperUtils.request.postXml<any>(wpsurl, finishXmlString).then(res => {
+     * helperUtils.request.postXml<unknown>(wpsurl, finishXmlString).then(res => {
      *  console.log(res)
      * })
      * @returns {XML} Execute Execute
