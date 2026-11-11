@@ -22,6 +22,26 @@
 
 ## 记录
 
+## [未发布]
+
+### Added
+
+- wms 新增 `GetMap`、`GetMapUrl`
+- 文档站增加 logo、favicon、首页示意图、中文搜索与变更日志页面
+
+### Changed
+
+- `GetCapabilities`、`GetMap`、`GetFeatureInfo` 未传 version 时默认仍为 `1.0.0`；调用方可显式传入 `1.1.1` 或 `1.3.0`
+- `GetFeatureInfo` 将 `bbox`、`width`、`height` 及按版本的像素坐标视为必填；不再默认 `width/height=101`，也不会把 `x/y` 或 `i/j` 静默设为 `0`
+- 未显式传 `srs` / `crs` 时，默认使用实例上的 `srsName`，不再写死 `EPSG:4326`
+- `info_format` 收紧为常见 GetFeatureInfo 格式联合；`GetLegendGraphic` 请求类型补上 `style`、`scale`、`width`、`height` 等常用字段
+- `WMSCapabilities` 与 `ol/format/WMSCapabilities` 解析结果对齐：`KeywordList` 统一为 `string[]`，图层字段改为可选并可嵌套；去掉 OpenLayers 并不会解析的 `DescribeLayer` / `GetStyles` / `GetLegendGraphic` 必填项
+
+### Fixed
+
+- 修复 `GetFeatureInfo` 在 WMS 1.3.0 / 1.1.x 下 `CRS`/`SRS` 与 `I`/`J`、`X`/`Y` 参数写反的问题
+- 修正 `GetMap` / `GetFeatureInfo` 注释示例中的 version，改回与默认一致的 `1.0.0`
+
 ## [0.0.15] - 2024-09-04
 
 ### Fixed

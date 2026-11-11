@@ -484,67 +484,79 @@ export interface featureOption {
 
 ## `IWms`（`wms.ts`）
 
-共约 1 个导出类型/接口/枚举，下方摘录常用项。
+共约若干导出类型，下方摘录常用项。完整定义以 `lib/interface/wms.ts` 为准。
+
+- `GetCapabilities`、`GetMap`、`GetFeatureInfo`、`GetLegendGraphic` 的请求/响应类型都在此命名空间。
+- WMS 1.1.x 使用 `srs` + `x`/`y`；WMS 1.3.0 使用 `crs` + `i`/`j`。`x/y` 与 `i/j` 是像素列/行，不是经纬度。
+- `GetFeatureInfo` 的 `bbox`、`width`、`height` 以及像素坐标在类型中为必填。
+- 未传 `version` 时默认仍为 `1.0.0`；调用方可显式传入 `1.1.1` 或 `1.3.0`。
+- `GetCapabilities` 的返回类型按 `ol/format/WMSCapabilities` 的解析结果来：`KeywordList` 统一为 `string[]`，图层可嵌套；`DescribeLayer` / `GetStyles` / `GetLegendGraphic` 不会出现在解析对象上。
+
+### type `GetMapParameters` / `GetFeatureInfoParameters`
+
+```ts
+export type WmsVersion = "1.0.0" | "1.1.0" | "1.1.1" | "1.3.0"
+
+export interface GetMapCommonParameters extends WmsCommonOptionalParameters {
+  layers?: string
+  styles?: string
+  bbox: string
+  width: string | number
+  height: string | number
+  format?: WmsFormats | string
+}
+
+export type GetMapParameters =
+  | (GetMapCommonParameters & {
+      version?: Extract<WmsVersion, "1.0.0" | "1.1.0" | "1.1.1">
+      srs?: string
+    })
+  | (GetMapCommonParameters & {
+      version: "1.3.0"
+      crs?: string
+    })
+
+export interface GetFeatureInfoCommonParameters extends WmsCommonOptionalParameters {
+  layers?: string
+  query_layers?: string // 默认等于 layers
+  styles?: string
+  bbox: string
+  width: string | number  // 与出图请求一致，规范必填
+  height: string | number
+  info_format?: "text/plain" | "application/vnd.ogc.gml" | "application/vnd.ogc.gml/3.1.1" | "text/xml" | "text/html" | "application/json" | "text/javascript"
+  feature_count?: number
+}
+
+export type GetFeatureInfoParameters =
+  | (GetFeatureInfoCommonParameters & {
+      version?: Extract<WmsVersion, "1.0.0" | "1.1.0" | "1.1.1">
+      srs?: string
+      x: string | number // 像素列，不是经度
+      y: string | number // 像素行，不是纬度
+    })
+  | (GetFeatureInfoCommonParameters & {
+      version: "1.3.0"
+      crs?: string
+      i: string | number
+      j: string | number
+    })
+```
 
 ### interface `GetCapabilitiesResponse`
 
 ```ts
 export interface GetCapabilitiesResponse {
-            Service: Service;
-            Capability: {
-                Request: {
-                    GetCapabilities: Operation;
-                    GetMap: Operation;
-                    GetFeatureInfo: Operation;
-                    DescribeLayer: Operation;
-                    GetLegendGraphic: Operation;
-                    GetStyles: Operation;
-                };
-                Exception: string[];
-                Layer: {
-                    Abstract: string
-                    Layer: Layer[]
-                    Title: string
-                };
-            };
-            version: string
-        }
-    }
-    export type GetFeatureInfoParameters = {
-        version?: Extract<WmsVersion, "1.0.0" | "1.1.0" | "1.1.1">
-        layers?: string
-        styles?: string
-        //坐标系
-        srs?: string
-        bbox?: string
-        //返回地图图片的宽度（点选查询的时候用不到）
-        width?: string
-        //返回地图图片的高度（点选查询的时候用不到）
-        height?: string
-        //经度
-        x?: string
-        //纬度
-        y?: string
-        //返回结果有哪些字段，默认返回全部
-        propertyName?: string
-        //cql过滤条件
-        cql_filter?: string
-        //返回结果的格式
-        info_format?: string
-        //返回要素的最大数量默认是1
-        feature_count?: number
-        //报错时报错信息的格式
-        exceptions?: "text/plain" | "application/vnd.ogc.gml" | "application/vnd.ogc.gml/3.1.1" | "text/html" | "application/json" | "text/javascript"
-    } | {
-        version?: Extract<WmsVersion, "1.3.0">
-        layers?: string
-        styles?: string
-        //坐标系（WMS 1.3.0 +）
-        crs?: string
-        bbox?: string
-        //返回地图图片的宽度（点选查询的时候用不到）
-        width?: string
-  // ... 其余字段见 lib/interface/wms.ts
+  Service: Service;
+  Capability: {
+    Request: {
+      GetCapabilities?: Operation;
+      GetMap?: Operation;
+      GetFeatureInfo?: Operation;
+    };
+    Exception?: string[];
+    Layer?: Layer;
+  };
+  version: string
 }
 ```
 

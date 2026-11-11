@@ -5,6 +5,9 @@ hero:
   name: geoserver-helper
   text: GeoServer 前端助手
   tagline: 用 TypeScript + 原生 fetch，更简单地调用 GeoServer 的 REST 与 OGC 服务。
+  image:
+    src: /hero.svg
+    alt: 图层叠加与 WMS 出图示意
   actions:
     - theme: brand
       text: 快速开始
@@ -23,7 +26,7 @@ features:
     link: /guide/wfs
     linkText: 查看指南
   - title: WMS
-    details: 能力集、GetFeatureInfo、图例等地图服务（geoserver-helper/wms）。
+    details: 能力集、GetMap 出图、GetFeatureInfo 点选与图例（geoserver-helper/wms）。
     link: /guide/wms
     linkText: 查看指南
   - title: WCS
