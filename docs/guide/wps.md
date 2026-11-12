@@ -104,6 +104,34 @@ formatAggregateXmlString(option: {
   cql?: string;
   outputMimiType?: string;
 })
+
+formatBufferXmlString(option: {
+  workspace: string;
+  workspaceURI: string;
+  queryName: string;
+  distance: number | string;
+  attributeName?: string;
+  cql?: string;
+  outputMimiType?: string;
+})
+
+formatCentroidXmlString(option: {
+  workspace: string;
+  workspaceURI: string;
+  queryName: string;
+  cql?: string;
+  outputMimiType?: string;
+})
+
+formatSimplifyXmlString(option: {
+  workspace: string;
+  workspaceURI: string;
+  queryName: string;
+  distance: number | string;
+  preserveTopology?: boolean;
+  cql?: string;
+  outputMimiType?: string;
+})
 ```
 
 ```ts

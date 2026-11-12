@@ -594,67 +594,108 @@ export interface GetCapabilitiesResponse {
 
 ## `IWps`（`wps.ts`）
 
-共约 1 个导出类型/接口/枚举，下方摘录常用项。
-
-### interface `WpsCapabilitiesResponse`
-
 ```ts
+interface stringExtension {
+  __text: string
+  __prefix: string
+  toString: () => string
+}
+
 export interface WpsCapabilitiesResponse {
-            Capabilities: {
-                xmlns_xs: stringExtension;
-                xmlns_ows: stringExtension;
-                xmlns_wps: stringExtension;
-                xmlns_xlink: stringExtension;
-                xmlns_xsi: stringExtension;
-                xml_lang: stringExtension;
-                service: stringExtension;
-                version: stringExtension;
-                xsi_schemaLocation: stringExtension;
-                ServiceIdentification: {
-                    Title: stringExtension;
-                    Abstract: stringExtension;
-                    ServiceType: stringExtension;
-                    ServiceTypeVersion: stringExtension;
-                };
-                ServiceProvider: {
-                    ProviderName: stringExtension;
-                    ProviderSite: stringExtension;
-                    ServiceContact: unknown;
-                };
-                OperationsMetadata: {
-                    Operation: Operation[];
-                };
-                ProcessOfferings: ProcessOfferings;
-                Languages: {
-                    Default: Language;
-                    Supported: Language[];
-                };
-            }
-        }
-        interface Operation {
-            name: stringExtension;
-            // 这里可以添加Operation的具体属性，如果有的话
-        }
-        interface ProcessOfferings {
-            // 这里可以添加ProcessOfferings的具体属性，如果有的话
-        }
-        interface Language {
-            Language: stringExtension;
-        }
+  Capabilities: {
+    "_xmlns:xs": string
+    "_xmlns:ows": string
+    "_xmlns:wps": string
+    "_xmlns:xlink": string
+    "_xmlns:xsi": string
+    "_xml:lang": string
+    _service: string
+    _version: string
+    "_xsi:schemaLocation": string
+    ServiceIdentification: {
+      Title: { __prefix: string; __text?: string }
+      Abstract: { __prefix: string; __text?: string }
+      ServiceType: stringExtension
+      ServiceTypeVersion: stringExtension
     }
-    export namespace DescribeProcess {
-        interface stringExtension {
-            __text: string
-            __prefix: string
-            toString: () => string
-        }
-        export interface DescribeProcessResponse {
-            ProcessDescriptions: {
-                _xmlns_xs: stringExtension;
-                _xmlns_ows: stringExtension;
-                _xmlns_wps: stringExtension;
-                _xmlns_xlink: stringExtension;
-  // ... 其余字段见 lib/interface/wps.ts
+    ServiceProvider: {
+      ProviderName: stringExtension
+      ProviderSite: { __prefix: string; "_xlink:href": string }
+      ServiceContact: unknown
+    }
+    OperationsMetadata: { Operation: { _name: string }[] }
+    ProcessOfferings: {
+      Process: {
+        Identifier: stringExtension
+        Title: stringExtension
+        Abstract: stringExtension
+        "_wps:processVersion": string
+      }[]
+    }
+    Languages: {
+      Default: { Language: stringExtension }
+      Supported: { Language: stringExtension }
+    }
+  }
+}
+
+export interface DescribeProcessResponse {
+  ProcessDescriptions: {
+    "_xmlns:xs": string
+    "_xmlns:ows": string
+    "_xmlns:wps": string
+    "_xmlns:xlink": string
+    "_xmlns:xsi": string
+    "_xml:lang": string
+    _service: string
+    _version: string
+    "_xsi:schemaLocation": string
+    ProcessDescription: {
+      "_wps:processVersion": string
+      _statusSupported: string
+      _storeSupported: string
+      Identifier: stringExtension
+      Title: stringExtension
+      Abstract: stringExtension
+      DataInputs: { Input: Input[] }
+      ProcessOutputs: { Output: Output }
+    }
+  }
+}
+
+interface Input {
+  _maxOccurs: string
+  _minOccurs: string
+  Identifier: stringExtension
+  Title: stringExtension
+  Abstract: stringExtension
+  ComplexData?: ComplexData
+  LiteralData?: LiteralData
+}
+
+interface ComplexData {
+  _maximumMegabytes?: string
+  Default: { Format: Format }
+  Supported: { Format: Format[] }
+}
+
+interface Format {
+  MimeType: string
+}
+
+interface LiteralData {
+  DataType?: stringExtension
+  AnyValue?: unknown
+  AllowedValues?: { Value: stringExtension[] }
+}
+
+interface Output {
+  Identifier: stringExtension
+  Title: stringExtension
+  ComplexOutput: {
+    Default: { Format: Format }
+    Supported: { Format: Format[] }
+  }
 }
 ```
 

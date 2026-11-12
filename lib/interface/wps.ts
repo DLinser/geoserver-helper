@@ -1,5 +1,8 @@
 export namespace IWps {
-    //能力集
+    /**
+     * x2js 解析结果。XML 属性名以 `_` 开头，命名空间冒号保留，值是字符串。
+     * 带前缀的元素文本是 `{ __text, __prefix }`。多个同名子节点才是数组，只有一个时是对象。
+     */
     export namespace WPSCapabilities {
         interface stringExtension {
             __text: string
@@ -8,42 +11,55 @@ export namespace IWps {
         }
         export interface WpsCapabilitiesResponse {
             Capabilities: {
-                xmlns_xs: stringExtension;
-                xmlns_ows: stringExtension;
-                xmlns_wps: stringExtension;
-                xmlns_xlink: stringExtension;
-                xmlns_xsi: stringExtension;
-                xml_lang: stringExtension;
-                service: stringExtension;
-                version: stringExtension;
-                xsi_schemaLocation: stringExtension;
+                "_xmlns:xs": string;
+                "_xmlns:ows": string;
+                "_xmlns:wps": string;
+                "_xmlns:xlink": string;
+                "_xmlns:xsi": string;
+                "_xml:lang": string;
+                _service: string;
+                _version: string;
+                "_xsi:schemaLocation": string;
                 ServiceIdentification: {
-                    Title: stringExtension;
-                    Abstract: stringExtension;
+                    Title: {
+                        __prefix: string;
+                        __text?: string;
+                    };
+                    Abstract: {
+                        __prefix: string;
+                        __text?: string;
+                    };
                     ServiceType: stringExtension;
                     ServiceTypeVersion: stringExtension;
                 };
                 ServiceProvider: {
                     ProviderName: stringExtension;
-                    ProviderSite: stringExtension;
+                    ProviderSite: {
+                        __prefix: string;
+                        "_xlink:href": string;
+                    };
                     ServiceContact: unknown;
                 };
                 OperationsMetadata: {
                     Operation: Operation[];
                 };
-                ProcessOfferings: ProcessOfferings;
+                ProcessOfferings: {
+                    Process: ProcessBrief[];
+                };
                 Languages: {
                     Default: Language;
-                    Supported: Language[];
+                    Supported: Language;
                 };
             }
         }
         interface Operation {
-            name: stringExtension;
-            // 这里可以添加Operation的具体属性，如果有的话
+            _name: string;
         }
-        interface ProcessOfferings {
-            // 这里可以添加ProcessOfferings的具体属性，如果有的话
+        interface ProcessBrief {
+            Identifier: stringExtension;
+            Title: stringExtension;
+            Abstract: stringExtension;
+            "_wps:processVersion": string;
         }
         interface Language {
             Language: stringExtension;
@@ -57,79 +73,73 @@ export namespace IWps {
         }
         export interface DescribeProcessResponse {
             ProcessDescriptions: {
-                _xmlns_xs: stringExtension;
-                _xmlns_ows: stringExtension;
-                _xmlns_wps: stringExtension;
-                _xmlns_xlink: stringExtension;
-                _xmlns_xsi: stringExtension;
-                _xml_lang: stringExtension;
-                _service: stringExtension;
-                _version: stringExtension;
-                _xsi_schemaLocation: stringExtension;
+                "_xmlns:xs": string;
+                "_xmlns:ows": string;
+                "_xmlns:wps": string;
+                "_xmlns:xlink": string;
+                "_xmlns:xsi": string;
+                "_xml:lang": string;
+                _service: string;
+                _version: string;
+                "_xsi:schemaLocation": string;
                 ProcessDescription: {
-                    '_wps:processVersion': stringExtension;
-                    _statusSupported: stringExtension;
-                    _storeSupported: stringExtension;
+                    "_wps:processVersion": string;
+                    _statusSupported: string;
+                    _storeSupported: string;
                     Identifier: stringExtension;
                     Title: stringExtension;
                     Abstract: stringExtension;
                     DataInputs: {
-                        Input: {
-                            maxOccurs: stringExtension;
-                            minOccurs: stringExtension;
-                            Identifier: stringExtension;
-                            Title: stringExtension;
-                            Abstract: stringExtension;
-                            ComplexData?: ComplexData;
-                            LiteralData?: LiteralData;
-                        }[];
+                        Input: Input[];
                     };
-                    ProcessOutputs: ProcessOutputs;
+                    ProcessOutputs: {
+                        Output: Output;
+                    };
                 };
             }
         }
+        interface Input {
+            _maxOccurs: string;
+            _minOccurs: string;
+            Identifier: stringExtension;
+            Title: stringExtension;
+            Abstract: stringExtension;
+            ComplexData?: ComplexData;
+            LiteralData?: LiteralData;
+        }
         interface ComplexData {
-            maximumMegabytes?: stringExtension;
-            Default: Default;
-            Supported: Supported[];
-        }
-
-        interface Default {
-            Format: Format;
-        }
-
-        interface Supported {
-            Format: Format[];
+            _maximumMegabytes?: string;
+            Default: {
+                Format: Format;
+            };
+            Supported: {
+                Format: Format[];
+            };
         }
 
         interface Format {
-            MimeType: stringExtension;
+            MimeType: string;
         }
 
         interface LiteralData {
-            DataType: stringExtension;
+            DataType?: stringExtension;
             AnyValue?: unknown;
-            AllowedValues?: AllowedValues;
-        }
-
-        interface AllowedValues {
-            Value: stringExtension[];
-        }
-
-        interface ProcessOutputs {
-            Output: Output[];
+            AllowedValues?: {
+                Value: stringExtension[];
+            };
         }
 
         interface Output {
             Identifier: stringExtension;
             Title: stringExtension;
-            ComplexOutput: ComplexOutput;
+            ComplexOutput: {
+                Default: {
+                    Format: Format;
+                };
+                Supported: {
+                    Format: Format[];
+                };
+            };
         }
-
-        interface ComplexOutput {
-            Default: Default;
-            Supported: Supported;
-        }
-
     }
 }
