@@ -28,6 +28,7 @@
 
 - wms 新增 `GetMap`、`GetMapUrl`
 - 文档站增加 logo、favicon、首页示意图、中文搜索与变更日志页面
+- 文档图标改为 GeoServer 绿色 G 标，并带上 WFS / WMS / WCS 示意
 
 ### Changed
 
@@ -36,11 +37,17 @@
 - 未显式传 `srs` / `crs` 时，默认使用实例上的 `srsName`，不再写死 `EPSG:4326`
 - `info_format` 收紧为常见 GetFeatureInfo 格式联合；`GetLegendGraphic` 请求类型补上 `style`、`scale`、`width`、`height` 等常用字段
 - `WMSCapabilities` 与 `ol/format/WMSCapabilities` 解析结果对齐：`KeywordList` 统一为 `string[]`，图层字段改为可选并可嵌套；去掉 OpenLayers 并不会解析的 `DescribeLayer` / `GetStyles` / `GetLegendGraphic` 必填项
+- `GetFeature` 未传 version 时默认仍为 `1.0.0`。各版本返回结构相同，请求参数名固定为 `typename`、`maxFeatures`
+- `IWfs.GetFeatureParameters` 不再按版本拆开，去掉 `GetFeatureParametersOfVersionOne`、`GetFeatureParametersOfVersionTwo`
+- 文档站主题色改为 GeoServer 绿
 
 ### Fixed
 
 - 修复 `GetFeatureInfo` 在 WMS 1.3.0 / 1.1.x 下 `CRS`/`SRS` 与 `I`/`J`、`X`/`Y` 参数写反的问题
 - 修正 `GetMap` / `GetFeatureInfo` 注释示例中的 version，改回与默认一致的 `1.0.0`
+- WFS 各读请求在配置了用户名密码时都会带上 Basic Authorization，包括 `GetFeatureByPost`
+- `GetFeature` 在 HTTP 失败或返回 XML/HTML 时抛出明确错误，不再把异常正文交给 `response.json()`
+- POST CQL 里的 `TOUCHES(...)` 等空间函数不再当成 `DISJOINT` 发出，遇到时 Promise 会拒绝
 
 ## [0.0.15] - 2024-09-04
 

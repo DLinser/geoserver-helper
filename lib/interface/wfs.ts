@@ -38,78 +38,51 @@ export namespace IWfs {
     }
 
     /**
-     * GetFeature通用参数
+     * GetFeature 请求参数。各版本返回的都是 GeoJSON，参数名固定为 typename、maxFeatures。
      */
-    interface GetFeatureCommonParameters{
+    export interface GetFeatureParameters {
         service: "WFS";
-        version: "1.0.0" | "1.1.0";
+        version?: WfsVersion;
         request: "GetFeature";
-
+        /**
+         * 图层名
+         */
+        typename: string;
         /**
          * 要素ID
          */
         featureId?: string;
-
         /**
          * 返回结果的投影，如果和原坐标系不一样，则会转换后返回
          */
         srsName?: string;
-
         /**
          * 空间查询的四至
          */
-        bbox?:string;
-
+        bbox?: string;
         /**
          * CQL查询条件
          */
         CQL_FILTER?: string;
-
         /**
          * 结果返回的字段，多个的话以逗号分隔
          */
         propertyName?: string;
         /**
-         * 从哪条数据开始查
+         * 从哪条数据开始查。0 是有效值。
          */
         startIndex?: number | string;
         /**
          * 排序字段(倒序的话字段名需要后面加"+D")
          */
         sortBy?: string;
-        outputFormat: "application/json";
         /**
-         * 这里允许任意类型的额外属性
-         */
-        [key: string]: string | number | undefined;
-    }
-    /**
-     * 1.x版本的GetFeature参数(包括1.0.0和1.1.0)
-     */
-    export interface GetFeatureParametersOfVersionOne extends GetFeatureCommonParameters{
-        /**
-         * 图层名
-         */
-        typename: string;
-        /**
-         * 最多返回的数据条数
+         * 最多返回的数据条数。0 是有效值。
          */
         maxFeatures?: number | string;
+        outputFormat?: "application/json";
+        [key: string]: string | number | undefined;
     }
-    /**
-     * 2.x版本的参数(包括2.0.0)
-     */
-    export interface GetFeatureParametersOfVersionTwo extends GetFeatureCommonParameters{
-        /**
-         * 图层名
-         */
-        typeNames: string;
-        /**
-         * 最多返回的数据条数
-         */
-        count: number | string;
-    }
-    export type GetFeatureParameters = GetFeatureParametersOfVersionOne | GetFeatureParametersOfVersionTwo
 
     /**
      * wfs服务支持的类型

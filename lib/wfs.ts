@@ -74,6 +74,26 @@ export default class wfsHelper {
         }
     }
 
+    private resolveLayerName(explicit?: string) {
+        const name = explicit || (this.workspace && this.layer
+            ? `${this.workspace}:${this.layer}`
+            : this.layer);
+        if (!name) {
+            throw new Error("WFS 需要图层名，或在构造 wfsHelper 时同时提供 workspace 与 layer");
+        }
+        return name;
+    }
+
+    /**
+     * 数字 0 要保留。字符串空值、null、undefined 不写入请求。
+     */
+    private shouldSendQueryValue(value: number | string | undefined): value is number | string {
+        if (typeof value === "number") {
+            return true;
+        }
+        return !!value;
+    }
+
     /**
      * 获取能力集(不同version会有细微的不同)
      * @example
@@ -86,24 +106,22 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {string} 能力集（暂不支持json格式）
+     * @return {Promise<Record<string, any>>} x2js 解析后的能力集（暂不支持 JSON 能力集）
      */
     GetCapabilities(option: {
-        version: string
+        version?: string
     } = {
             version: "1.0.0"
         }) {
         const featureRequest = {
             service: "WFS",
-            version: option.version,
+            version: option.version || "1.0.0",
             request: "GetCapabilities"
         };
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-        // return fetchUtil.get<string>(fetchUrl)
-        return new Promise<ILayer.LayerPropertyValue>((resolve, reject) => {
-            fetchUtil.get<any>(fetchUrl).then(xmlString => {
-                const jsonResult = x2js.xml2js<any>(xmlString)
-                resolve(jsonResult)
+        return new Promise<Record<string, any>>((resolve, reject) => {
+            fetchUtil.get<string>(fetchUrl, undefined, this.restXhrConfig).then(xmlString => {
+                resolve(x2js.xml2js(xmlString))
             }).catch((err) => {
                 reject(err)
             })
@@ -124,25 +142,29 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {ILayer.LayerPropertyValue} 单属性表
+     * @return {Promise<ILayer.LayerPropertyValue>} 单属性表。响应是 XML，经 x2js 解析后再返回。
      */
     GetPropertyValue(option: {
         typeNames?: string;
         valueReference: string;
     }) {
-        const realTypeNames = option.typeNames ? option.typeNames : this.workspace
-            ? `${this.workspace}:${this.layer}`
-            : this.layer
-        const featureRequest = {
-            service: "WFS",
-            version: "2.0.0",
-            request: "GetPropertyValue",
-            typeNames: realTypeNames,
-            valueReference: option.valueReference
-        };
-        const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
         return new Promise<ILayer.LayerPropertyValue>((resolve, reject) => {
-            fetchUtil.get<string>(fetchUrl).then(xmlString => {
+            let realTypeNames = "";
+            try {
+                realTypeNames = this.resolveLayerName(option.typeNames);
+            } catch (error) {
+                reject(error);
+                return;
+            }
+            const featureRequest = {
+                service: "WFS",
+                version: "2.0.0",
+                request: "GetPropertyValue",
+                typeNames: realTypeNames,
+                valueReference: option.valueReference
+            };
+            const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
+            fetchUtil.get<string>(fetchUrl, undefined, this.restXhrConfig).then(xmlString => {
                 const jsonResult = x2js.xml2js<ILayer.LayerPropertyValue>(xmlString)
                 resolve(jsonResult)
             }).catch((err) => {
@@ -165,7 +187,8 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {*}
+     * 未传 version 时为 1.0.0。各版本都返回 GeoJSON，请求参数名固定为 typename、maxFeatures。
+     * @return {Promise<ILayer.LayerPropertySheetInfo>}
      */
     GetFeature(queryOption?: {
         cql?: string;
@@ -175,51 +198,46 @@ export default class wfsHelper {
         typename?: string;
         maxFeatures?: number | string;
         startIndex?: number | string;
-        extension?: Record<string, string | number>;
+        version?: IWfs.WfsVersion;
+        extension?: Record<string, string | number | undefined>;
     }) {
         return new Promise<ILayer.LayerPropertySheetInfo>((resolve, reject) => {
-            let featureRequest: IWfs.GetFeatureParameters = {
+            let typeName = "";
+            try {
+                typeName = this.resolveLayerName(queryOption?.typename);
+            } catch (error) {
+                reject(error);
+                return;
+            }
+            const featureRequest: IWfs.GetFeatureParameters = {
                 service: "WFS",
-                version: "1.0.0",
+                version: queryOption?.version || "1.0.0",
                 request: "GetFeature",
+                typename: typeName,
                 srsName: this.srsName,
-                typename: this.workspace
-                    ? `${this.workspace}:${this.layer}`
-                    : this.layer,
                 outputFormat: "application/json",
             };
             if (queryOption) {
-                if (queryOption.fid) {
+                if (this.shouldSendQueryValue(queryOption.maxFeatures)) {
+                    featureRequest.maxFeatures = queryOption.maxFeatures;
+                }
+                if (this.shouldSendQueryValue(queryOption.fid)) {
                     featureRequest.featureId = String(queryOption.fid);
                 }
                 if (queryOption.cql) {
                     featureRequest.CQL_FILTER = queryOption.cql;
                 }
-                if (queryOption.typename) {
-                    featureRequest.typename = queryOption.typename;
-                } else {
-                    featureRequest.typename = this.workspace
-                        ? `${this.workspace}:${this.layer}`
-                        : this.layer
-                }
                 if (queryOption.propertyname) {
-                    featureRequest.propertyname = queryOption.propertyname;
+                    featureRequest.propertyName = queryOption.propertyname;
                 }
-                if (queryOption.maxFeatures) {
-                    featureRequest.maxFeatures = queryOption.maxFeatures;
-                }
-                if (queryOption.startIndex !== undefined && queryOption.startIndex !== null) {
+                if (this.shouldSendQueryValue(queryOption.startIndex)) {
                     featureRequest.startIndex = queryOption.startIndex;
                 }
                 if (
                     queryOption.extension &&
-                    Object.prototype.toString.call(queryOption.extension) ==
-                    "[object Object]"
+                    Object.prototype.toString.call(queryOption.extension) == "[object Object]"
                 ) {
-                    featureRequest = {
-                        ...featureRequest,
-                        ...queryOption.extension,
-                    };
+                    Object.assign(featureRequest, queryOption.extension);
                 }
             }
             const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
@@ -227,12 +245,18 @@ export default class wfsHelper {
                 method: "GET",
                 headers: new Headers({
                     Accept: "application/json;charset=utf-8",
-                    "Content-Type": "application/x-www-form-urlencoded",
                     ...this.restXhrConfig.headers,
                 }),
                 mode: "cors",
             })
-                .then(function (response) {
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`WFS GetFeature request failed with status ${response.status}`);
+                    }
+                    const contentType = response.headers.get("content-type") || "";
+                    if (/xml|html/i.test(contentType)) {
+                        throw new Error(`WFS GetFeature 期望 JSON，实际 Content-Type 为 ${contentType}`);
+                    }
                     return response.json();
                 })
                 .then((json) => {
@@ -262,7 +286,7 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {*}
+     * @return {Promise<ILayer.LayerPropertySheetInfo>}
      */
     GetFeatureByPost(option?: {
         cql?: string;
@@ -277,21 +301,29 @@ export default class wfsHelper {
         maxFeatures?: number
         startIndex?: number
     }) {
-        const currentLayerName = option?.typename || (this.workspace
-            ? `${this.workspace}:${this.layer}`
-            : this.layer);
-        const xmlParam = creatFeatureRequestXml({
-            srsName: this.srsName,
-            featureNS: option?.workspaceUri || this.workspaceUri || "",
-            featurePrefix: option?.workspace || this.workspace || "",
-            featureTypes: [currentLayerName],
-            outputFormat: 'application/json',
-            propertyNames: option?.propertyname ? option?.propertyname.split(",") : undefined,
-            startIndex: option?.startIndex,
-            maxFeatures: option?.maxFeatures,
-            cql: option?.cql
-        })
-        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam)
+        let currentLayerName = "";
+        try {
+            currentLayerName = this.resolveLayerName(option?.typename);
+        } catch (error) {
+            return Promise.reject(error);
+        }
+        let xmlParam = "";
+        try {
+            xmlParam = creatFeatureRequestXml({
+                srsName: this.srsName,
+                featureNS: option?.workspaceUri || this.workspaceUri || "",
+                featurePrefix: option?.workspace || this.workspace || "",
+                featureTypes: [currentLayerName],
+                outputFormat: 'application/json',
+                propertyNames: option?.propertyname ? option?.propertyname.split(",") : undefined,
+                startIndex: option?.startIndex,
+                maxFeatures: option?.maxFeatures,
+                cql: option?.cql
+            })
+        } catch (error) {
+            return Promise.reject(error);
+        }
+        return fetchUtil.postXml<ILayer.LayerPropertySheetInfo>(`${this.url}`, xmlParam, this.restXhrConfig)
     }
 
     /**
@@ -306,7 +338,7 @@ export default class wfsHelper {
      * }).then(res => {
      *   console.log(res)
      * })
-     * @return {*}
+     * @return {Promise<ILayer.LayerDescribeFeatureType>}
      */
     DescribeFeatureType(queryOption?: {
         typeName?: string;
@@ -324,23 +356,18 @@ export default class wfsHelper {
         const featureRequest: wfsQueryDescribeFeatureTypeParams = {
             service: "WFS",
             version: "1.0.0",
-            typeName: "",
+            typeName: queryOption?.typeName || (this.workspace
+                ? `${this.workspace}:${this.layer}`
+                : this.layer),
             request: "DescribeFeatureType",
             outputFormat: "application/json",
         };
-        if (queryOption?.typeName) {
-            featureRequest.typeName = queryOption?.typeName
-        } else {
-            featureRequest.typeName = this.workspace
-                ? `${this.workspace}:${this.layer}`
-                : this.layer
-        }
         const fetchUrl = `${this.url}${this.url.indexOf("?") > -1 ? "&" : "?"}${formateObjToParamStr(featureRequest)}`;
-        return fetchUtil.get<ILayer.LayerDescribeFeatureType>(fetchUrl)
+        return fetchUtil.get<ILayer.LayerDescribeFeatureType>(fetchUrl, undefined, this.restXhrConfig)
     }
 
     /**
-     *  矢量图层要素的新增、编辑、删除 （features在内部已经加了经纬度反转，不用再次处理）
+     *  矢量图层要素的新增、编辑、删除（写出前仍对调经纬度，和原来一样）
      * @example
      * import wfsHelper from 'geoserver-helper/wfs'
      * const wfsHelperInstance = new wfsHelper({

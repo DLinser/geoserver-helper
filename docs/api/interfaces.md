@@ -418,67 +418,44 @@ export interface ILinkItem {
 
 ## `IWfs`（`wfs.ts`）
 
-共约 1 个导出类型/接口/枚举，下方摘录常用项。
+共约若干导出类型，下方摘录常用项。完整定义以 `lib/interface/wfs.ts` 为准。
 
-### interface `featureOption`
+- `WfsVersion` 为 `"1.0.0" | "1.1.0" | "2.0.0"`。
+- GetFeature 各版本返回同一份 GeoJSON。请求参数名固定为 `typename`、`maxFeatures`。
+- 调用 `GetFeature({ propertyname })` 时会写成 `propertyName`。
+
+### interface `GetFeatureParameters`
 
 ```ts
-export interface featureOption {
-            type: "Point" | "LineString" | "MultiPolygon" | "Polygon",
-            coordinates: Array<number | number[] | Array<number[]>>,
-            properties?: Record<string, string | number | undefined>,
-            id?: string | number
-        }
+export interface GetFeatureParameters {
+  service: "WFS"
+  version?: WfsVersion
+  request: "GetFeature"
+  typename: string
+  featureId?: string
+  srsName?: string
+  bbox?: string
+  CQL_FILTER?: string
+  propertyName?: string
+  startIndex?: number | string
+  sortBy?: string
+  maxFeatures?: number | string
+  outputFormat?: "application/json"
+}
+```
 
-        export interface FeatureTransactionOption {
-            /**
-             * 操作类型
-             */
-            type: "modif" | "create" | "delete",
-            /**
-             * 工作区的名称
-             */
-            featurePrefix: string,
-            /**
-             * 工作区的命名空间URI
-             */
-            featureNS: string, // 注意这个值必须为创建工作区时的命名空间URI
-            /**
-             * 图层名
-             */
-            featureType: string,
-            /**
-             * 坐标系
-             */
-            srsName?: string,
-            /**
-             * 要操作的要素
-             */
-            features: Feature[] | featureOption[]
-        }
-    }
+### interface `IWfs.Transaction.FeatureTransactionOption`
 
-    /**
-     * GetFeature通用参数
-     */
-    interface GetFeatureCommonParameters{
-        service: "WFS";
-        version: "1.0.0" | "1.1.0";
-        request: "GetFeature";
-
-        /**
-         * 要素ID
-         */
-        featureId?: string;
-
-        /**
-         * 返回结果的投影，如果和原坐标系不一样，则会转换后返回
-         */
-        srsName?: string;
-
-        /**
-         * 空间查询的四至
-  // ... 其余字段见 lib/interface/wfs.ts
+```ts
+export namespace Transaction {
+  export interface FeatureTransactionOption {
+    type: "modif" | "create" | "delete"
+    featurePrefix: string
+    featureNS: string
+    featureType: string
+    srsName?: string
+    features: Feature[] | featureOption[]
+  }
 }
 ```
 

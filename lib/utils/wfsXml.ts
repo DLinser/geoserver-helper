@@ -24,11 +24,13 @@ import Filter from 'ol/format/filter/Filter';
 import { IWfs } from '../interface/wfs';
 const WFSTSerializer = new WFS()
 
+const UNSUPPORTED_SPATIAL_CQL = /\b(TOUCHES|CROSSES|OVERLAPS|DWITHIN|BEYOND)\s*\(/i
 
-/**
- * 空间查询Filter的数组
- */
-let geometryFilterArray: Filter[] = []
+function assertSupportedSpatialCql(cql: string) {
+  if (UNSUPPORTED_SPATIAL_CQL.test(cql)) {
+    throw new Error("WFS GetFeatureByPost 的 CQL 暂不支持 TOUCHES、CROSSES、OVERLAPS、DWITHIN、BEYOND");
+  }
+}
 
 
 /**
@@ -36,7 +38,7 @@ let geometryFilterArray: Filter[] = []
  * @param {GeoFilter} cqlCondition
  * @return {*}
  */
-const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoPropertyType>) => {
+const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoPropertyType>, filters: Filter[]) => {
   // TODO 因为cqlCondition还有自定义的类型 所以这个地方可能会有特殊情况
   let cqlOperator: GeoOperator | "LikePredicate" | 'InExpressionListPredicate' = '=='
   let cqlProperty: GeoFilter | GeoExpression<GeoPropertyType> = ""
@@ -62,20 +64,20 @@ const geoStyleCqlToOlFilter = (cqlCondition: GeoFilter | GeoExpression<GeoProper
   switch (cqlOperator) {
     case '&&':
       filter = andFilter(
-        geoStyleCqlToOlFilter(cqlProperty),
-        geoStyleCqlToOlFilter(cqlValue),
+        geoStyleCqlToOlFilter(cqlProperty, filters),
+        geoStyleCqlToOlFilter(cqlValue, filters),
       )
       break;
     case '||':
       filter = orFilter(
-        geoStyleCqlToOlFilter(cqlProperty),
-        geoStyleCqlToOlFilter(cqlValue),
+        geoStyleCqlToOlFilter(cqlProperty, filters),
+        geoStyleCqlToOlFilter(cqlValue, filters),
       )
       break;
     //export type ComparisonOperator = '==' | '*=' | '!=' | '<' | '<=' | '>' | '>=' | '<=x<=';
     case '==':
       if ((cqlProperty as string).includes("spatialMatch")) {
-        filter = geometryFilterArray[Number((cqlProperty as string).substring(12))]
+        filter = filters[Number((cqlProperty as string).substring(12))]
       } else {
         filter = equalToFilter(cqlProperty as string, cqlValue as string | number);
       }
@@ -125,7 +127,8 @@ export const creatFeatureRequestXml = (option: {
     outputFormat: option.outputFormat,
   }
   if (option.cql) {
-    geometryFilterArray = []
+    assertSupportedSpatialCql(option.cql)
+    const geometryFilters: Filter[] = []
     //cql太长的话正则匹配会因崩溃而失效
     if (option.cql.length <= 680) {
       let nonSpatialCql = option.cql + ""
@@ -136,37 +139,35 @@ export const creatFeatureRequestXml = (option: {
         const spatialField = spatialMatch[2];
         const geometry = new WKT().readGeometry(wktGeometry, {});
         if (spatialMatch[1].toUpperCase() === 'INTERSECTS') {
-          geometryFilterArray.push(intersectsFilter(spatialField, geometry))
+          geometryFilters.push(intersectsFilter(spatialField, geometry))
         } else if (spatialMatch[1].toUpperCase() === 'WITHIN') {
-          geometryFilterArray.push(withinFilter(spatialField, geometry))
+          geometryFilters.push(withinFilter(spatialField, geometry))
         } else if (spatialMatch[1].toUpperCase() === 'CONTAINS') {
-          geometryFilterArray.push(containsFilter(spatialField, geometry))
+          geometryFilters.push(containsFilter(spatialField, geometry))
         } else if (spatialMatch[1].toUpperCase() === 'DISJOINT') {
-          geometryFilterArray.push(disjointFilter(spatialField, geometry))
-        } else if (spatialMatch[1].toUpperCase() === 'TOUCHES') {
-          geometryFilterArray.push(disjointFilter(spatialField, geometry))
+          geometryFilters.push(disjointFilter(spatialField, geometry))
         }
-        nonSpatialCql = spatialMatch ? nonSpatialCql.replace(spatialMatch[0], `spatialMatch${geometryFilterArray.length - 1} = 0`) : option.cql;
+        nonSpatialCql = spatialMatch ? nonSpatialCql.replace(spatialMatch[0], `spatialMatch${geometryFilters.length - 1} = 0`) : option.cql;
       }
       const geoStyleCql = cqlParser.read(nonSpatialCql)
-      const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
+      const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[], geometryFilters)
       writeGetFeatureOptions.filter = cqlFilter
     } else { //这种情况一般都是带有空间查询的
       if (option.cql.includes("AND") || option.cql.includes("OR")) { //复杂条件暂时不支持
         let nonSpatialCql = option.cql + ""
         const unitSimpleCqlArray = option.cql.replaceAll(" AND ", " splitTag ").replaceAll(" OR ", " splitTag ").split(" splitTag ")
         for (let i = 0; i < unitSimpleCqlArray.length; i++) {
-          if (unitSimpleCqlArray[i].includes("INTERSECTS") || unitSimpleCqlArray[i].includes("WITHIN") || unitSimpleCqlArray[i].includes("CONTAINS") || unitSimpleCqlArray[i].includes("DISJOINT") || unitSimpleCqlArray[i].includes("TOUCHES")) {
-            creatGeometryFilter(unitSimpleCqlArray[i])
-            nonSpatialCql = nonSpatialCql.replace(unitSimpleCqlArray[i], `spatialMatch${geometryFilterArray.length - 1} = 0`);
+          if (unitSimpleCqlArray[i].includes("INTERSECTS") || unitSimpleCqlArray[i].includes("WITHIN") || unitSimpleCqlArray[i].includes("CONTAINS") || unitSimpleCqlArray[i].includes("DISJOINT")) {
+            creatGeometryFilter(unitSimpleCqlArray[i], geometryFilters)
+            nonSpatialCql = nonSpatialCql.replace(unitSimpleCqlArray[i], `spatialMatch${geometryFilters.length - 1} = 0`);
           }
         }
         const geoStyleCql = cqlParser.read(nonSpatialCql)
-        const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[])
+        const cqlFilter = geoStyleCqlToOlFilter(geoStyleCql as any[], geometryFilters)
         writeGetFeatureOptions.filter = cqlFilter
       } else {
-        creatGeometryFilter(option.cql)
-        writeGetFeatureOptions.filter = geometryFilterArray[0]
+        creatGeometryFilter(option.cql, geometryFilters)
+        writeGetFeatureOptions.filter = geometryFilters[0]
       }
     }
   }
@@ -176,20 +177,19 @@ export const creatFeatureRequestXml = (option: {
 
 
 
-export const creatGeometryFilter = (geometryFilterCql: string) => {
+export const creatGeometryFilter = (geometryFilterCql: string, filters: Filter[] = []) => {
+  assertSupportedSpatialCql(geometryFilterCql)
   const wktGeometry = geometryFilterCql.substring(geometryFilterCql.indexOf(", ") + 1, geometryFilterCql.length - 1);
   const spatialField = geometryFilterCql.substring(geometryFilterCql.indexOf("(") + 1, geometryFilterCql.indexOf(", ")).trim()
   const geometry = new WKT().readGeometry(wktGeometry, {});
   if (geometryFilterCql.includes("INTERSECTS")) {
-    geometryFilterArray.push(intersectsFilter(spatialField, geometry))
+    filters.push(intersectsFilter(spatialField, geometry))
   } else if (geometryFilterCql.includes("WITHIN")) {
-    geometryFilterArray.push(withinFilter(spatialField, geometry))
+    filters.push(withinFilter(spatialField, geometry))
   } else if (geometryFilterCql.includes("CONTAINS")) {
-    geometryFilterArray.push(containsFilter(spatialField, geometry))
+    filters.push(containsFilter(spatialField, geometry))
   } else if (geometryFilterCql.includes("DISJOINT")) {
-    geometryFilterArray.push(disjointFilter(spatialField, geometry))
-  } else if (geometryFilterCql.includes("TOUCHES")) {
-    geometryFilterArray.push(disjointFilter(spatialField, geometry))
+    filters.push(disjointFilter(spatialField, geometry))
   }
 }
 
@@ -201,7 +201,8 @@ export type featureOption = {
 }
 
 /**
- * @description: 格式化要素（统一为openlayers的格式）
+ * @description: 格式化要素（统一为 openlayers 的格式）。
+ * 写出前仍对调坐标，保持原有 Transaction 结果不变。
  * @param {Feature[] | featureOption[]} features 要素列表
  * @return {Feature[]} 格式化后的要素列表
  */
@@ -238,7 +239,6 @@ export const formateFeatures = (features: Feature[] | featureOption[]) => {
       }
     }
     if (initedFeature) {
-      // 转换坐标
       const geometry = initedFeature.getGeometry()?.clone();
       geometry?.applyTransform(function (flatCoordinates, _flatCoordinates2, stride = 2) {
         for (let j = 0; j < flatCoordinates.length; j += stride) {

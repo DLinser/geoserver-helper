@@ -7,7 +7,7 @@ hero:
   tagline: 用 TypeScript + 原生 fetch，更简单地调用 GeoServer 的 REST 与 OGC 服务。
   image:
     src: /hero.svg
-    alt: 图层叠加与 WMS 出图示意
+    alt: GeoServer 标志与 WFS、WMS、WCS
   actions:
     - theme: brand
       text: 快速开始

@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="geoserver-helper">
-  <rect width="32" height="32" rx="8" fill="#134e4a"/>
-  <rect x="6" y="13" width="20" height="13" rx="2" fill="#ccfbf1"/>
-  <path d="M8 20c3-4 6-3 9-1s5-4 9-3" fill="none" stroke="#0f766e" stroke-width="1.4" stroke-linecap="round"/>
-  <circle cx="21" cy="17" r="2.1" fill="#f59e0b"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="GeoServer">
+  <rect width="32" height="32" rx="7" fill="#00963c"/>
+  <path fill="#fff" d="M16.6 6.4c-5.2 0-9.3 4.1-9.3 9.4s4.1 9.4 9.3 9.4c3.4 0 6.4-1.8 8.1-4.4l-3.4-1.9c-1 1.6-2.7 2.5-4.7 2.5-3.1 0-5.5-2.4-5.5-5.6s2.4-5.6 5.5-5.6c1.3 0 2.5.4 3.4 1.2l2.5-3.3a9.2 9.2 0 0 0-5.9-2.7z"/>
+  <path fill="#fff" d="M15.6 14.2h10v3.8h-10z"/>
 </svg>

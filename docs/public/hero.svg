@@ -1,34 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="图层叠加与 WMS 出图示意">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ecfeff"/>
-      <stop offset="100%" stop-color="#f0fdf4"/>
-    </linearGradient>
-    <linearGradient id="map" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#99f6e4"/>
-      <stop offset="100%" stop-color="#bbf7d0"/>
-    </linearGradient>
-  </defs>
-  <rect width="480" height="360" rx="28" fill="url(#bg)"/>
-  <rect x="48" y="44" width="384" height="272" rx="18" fill="#fff" stroke="#99f6e4" stroke-width="2"/>
-  <rect x="48" y="44" width="384" height="36" rx="18" fill="#134e4a"/>
-  <rect x="48" y="62" width="384" height="18" fill="#134e4a"/>
-  <circle cx="70" cy="62" r="5" fill="#f87171"/>
-  <circle cx="88" cy="62" r="5" fill="#fbbf24"/>
-  <circle cx="106" cy="62" r="5" fill="#34d399"/>
-  <rect x="72" y="104" width="248" height="176" rx="10" fill="url(#map)" stroke="#0f766e" stroke-width="1.5"/>
-  <path d="M88 220c28-42 56-20 84-36s58-48 132-20" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round"/>
-  <path d="M96 248c36-16 70 8 110 0s78-28 118-8" fill="none" stroke="#3f6212" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>
-  <g opacity="0.35" fill="none" stroke="#0f766e" stroke-width="1">
-    <path d="M72 148h248M72 192h248M72 236h248"/>
-    <path d="M134 104v176M196 104v176M258 104v176"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="GeoServer 与 WFS、WMS、WCS">
+  <rect width="640" height="420" rx="28" fill="#f3faf4"/>
+  <rect x="28" y="28" width="584" height="364" rx="24" fill="#fff"/>
+  <g transform="translate(56 78) scale(2.35)">
+    <rect width="64" height="64" rx="14" fill="#00963c"/>
+    <path fill="#fff" d="M33 13.5c-10.2 0-18.2 8-18.2 18.3S22.8 50.1 33 50.1c6.6 0 12.4-3.4 15.7-8.6l-6.6-3.7c-1.9 3-5.2 4.9-9.1 4.9-6 0-10.6-4.6-10.6-10.9s4.6-10.9 10.6-10.9c2.5 0 4.8.8 6.6 2.3l4.8-6.4A18 18 0 0 0 33 13.5z"/>
+    <path fill="#fff" d="M31.2 28.4h19.4v7.4H31.2z"/>
   </g>
-  <circle cx="238" cy="168" r="7" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
-  <rect x="340" y="112" width="68" height="52" rx="8" fill="#fff" stroke="#14b8a6" stroke-width="2"/>
-  <rect x="352" y="124" width="44" height="6" rx="3" fill="#0e7490"/>
-  <rect x="352" y="136" width="32" height="6" rx="3" fill="#99f6e4"/>
-  <rect x="340" y="176" width="68" height="52" rx="8" fill="#fff" stroke="#14b8a6" stroke-width="2"/>
-  <rect x="352" y="188" width="44" height="6" rx="3" fill="#3f6212"/>
-  <rect x="352" y="200" width="28" height="6" rx="3" fill="#bbf7d0"/>
-  <text x="240" y="308" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" fill="#134e4a">WMS GetMap / GetFeatureInfo</text>
+  <text x="56" y="268" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" fill="#0b3d22">GeoServer</text>
+  <text x="56" y="302" font-family="Segoe UI, Microsoft YaHei, sans-serif" font-size="16" fill="#3d6b4f">前端调用 REST 与 OGC 服务</text>
+  <g font-family="Segoe UI, Microsoft YaHei, sans-serif">
+    <rect x="360" y="78" width="212" height="72" rx="14" fill="#f3faf4" stroke="#b7e4c7"/>
+    <text x="382" y="108" font-size="18" font-weight="700" fill="#00963c">WFS</text>
+    <text x="382" y="132" font-size="14" fill="#245c38">要素查询与事务</text>
+    <rect x="360" y="166" width="212" height="72" rx="14" fill="#f3faf4" stroke="#b7e4c7"/>
+    <text x="382" y="196" font-size="18" font-weight="700" fill="#00963c">WMS</text>
+    <text x="382" y="220" font-size="14" fill="#245c38">出图与点选</text>
+    <rect x="360" y="254" width="212" height="72" rx="14" fill="#f3faf4" stroke="#b7e4c7"/>
+    <text x="382" y="284" font-size="18" font-weight="700" fill="#00963c">WCS</text>
+    <text x="382" y="308" font-size="14" fill="#245c38">栅格覆盖</text>
+  </g>
 </svg>

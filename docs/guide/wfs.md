@@ -20,14 +20,16 @@ const wfs = new wfsHelper({
 });
 ```
 
-实例上可读改：`url`、`userName`、`password`、`layer`、`srsName`、`workspace`、`workspaceUri`。未在方法里指定图层时，会用 `workspace:layer`（有 workspace）或 `layer`。
+实例上可读改：`url`、`userName`、`password`、`layer`、`srsName`、`workspace`、`workspaceUri`。未在方法里指定图层时，会用 `workspace:layer`（workspace 和 layer 都有）或 `layer`。`GetFeature`、`GetFeatureByPost`、`GetPropertyValue` 在两者都没有时会拒绝，不再发空图层名。`DescribeFeatureType` 可以不传图层名。
+
+传了 `userName` 和 `password` 后，`GetCapabilities`、`GetFeature`、`GetFeatureByPost`、`DescribeFeatureType`、`GetPropertyValue`、`Transaction` 都会带上 Basic Authorization。
 
 ## 查询能力集
 
-不同 `version` 返回内容略有差异；暂不支持 JSON。
+不同 `version` 返回内容略有差异。返回值是把 XML 用 x2js 转成的对象，不是 JSON 能力集。
 
 ```ts
-GetCapabilities(option: { version: string } = { version: "1.0.0" })
+GetCapabilities(option: { version?: string } = { version: "1.0.0" })
 ```
 
 ```ts
@@ -36,7 +38,9 @@ const caps = await wfs.GetCapabilities({ version: "1.0.0" });
 
 ## 查询要素
 
-简单条件用 GET 的 `GetFeature`；复杂 CQL / 长过滤建议用 `GetFeatureByPost`（POST）。POST 的 CQL 暂不支持 `TOUCHES` | `CROSSES` | `OVERLAPS` | `DWITHIN` | `BEYOND`。
+简单条件用 GET 的 `GetFeature`；复杂 CQL / 长过滤建议用 `GetFeatureByPost`（POST）。POST 的 CQL 暂不支持 `TOUCHES` | `CROSSES` | `OVERLAPS` | `DWITHIN` | `BEYOND`，写成这类空间函数时会拒绝，不会再当成 `DISJOINT` 查询。
+
+未传 `version` 时 `GetFeature` 仍是 `"1.0.0"`。各版本返回的都是同一份 GeoJSON，请求里的图层名和条数固定用 `typename`、`maxFeatures`。
 
 ```ts
 GetFeature(queryOption?: {
@@ -46,7 +50,8 @@ GetFeature(queryOption?: {
   typename?: string;
   maxFeatures?: number | string;
   startIndex?: number | string;
-  extension?: Record<string, string | number>;
+  version?: "1.0.0" | "1.1.0" | "2.0.0";
+  extension?: Record<string, string | number | undefined>;
 })
 
 GetFeatureByPost(option?: {
